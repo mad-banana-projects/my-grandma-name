@@ -5,7 +5,7 @@ const PROTECTED_ROUTES = ['/dashboard', '/personalized-gifts', '/subscribe']
 const SUBSCRIPTION_REQUIRED_ROUTES = ['/dashboard', '/personalized-gifts']
 const AUTH_ROUTES = ['/login', '/signup']
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })
 
   const supabase = createServerClient(
