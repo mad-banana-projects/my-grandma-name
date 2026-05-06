@@ -10,10 +10,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const { plan } = await request.json() as { plan: 'monthly' | 'yearly' }
+  const { plan } = await request.json() as { plan: 'monthly' | 'annual' }
+
+  if (plan !== 'monthly' && plan !== 'annual') {
+    return NextResponse.json({ error: 'Invalid plan' }, { status: 400 })
+  }
 
   const priceId =
-    plan === 'yearly'
+    plan === 'annual'
       ? process.env.STRIPE_YEARLY_PRICE_ID!
       : process.env.STRIPE_MONTHLY_PRICE_ID!
 
@@ -26,8 +30,12 @@ export async function POST(request: NextRequest) {
   const session = await stripe.checkout.sessions.create({
     mode: 'subscription',
     customer: profile?.stripe_customer_id ?? undefined,
-    customer_email: profile?.stripe_customer_id ? undefined : profile?.email,
+    customer_email: profile?.stripe_customer_id ? undefined : (profile?.email ?? user.email),
     line_items: [{ price: priceId, quantity: 1 }],
+    subscription_data: {
+      trial_period_days: 7,
+      metadata: { user_id: user.id },
+    },
     success_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/grandma?checkout=success`,
     cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/subscribe`,
     metadata: { user_id: user.id },

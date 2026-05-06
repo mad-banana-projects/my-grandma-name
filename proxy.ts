@@ -1,8 +1,8 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
-const PROTECTED_ROUTES = ['/dashboard', '/personalized-gifts', '/subscribe']
-const SUBSCRIPTION_REQUIRED_ROUTES = ['/dashboard', '/personalized-gifts']
+const PROTECTED_ROUTES = ['/dashboard', '/subscribe']
+const SUBSCRIPTION_REQUIRED_ROUTES = ['/dashboard']
 const AUTH_ROUTES = ['/login', '/signup']
 
 export async function proxy(request: NextRequest) {
@@ -49,7 +49,13 @@ export async function proxy(request: NextRequest) {
       .single()
 
     const url = request.nextUrl.clone()
-    url.pathname = profile?.role === 'grandma' ? '/dashboard/grandma' : '/dashboard/family'
+    if (profile?.role === 'grandma') {
+      url.pathname = '/dashboard/grandma'
+    } else if (profile?.role === 'family') {
+      url.pathname = '/dashboard/family'
+    } else {
+      url.pathname = '/browse'
+    }
     return NextResponse.redirect(url)
   }
 
@@ -61,7 +67,7 @@ export async function proxy(request: NextRequest) {
       .eq('id', user.id)
       .single()
 
-    if (profile?.subscription_status !== 'active') {
+    if (profile?.subscription_status !== 'active' && profile?.subscription_status !== 'trialing') {
       const url = request.nextUrl.clone()
       url.pathname = '/subscribe'
       return NextResponse.redirect(url)

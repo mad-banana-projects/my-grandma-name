@@ -16,13 +16,10 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { signUpGrandma, type GrandmaSignupState } from '@/app/(auth)/signup/grandma/actions'
 
-const initialState: GrandmaSignupState = {
-  status: 'idle',
-}
+const initialState: GrandmaSignupState = { status: 'idle' }
 
 function SubmitButton() {
   const { pending } = useFormStatus()
-
   return (
     <Button type="submit" size="lg" className="w-full" disabled={pending}>
       {pending ? 'Creating account...' : 'Create grandma account'}
@@ -31,10 +28,7 @@ function SubmitButton() {
 }
 
 function FieldError({ errors }: { errors?: string[] }) {
-  if (!errors?.length) {
-    return null
-  }
-
+  if (!errors?.length) return null
   return <p className="text-sm text-destructive">{errors[0]}</p>
 }
 
@@ -42,7 +36,7 @@ export function GrandmaSignupForm() {
   const [state, formAction] = useActionState(signUpGrandma, initialState)
 
   return (
-    <Card className="w-full max-w-md rounded-lg">
+    <Card className="w-full max-w-lg rounded-lg">
       <CardHeader>
         <CardTitle className="text-xl">Create your registry</CardTitle>
         <CardDescription>
@@ -51,6 +45,101 @@ export function GrandmaSignupForm() {
       </CardHeader>
       <CardContent>
         <form action={formAction} className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="firstName">First name</Label>
+              <Input
+                id="firstName"
+                name="firstName"
+                type="text"
+                autoComplete="given-name"
+                required
+                aria-invalid={Boolean(state.fieldErrors?.firstName)}
+              />
+              <FieldError errors={state.fieldErrors?.firstName} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="lastName">Last name</Label>
+              <Input
+                id="lastName"
+                name="lastName"
+                type="text"
+                autoComplete="family-name"
+                required
+                aria-invalid={Boolean(state.fieldErrors?.lastName)}
+              />
+              <FieldError errors={state.fieldErrors?.lastName} />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="grandmaName">Grandma name</Label>
+            <Input
+              id="grandmaName"
+              name="grandmaName"
+              type="text"
+              placeholder="Mimi, Nana, Gigi…"
+              autoComplete="nickname"
+              required
+              aria-invalid={Boolean(state.fieldErrors?.grandmaName)}
+            />
+            <FieldError errors={state.fieldErrors?.grandmaName} />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="birthday">Birthday</Label>
+            <Input
+              id="birthday"
+              name="birthday"
+              type="date"
+              required
+              aria-invalid={Boolean(state.fieldErrors?.birthday)}
+            />
+            <FieldError errors={state.fieldErrors?.birthday} />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="phoneNumber">Phone number</Label>
+            <Input
+              id="phoneNumber"
+              name="phoneNumber"
+              type="tel"
+              autoComplete="tel"
+              required
+              aria-invalid={Boolean(state.fieldErrors?.phoneNumber)}
+            />
+            <FieldError errors={state.fieldErrors?.phoneNumber} />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="bio">About you</Label>
+            <textarea
+              id="bio"
+              name="bio"
+              rows={3}
+              maxLength={500}
+              required
+              placeholder="Tell your family a little about yourself…"
+              aria-invalid={Boolean(state.fieldErrors?.bio)}
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            />
+            <FieldError errors={state.fieldErrors?.bio} />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <input
+              id="textUpdatesOptIn"
+              name="textUpdatesOptIn"
+              type="checkbox"
+              className="h-4 w-4 rounded border-input"
+            />
+            <Label htmlFor="textUpdatesOptIn" className="font-normal">
+              I'd like to receive text updates (optional)
+            </Label>
+          </div>
+
+          <hr className="border-border" />
+
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input
@@ -76,31 +165,6 @@ export function GrandmaSignupForm() {
               aria-invalid={Boolean(state.fieldErrors?.password)}
             />
             <FieldError errors={state.fieldErrors?.password} />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="grandmaName">Grandma name</Label>
-            <Input
-              id="grandmaName"
-              name="grandmaName"
-              type="text"
-              placeholder="Mimi"
-              autoComplete="nickname"
-              required
-              aria-invalid={Boolean(state.fieldErrors?.grandmaName)}
-            />
-            <FieldError errors={state.fieldErrors?.grandmaName} />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="birthday">Birthday</Label>
-            <Input
-              id="birthday"
-              name="birthday"
-              type="date"
-              aria-invalid={Boolean(state.fieldErrors?.birthday)}
-            />
-            <FieldError errors={state.fieldErrors?.birthday} />
           </div>
 
           {state.message ? (
