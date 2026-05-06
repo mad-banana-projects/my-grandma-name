@@ -23,7 +23,7 @@ const CATEGORY_LABELS: Record<Product['category'], string> = {
   entertaining: 'Entertaining',
 }
 
-export function ProductCard({ product }: { product: Product }) {
+export function ProductCard({ product, priority = false }: { product: Product; priority?: boolean }) {
   const outboundUrl = product.affiliate_url ?? product.product_url
   const imageUrl = product.image_urls?.[0] ?? null
 
@@ -41,6 +41,7 @@ export function ProductCard({ product }: { product: Product }) {
             fill
             className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            priority={priority}
           />
         ) : (
           <div className="flex h-full items-center justify-center text-muted-foreground text-sm">

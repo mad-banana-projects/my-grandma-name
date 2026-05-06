@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 
-import { Button, buttonVariants } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button'
 import { ProductCard, type Product } from '@/components/products/product-card'
 import { cn } from '@/lib/utils'
 
@@ -55,8 +55,8 @@ export function ProductGrid({ products, isAnonymous, previewLimit }: Props) {
         <p className="py-12 text-center text-sm text-muted-foreground">No products in this category yet.</p>
       ) : (
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {visible.map((product) => (
-            <ProductCard key={product.id} product={product} />
+          {visible.map((product, i) => (
+            <ProductCard key={product.id} product={product} priority={i === 0} />
           ))}
         </div>
       )}
