@@ -79,7 +79,7 @@ create table public.family_members (
 create table public.products (
   id                uuid default gen_random_uuid() primary key,
   name              text not null,
-  image_url         text not null,
+  image_urls        text[] not null,
   product_url       text not null,
   affiliate_url     text,
   category          text check (category in ('personal', 'home', 'entertaining')) not null,
