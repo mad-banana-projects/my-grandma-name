@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "GrandmaGifts",
-  description: "The gift registry built for grandmas.",
+  title: "My Grandma Name",
+  description: "Choose your grandma name. Share the gifts you actually want.",
 };
 
 export default function RootLayout({
