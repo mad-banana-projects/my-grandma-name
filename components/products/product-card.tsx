@@ -1,9 +1,22 @@
+'use client'
+
+import { useState } from 'react'
 import Image from 'next/image'
 
 import { Badge } from '@/components/ui/badge'
 import { buttonVariants } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
+
+export type ProductVariant = {
+  id: string
+  label: string
+  price: string | null
+  image_urls: string[] | null
+  product_url: string | null
+  affiliate_url: string | null
+  display_order: number
+}
 
 export type Product = {
   id: string
@@ -15,6 +28,7 @@ export type Product = {
   price: string | null
   brand: string | null
   short_description: string | null
+  product_variants: ProductVariant[]
 }
 
 const CATEGORY_LABELS: Record<Product['category'], string> = {
@@ -23,13 +37,35 @@ const CATEGORY_LABELS: Record<Product['category'], string> = {
   entertaining: 'Entertaining',
 }
 
-export function ProductCard({ product, priority = false }: { product: Product; priority?: boolean }) {
-  const outboundUrl = product.affiliate_url ?? product.product_url
-  const imageUrl = product.image_urls?.[0] ?? null
+function formatPrice(price: string | null): string | null {
+  if (!price) return null
+  return `$${parseFloat(price).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`
+}
 
-  const priceDisplay = product.price
-    ? `$${parseFloat(product.price).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`
-    : null
+export function ProductCard({ product, priority = false }: { product: Product; priority?: boolean }) {
+  const variants = product.product_variants ?? []
+  const hasVariants = variants.length > 0
+
+  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
+    hasVariants ? variants[0] : null
+  )
+
+  const imageUrl = (
+    selectedVariant?.image_urls?.[0] ??
+    product.image_urls?.[0] ??
+    null
+  )
+
+  const outboundUrl = (
+    selectedVariant?.affiliate_url ??
+    selectedVariant?.product_url ??
+    product.affiliate_url ??
+    product.product_url
+  )
+
+  const priceDisplay = formatPrice(
+    selectedVariant !== null ? selectedVariant.price : product.price
+  )
 
   return (
     <Card className="group flex flex-col overflow-hidden rounded-lg border transition-shadow hover:shadow-md">
@@ -44,7 +80,7 @@ export function ProductCard({ product, priority = false }: { product: Product; p
             priority={priority}
           />
         ) : (
-          <div className="flex h-full items-center justify-center text-muted-foreground text-sm">
+          <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
             No image
           </div>
         )}
@@ -67,6 +103,25 @@ export function ProductCard({ product, priority = false }: { product: Product; p
           <p className="line-clamp-2 text-xs leading-relaxed text-muted-foreground">
             {product.short_description}
           </p>
+        )}
+
+        {hasVariants && (
+          <div className="flex flex-wrap gap-1.5">
+            {variants.map((v) => (
+              <button
+                key={v.id}
+                onClick={() => setSelectedVariant(v)}
+                className={cn(
+                  'rounded-full border px-3 py-1 text-xs transition-colors',
+                  selectedVariant?.id === v.id
+                    ? 'border-foreground bg-foreground text-background'
+                    : 'border-border bg-background text-foreground hover:border-foreground/40'
+                )}
+              >
+                {v.label}
+              </button>
+            ))}
+          </div>
         )}
 
         <div className="mt-auto flex items-center justify-between gap-2 pt-1">

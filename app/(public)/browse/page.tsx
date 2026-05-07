@@ -10,9 +10,10 @@ export default async function BrowsePage() {
 
   const { data: products } = await supabase
     .from('products')
-    .select('id, name, image_urls, product_url, affiliate_url, category, price, brand, short_description')
+    .select('id, name, image_urls, product_url, affiliate_url, category, price, brand, short_description, product_variants(id, label, price, image_urls, product_url, affiliate_url, display_order)')
     .eq('is_active', true)
     .order('display_order', { ascending: true })
+    .order('display_order', { referencedTable: 'product_variants', ascending: true })
 
   return (
     <main className="min-h-screen bg-background px-4 py-12">
