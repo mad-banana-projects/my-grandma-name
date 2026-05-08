@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     relationship?: string
   }
 
-  const serviceClient = await createServiceClient()
+  const serviceClient = createServiceClient()
 
   // Verify the inviting user is a paid grandma
   const { data: profile } = await serviceClient
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
 
   // TODO: replace with FamilyInvite React Email template
   const { error: emailError } = await resend.emails.send({
-    from: 'My Grandma Name <noreply@mygrandmaname.com>',
+    from: 'My Grandma Name <onboarding@resend.dev>',
     to: email,
     subject: `You've been invited to ${profile.grandma_name}'s gift registry`,
     html: `<p>You've been invited! <a href="${inviteUrl}">Accept your invite</a></p>`,

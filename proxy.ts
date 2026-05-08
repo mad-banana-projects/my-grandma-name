@@ -4,6 +4,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 const PROTECTED_ROUTES = ['/dashboard', '/subscribe']
 const SUBSCRIPTION_REQUIRED_ROUTES = ['/dashboard']
 const AUTH_ROUTES = ['/login', '/signup']
+const SIGNUP_SUB_ROUTES = ['/signup/grandma', '/signup/family']
 
 export async function proxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })
@@ -34,6 +35,7 @@ export async function proxy(request: NextRequest) {
 
   const isProtected = PROTECTED_ROUTES.some((r) => pathname.startsWith(r))
   const isAuthRoute = AUTH_ROUTES.some((r) => pathname.startsWith(r))
+    && !SIGNUP_SUB_ROUTES.some((r) => pathname.startsWith(r))
 
   if (isProtected && !user) {
     const url = request.nextUrl.clone()
@@ -60,7 +62,7 @@ export async function proxy(request: NextRequest) {
   }
 
   const needsSubscription = SUBSCRIPTION_REQUIRED_ROUTES.some((r) => pathname.startsWith(r))
-  if (user && needsSubscription) {
+  if (user && needsSubscription && process.env.BYPASS_SUBSCRIPTION !== 'true') {
     const { data: profile } = await supabase
       .from('users')
       .select('subscription_status')

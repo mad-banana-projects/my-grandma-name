@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
 
   if (user) {
-    const serviceClient = await createServiceClient()
+    const serviceClient = createServiceClient()
     const { data: profile } = await serviceClient
       .from('users')
       .select('role, generator_uses_remaining')
@@ -63,26 +63,30 @@ export async function POST(request: NextRequest) {
     messages: [
       {
         role: 'user',
-        content: `You are helping someone choose a grandma name — a warm, personal name their grandchildren will call them.
+        content: `You are helping someone choose a grandma name — the special name their grandchildren will call them (not their given name).
 
-Generate the ideal grandma name based on these preferences:
+A grandma name is a term of endearment like: Nana, Mimi, Grammy, Gigi, Nona, Lola, Oma, Baba, Mémé, Mamie, Grams, Granny, Grandma, Bubbe — or a creative personalized variation derived from the person's first name (e.g. "JenJen", "Mimi-J", "Nana Jen"). It must sound like something a small child would naturally say and love.
+
+Generate two grandma name suggestions based on these preferences:
 - First name: ${firstName}
-- Preferred style: ${style}
-- Preferred vibe: ${vibe}
+- Preferred style: ${style} (classic = timeless traditional names; playful = fun, rhyming, or doubled names a child loves saying; modern = fresh, short, stylish names)
+- Preferred vibe: ${vibe} (timeless = enduring classics; sweet = soft and loving; stylish = elegant and current; playful = whimsical and fun; cozy = warm and homey)
 ${avoidClause}
 
 Return a JSON object with exactly this shape:
 {
   "winner": { "name": "string" },
   "runnerUp": { "name": "string" },
-  "explanation": "2-3 sentences explaining why these names fit perfectly"
+  "explanation": "2-3 sentences explaining why the winner name fits this person perfectly"
 }
 
 Rules:
-- Return only the JSON object, no other text.
-- The winner and runner-up names must be different from each other.
+- Return only the JSON object, no other text, no markdown.
+- Both names must be genuine grandma names — terms a grandchild would call their grandmother.
+- Both names must be derived from or phonetically connected to the person's first name. Do not suggest generic grandma names (Gigi, Mimi, Nana, etc.) unless they have a clear phonetic link to the given first name.
+- The winner and runner-up must sound completely different when spoken aloud — a hyphenated and unhyphenated version of the same name (e.g. "JenJen" and "Jen-Jen") are NOT acceptable. Each must use a genuinely different approach: for example, one could use syllable doubling, another a traditional grandma suffix (-ma, -na, -nie), another a phonetic nickname, another a term of endearment combined with a name fragment.
 - Neither name may match or closely resemble the name they want to avoid.
-- Names should feel personal, elegant, and fitting for a grandparent.`,
+- Do not suggest generic adjectives, nouns, or words that are not grandma names.`,
       },
     ],
   })
@@ -91,14 +95,15 @@ Rules:
 
   let result: { winner: { name: string }; runnerUp: { name: string }; explanation: string }
   try {
-    result = JSON.parse(text)
+    const cleaned = text.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim()
+    result = JSON.parse(cleaned)
   } catch {
     return NextResponse.json({ error: 'Failed to generate name. Please try again.' }, { status: 500 })
   }
 
   // Decrement counter for free signed-in users after a successful generation
   if (user) {
-    const serviceClient = await createServiceClient()
+    const serviceClient = createServiceClient()
     const { data: profile } = await serviceClient
       .from('users')
       .select('role, generator_uses_remaining')

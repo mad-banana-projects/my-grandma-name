@@ -101,7 +101,7 @@ export async function signUpGrandma(
     return { status: 'error', message: 'Supabase did not return a user for this signup.' }
   }
 
-  const serviceClient = await createServiceClient()
+  const serviceClient = createServiceClient()
   const { error: profileError } = await serviceClient
     .from('grandma_profiles')
     .upsert(
