@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { buttonVariants } from '@/components/ui/button'
@@ -49,12 +50,30 @@ export function ProductCard({ product, priority = false }: { product: Product; p
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
     hasVariants ? variants[0] : null
   )
+  const [imageIndex, setImageIndex] = useState(0)
 
-  const imageUrl = (
-    selectedVariant?.image_urls?.[0] ??
-    product.image_urls?.[0] ??
-    null
+  const activeImages: string[] = (
+    selectedVariant?.image_urls?.length ? selectedVariant.image_urls :
+    product.image_urls?.length ? product.image_urls :
+    []
   )
+  const imageUrl = activeImages[imageIndex] ?? null
+  const hasMultipleImages = activeImages.length > 1
+
+  function selectVariant(v: ProductVariant) {
+    setSelectedVariant(v)
+    setImageIndex(0)
+  }
+
+  function prevImage(e: React.MouseEvent) {
+    e.preventDefault()
+    setImageIndex(i => (i - 1 + activeImages.length) % activeImages.length)
+  }
+
+  function nextImage(e: React.MouseEvent) {
+    e.preventDefault()
+    setImageIndex(i => (i + 1) % activeImages.length)
+  }
 
   const outboundUrl = (
     selectedVariant?.affiliate_url ??
@@ -64,7 +83,7 @@ export function ProductCard({ product, priority = false }: { product: Product; p
   )
 
   const priceDisplay = formatPrice(
-    selectedVariant !== null ? selectedVariant.price : product.price
+    selectedVariant?.price ?? product.price
   )
 
   return (
@@ -83,6 +102,38 @@ export function ProductCard({ product, priority = false }: { product: Product; p
           <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
             No image
           </div>
+        )}
+
+        {hasMultipleImages && (
+          <>
+            <button
+              onClick={prevImage}
+              aria-label="Previous image"
+              className="absolute left-1.5 top-1/2 -translate-y-1/2 rounded-full bg-background/70 p-0.5 opacity-0 shadow transition-opacity group-hover:opacity-100"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <button
+              onClick={nextImage}
+              aria-label="Next image"
+              className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-full bg-background/70 p-0.5 opacity-0 shadow transition-opacity group-hover:opacity-100"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+            <div className="absolute bottom-2 left-1/2 flex -translate-x-1/2 gap-1">
+              {activeImages.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={(e) => { e.preventDefault(); setImageIndex(i) }}
+                  aria-label={`Image ${i + 1}`}
+                  className={cn(
+                    'h-1.5 w-1.5 rounded-full transition-colors',
+                    i === imageIndex ? 'bg-white' : 'bg-white/50'
+                  )}
+                />
+              ))}
+            </div>
+          </>
         )}
       </div>
 
@@ -110,7 +161,7 @@ export function ProductCard({ product, priority = false }: { product: Product; p
             {variants.map((v) => (
               <button
                 key={v.id}
-                onClick={() => setSelectedVariant(v)}
+                onClick={() => selectVariant(v)}
                 className={cn(
                   'rounded-full border px-3 py-1 text-xs transition-colors',
                   selectedVariant?.id === v.id
