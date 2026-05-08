@@ -20,9 +20,17 @@ type Props = {
   products: Product[]
   isAnonymous: boolean
   previewLimit: number
+  savedProductIds?: Set<string>
+  grandmaProfileId?: string | null
 }
 
-export function ProductGrid({ products, isAnonymous, previewLimit }: Props) {
+export function ProductGrid({
+  products,
+  isAnonymous,
+  previewLimit,
+  savedProductIds = new Set(),
+  grandmaProfileId = null,
+}: Props) {
   const [activeCategory, setActiveCategory] = useState<Category>('all')
 
   const filtered = activeCategory === 'all'
@@ -31,6 +39,8 @@ export function ProductGrid({ products, isAnonymous, previewLimit }: Props) {
 
   const visible = isAnonymous ? filtered.slice(0, previewLimit) : filtered
   const hiddenCount = isAnonymous ? Math.max(0, filtered.length - previewLimit) : 0
+
+  const isPaidUser = grandmaProfileId !== null
 
   return (
     <div className="space-y-6">
@@ -56,7 +66,13 @@ export function ProductGrid({ products, isAnonymous, previewLimit }: Props) {
       ) : (
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {visible.map((product, i) => (
-            <ProductCard key={product.id} product={product} priority={i === 0} />
+            <ProductCard
+              key={product.id}
+              product={product}
+              priority={i === 0}
+              isSaved={savedProductIds.has(product.id)}
+              isPaidUser={isPaidUser}
+            />
           ))}
         </div>
       )}

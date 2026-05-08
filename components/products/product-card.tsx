@@ -1,13 +1,14 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
 import Image from 'next/image'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Bookmark, BookmarkCheck } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { buttonVariants } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
+import { toggleRegistryItem } from '@/app/(app)/registry/actions'
 
 export type ProductVariant = {
   id: string
@@ -43,7 +44,19 @@ function formatPrice(price: string | null): string | null {
   return `$${parseFloat(price).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`
 }
 
-export function ProductCard({ product, priority = false }: { product: Product; priority?: boolean }) {
+interface ProductCardProps {
+  product: Product
+  priority?: boolean
+  isSaved?: boolean
+  isPaidUser?: boolean
+}
+
+export function ProductCard({
+  product,
+  priority = false,
+  isSaved = false,
+  isPaidUser = false,
+}: ProductCardProps) {
   const variants = product.product_variants ?? []
   const hasVariants = variants.length > 0
 
@@ -51,6 +64,8 @@ export function ProductCard({ product, priority = false }: { product: Product; p
     hasVariants ? variants[0] : null
   )
   const [imageIndex, setImageIndex] = useState(0)
+  const [saved, setSaved] = useState(isSaved)
+  const [isPending, startTransition] = useTransition()
 
   const activeImages: string[] = (
     selectedVariant?.image_urls?.length ? selectedVariant.image_urls :
@@ -73,6 +88,19 @@ export function ProductCard({ product, priority = false }: { product: Product; p
   function nextImage(e: React.MouseEvent) {
     e.preventDefault()
     setImageIndex(i => (i + 1) % activeImages.length)
+  }
+
+  function handleToggleSave(e: React.MouseEvent) {
+    e.preventDefault()
+    if (isPending) return
+    const next = !saved
+    setSaved(next)
+    startTransition(async () => {
+      const result = await toggleRegistryItem(product.id, saved)
+      if (!result.success) {
+        setSaved(saved) // revert on error
+      }
+    })
   }
 
   const outboundUrl = (
@@ -179,14 +207,35 @@ export function ProductCard({ product, priority = false }: { product: Product; p
           <Badge variant="secondary" className="text-xs">
             {CATEGORY_LABELS[product.category]}
           </Badge>
-          <a
-            href={outboundUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={cn(buttonVariants({ size: 'sm', variant: 'outline' }))}
-          >
-            View product
-          </a>
+          <div className="flex items-center gap-2">
+            {isPaidUser && (
+              <button
+                onClick={handleToggleSave}
+                disabled={isPending}
+                aria-label={saved ? 'Remove from registry' : 'Save to registry'}
+                className={cn(
+                  'rounded-md p-1 transition-colors',
+                  saved
+                    ? 'text-foreground'
+                    : 'text-muted-foreground hover:text-foreground',
+                  isPending && 'opacity-50'
+                )}
+              >
+                {saved
+                  ? <BookmarkCheck className="h-4 w-4" />
+                  : <Bookmark className="h-4 w-4" />
+                }
+              </button>
+            )}
+            <a
+              href={outboundUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={cn(buttonVariants({ size: 'sm', variant: 'outline' }))}
+            >
+              View product
+            </a>
+          </div>
         </div>
       </CardContent>
     </Card>

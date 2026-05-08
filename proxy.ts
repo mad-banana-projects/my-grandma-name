@@ -2,7 +2,7 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 const PROTECTED_ROUTES = ['/grandma-profile', '/registry']
-const SUBSCRIPTION_REQUIRED_ROUTES = ['/grandma-profile']
+const SUBSCRIPTION_REQUIRED_ROUTES: string[] = []
 const AUTH_ROUTES = ['/login', '/signup']
 const SIGNUP_SUB_ROUTES = ['/signup/grandma', '/signup/family']
 
