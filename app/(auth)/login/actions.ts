@@ -52,10 +52,10 @@ export async function login(
     .single()
 
   if (profile?.role === 'grandma') {
-    redirect('/dashboard/grandma')
+    redirect('/grandma-profile')
   } else if (profile?.role === 'family') {
-    redirect('/dashboard/family')
+    redirect('/grandma-profile')
   } else {
-    redirect('/browse')
+    redirect('/browse-products')
   }
 }

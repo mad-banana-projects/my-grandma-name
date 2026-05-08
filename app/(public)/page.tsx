@@ -42,6 +42,7 @@ export default function LandingPage() {
               <Link href="/name-generator" className={cn(buttonVariants({ size: 'lg', variant: 'outline' }), 'w-full sm:w-auto')}>
                 Try name generator
               </Link>
+
             </div>
           </div>
 

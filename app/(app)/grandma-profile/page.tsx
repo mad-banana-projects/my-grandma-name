@@ -9,7 +9,7 @@ function formatBirthday(dateStr: string): string {
   return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })
 }
 
-export default async function GrandmaDashboard() {
+export default async function GrandmaProfilePage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -42,7 +42,7 @@ export default async function GrandmaDashboard() {
   const subscriptionStatus = userData?.subscription_status
 
   return (
-    <main className="min-h-screen bg-background px-4 py-12">
+    <main className="bg-background px-4 py-12">
       <div className="mx-auto max-w-3xl space-y-10">
 
         {/* Header */}
@@ -54,7 +54,10 @@ export default async function GrandmaDashboard() {
               {profile.first_name} {profile.last_name}
             </p>
           </div>
-          <Badge variant={subscriptionStatus === 'active' ? 'default' : 'secondary'} className="mt-1 shrink-0">
+          <Badge
+            variant={subscriptionStatus === 'active' ? 'default' : 'secondary'}
+            className="mt-1 shrink-0"
+          >
             {subscriptionStatus === 'active'
               ? 'Active'
               : subscriptionStatus === 'trialing'
@@ -122,24 +125,6 @@ export default async function GrandmaDashboard() {
           )}
 
           <InviteForm memberCount={members.length} />
-        </div>
-
-        {/* Registry */}
-        <div className="space-y-4">
-          <h2 className="text-lg font-semibold">Your registry</h2>
-          <Card>
-            <CardContent className="flex flex-col items-center gap-3 py-10 text-center">
-              <p className="text-sm text-muted-foreground">
-                You haven't saved any gifts yet.
-              </p>
-              <a
-                href="/browse"
-                className="text-sm font-medium underline underline-offset-4"
-              >
-                Browse gift ideas →
-              </a>
-            </CardContent>
-          </Card>
         </div>
 
       </div>

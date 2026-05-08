@@ -25,8 +25,8 @@ export default function SubscribePage() {
             For now, use this screen as confirmation that signup and profile onboarding completed far enough to redirect into the paid app flow.
           </p>
           <div className="flex flex-col gap-2 sm:flex-row">
-            <Link href="/dashboard/grandma" className={cn(buttonVariants(), 'w-full sm:w-auto')}>
-              Go to dashboard
+            <Link href="/grandma-profile" className={cn(buttonVariants(), 'w-full sm:w-auto')}>
+              Go to my profile
             </Link>
             <Link href="/" className={cn(buttonVariants({ variant: 'outline' }), 'w-full sm:w-auto')}>
               Back home

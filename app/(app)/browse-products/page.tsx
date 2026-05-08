@@ -4,7 +4,7 @@ import type { Product } from '@/components/products/product-card'
 
 const ANONYMOUS_PREVIEW_LIMIT = 6
 
-export default async function BrowsePage() {
+export default async function BrowseProductsPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -16,7 +16,7 @@ export default async function BrowsePage() {
     .order('display_order', { referencedTable: 'product_variants', ascending: true })
 
   return (
-    <main className="min-h-screen bg-background px-4 py-12">
+    <main className="bg-background px-4 py-12">
       <div className="mx-auto max-w-6xl space-y-8">
         <div className="space-y-2">
           <h1 className="text-3xl font-semibold tracking-tight">Gift ideas she'll love</h1>
