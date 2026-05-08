@@ -20,7 +20,7 @@ type Props = {
   products: Product[]
   isAnonymous: boolean
   previewLimit: number
-  savedProductIds?: Set<string>
+  savedItems?: Map<string, string | null>
   grandmaProfileId?: string | null
 }
 
@@ -28,7 +28,7 @@ export function ProductGrid({
   products,
   isAnonymous,
   previewLimit,
-  savedProductIds = new Set(),
+  savedItems = new Map(),
   grandmaProfileId = null,
 }: Props) {
   const [activeCategory, setActiveCategory] = useState<Category>('all')
@@ -70,7 +70,8 @@ export function ProductGrid({
               key={product.id}
               product={product}
               priority={i === 0}
-              isSaved={savedProductIds.has(product.id)}
+              isSaved={savedItems.has(product.id)}
+              savedVariantId={savedItems.get(product.id) ?? null}
               isPaidUser={isPaidUser}
             />
           ))}

@@ -36,6 +36,7 @@ export default async function RegistryPage({
     .select(`
       id,
       added_at,
+      variant:product_variants ( id, label ),
       product:products (
         id, name, image_urls, product_url, affiliate_url, price, brand, short_description
       )
@@ -82,6 +83,7 @@ export default async function RegistryPage({
                 brand: string | null
                 short_description: string | null
               }
+              const variant = item.variant as unknown as { id: string; label: string } | null
               const imageUrl = product.image_urls?.[0] ?? null
               const outboundUrl = product.affiliate_url ?? product.product_url
               const priceDisplay = formatPrice(product.price)
@@ -114,6 +116,9 @@ export default async function RegistryPage({
                       </p>
                     )}
                     <p className="truncate text-sm font-semibold">{product.name}</p>
+                    {variant && (
+                      <p className="text-xs text-muted-foreground">{variant.label}</p>
+                    )}
                     {priceDisplay && (
                       <p className="text-xs text-muted-foreground">{priceDisplay}</p>
                     )}

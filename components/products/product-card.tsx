@@ -48,6 +48,7 @@ interface ProductCardProps {
   product: Product
   priority?: boolean
   isSaved?: boolean
+  savedVariantId?: string | null
   isPaidUser?: boolean
 }
 
@@ -55,6 +56,7 @@ export function ProductCard({
   product,
   priority = false,
   isSaved = false,
+  savedVariantId = null,
   isPaidUser = false,
 }: ProductCardProps) {
   const variants = product.product_variants ?? []
@@ -65,6 +67,7 @@ export function ProductCard({
   )
   const [imageIndex, setImageIndex] = useState(0)
   const [saved, setSaved] = useState(isSaved)
+  const [localSavedVariantId, setLocalSavedVariantId] = useState<string | null>(savedVariantId)
   const [isPending, startTransition] = useTransition()
 
   const activeImages: string[] = (
@@ -93,12 +96,26 @@ export function ProductCard({
   function handleToggleSave(e: React.MouseEvent) {
     e.preventDefault()
     if (isPending) return
-    const next = !saved
-    setSaved(next)
+
+    const currentVariantId = selectedVariant?.id ?? null
+
+    // Saved and same variant selected → unsave
+    // Saved and different variant selected → update to new variant (stay saved)
+    // Not saved → save with current variant
+    const isSameVariant = saved && currentVariantId === localSavedVariantId
+    const wantsToSave = !isSameVariant
+
+    const prevSaved = saved
+    const prevVariantId = localSavedVariantId
+
+    setSaved(wantsToSave)
+    setLocalSavedVariantId(wantsToSave ? currentVariantId : null)
+
     startTransition(async () => {
-      const result = await toggleRegistryItem(product.id, saved)
+      const result = await toggleRegistryItem(product.id, currentVariantId, wantsToSave)
       if (!result.success) {
-        setSaved(saved) // revert on error
+        setSaved(prevSaved)
+        setLocalSavedVariantId(prevVariantId)
       }
     })
   }
@@ -110,9 +127,7 @@ export function ProductCard({
     product.product_url
   )
 
-  const priceDisplay = formatPrice(
-    selectedVariant?.price ?? product.price
-  )
+  const priceDisplay = formatPrice(selectedVariant?.price ?? product.price)
 
   return (
     <Card className="group flex flex-col overflow-hidden rounded-lg border transition-shadow hover:shadow-md">

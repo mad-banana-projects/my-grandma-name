@@ -8,7 +8,8 @@ export type ToggleResult =
 
 export async function toggleRegistryItem(
   productId: string,
-  currentlySaved: boolean
+  variantId: string | null,
+  wantsToSave: boolean
 ): Promise<ToggleResult> {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -24,21 +25,22 @@ export async function toggleRegistryItem(
 
   if (!profile) return { success: false, error: 'Grandma profile not found' }
 
-  if (currentlySaved) {
+  if (wantsToSave) {
+    const { error } = await service
+      .from('registry_items')
+      .upsert(
+        { grandma_id: profile.id, product_id: productId, variant_id: variantId },
+        { onConflict: 'grandma_id,product_id' }
+      )
+    if (error) return { success: false, error: error.message }
+    return { success: true, saved: true }
+  } else {
     const { error } = await service
       .from('registry_items')
       .delete()
       .eq('grandma_id', profile.id)
       .eq('product_id', productId)
-
     if (error) return { success: false, error: error.message }
     return { success: true, saved: false }
-  } else {
-    const { error } = await service
-      .from('registry_items')
-      .insert({ grandma_id: profile.id, product_id: productId })
-
-    if (error) return { success: false, error: error.message }
-    return { success: true, saved: true }
   }
 }

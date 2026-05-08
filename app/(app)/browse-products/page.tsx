@@ -17,7 +17,8 @@ export default async function BrowseProductsPage() {
     .order('display_order', { ascending: true })
     .order('display_order', { referencedTable: 'product_variants', ascending: true })
 
-  let savedProductIds: Set<string> = new Set()
+  // Maps product_id → variant_id (null means saved with no specific variant)
+  let savedItems: Map<string, string | null> = new Map()
   let grandmaProfileId: string | null = null
 
   if (user) {
@@ -40,12 +41,14 @@ export default async function BrowseProductsPage() {
       if (profile) {
         grandmaProfileId = profile.id
 
-        const { data: savedItems } = await service
+        const { data: rows } = await service
           .from('registry_items')
-          .select('product_id')
+          .select('product_id, variant_id')
           .eq('grandma_id', profile.id)
 
-        savedProductIds = new Set((savedItems ?? []).map((r) => r.product_id))
+        savedItems = new Map(
+          (rows ?? []).map((r) => [r.product_id, r.variant_id ?? null])
+        )
       }
     }
   }
@@ -64,7 +67,7 @@ export default async function BrowseProductsPage() {
           products={(products ?? []) as Product[]}
           isAnonymous={!user}
           previewLimit={ANONYMOUS_PREVIEW_LIMIT}
-          savedProductIds={savedProductIds}
+          savedItems={savedItems}
           grandmaProfileId={grandmaProfileId}
         />
       </div>
