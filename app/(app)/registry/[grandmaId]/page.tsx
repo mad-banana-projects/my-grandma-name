@@ -29,7 +29,7 @@ export default async function RegistryPage({
     .eq('id', grandmaId)
     .single()
 
-  if (!profile) redirect('/grandma-profile')
+  if (!profile) redirect('/dashboard')
 
   const { data: items } = await service
     .from('registry_items')

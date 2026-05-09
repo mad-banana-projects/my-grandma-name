@@ -2,7 +2,6 @@ import { redirect } from 'next/navigation'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { Badge } from '@/components/ui/badge'
 import { ProfileCard, type UnifiedProfile } from '@/components/profile/profile-card'
-import { ChangePasswordCard } from '@/components/profile/change-password-card'
 import { InviteForm } from '@/components/dashboard/grandma/invite-form'
 import { EmailRemindersCard } from '@/components/dashboard/email-reminders-card'
 import { LockedFeatureCard } from '@/components/dashboard/locked-feature-card'
@@ -109,7 +108,7 @@ export default async function DashboardPage() {
 
   return (
     <main className="bg-background px-4 py-12">
-      <div className="mx-auto max-w-3xl space-y-10">
+      <div className="mx-auto max-w-5xl space-y-10">
 
         {/* Header */}
         <div className="flex items-start justify-between gap-4">
@@ -138,21 +137,28 @@ export default async function DashboardPage() {
           </Badge>
         </div>
 
-        {/* Profile */}
-        <ProfileCard profile={profile} role={isPaid ? 'grandma' : 'free'} />
-        {isPaid && <ChangePasswordCard />}
+        {/* Row 1: About You + Email Reminders */}
+        <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-2">
 
-        {/* Email Reminders */}
-        {isPaid && reminderSettings ? (
-          <EmailRemindersCard initial={reminderSettings} />
-        ) : (
-          <LockedFeatureCard
-            title="Email Reminders"
-            description="Get reminders before birthdays, holidays, and custom dates — so family never misses a gift opportunity."
-          />
-        )}
+          {/* About You */}
+          <div className="space-y-4">
+            <h2 className="text-lg font-semibold">About you</h2>
+            <ProfileCard profile={profile} role={isPaid ? 'grandma' : 'free'} />
+          </div>
 
-        {/* Family Members */}
+          {/* Email Reminders */}
+          {isPaid && reminderSettings ? (
+            <EmailRemindersCard initial={reminderSettings} />
+          ) : (
+            <LockedFeatureCard
+              title="Email Reminders"
+              description="Get reminders before birthdays, holidays, and custom dates — so family never misses a gift opportunity."
+            />
+          )}
+
+        </div>
+
+        {/* Row 2: Family Members — full width */}
         {isPaid ? (
           <div className="space-y-4">
             <div className="flex items-center justify-between">

@@ -6,13 +6,14 @@ import { Pencil, Lock } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import {
   updateProfile,
   updateFreeProfile,
+  updatePassword,
   type PaidProfileFormValues,
   type FreeProfileFormValues,
 } from '@/app/(app)/dashboard/actions'
@@ -40,7 +41,18 @@ const freeSchema = z.object({
   text_updates_opt_in: z.boolean().optional(),
 })
 
+const passwordSchema = z
+  .object({
+    password: z.string().min(8, 'Password must be at least 8 characters'),
+    confirmPassword: z.string(),
+  })
+  .refine((d) => d.password === d.confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
+  })
+
 type AllFormValues = z.infer<typeof paidSchema>
+type PasswordFormValues = z.infer<typeof passwordSchema>
 
 export interface UnifiedProfile {
   id: string | null
@@ -85,9 +97,17 @@ function LockedLabel({ children }: { children: React.ReactNode }) {
 export function ProfileCard({ profile, role }: ProfileCardProps) {
   const router = useRouter()
   const isPaid = role === 'grandma'
+
+  // Profile edit state
   const [isEditing, setIsEditing] = useState(false)
   const [serverError, setServerError] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
+
+  // Password state
+  const [isPasswordOpen, setIsPasswordOpen] = useState(false)
+  const [passwordSuccess, setPasswordSuccess] = useState(false)
+  const [passwordServerError, setPasswordServerError] = useState<string | null>(null)
+  const [isPasswordPending, startPasswordTransition] = useTransition()
 
   const {
     register,
@@ -108,6 +128,13 @@ export function ProfileCard({ profile, role }: ProfileCardProps) {
       text_updates_opt_in: profile.text_updates_opt_in ?? false,
     },
   })
+
+  const {
+    register: registerPassword,
+    handleSubmit: handlePasswordSubmit,
+    reset: resetPassword,
+    formState: { errors: passwordErrors },
+  } = useForm<PasswordFormValues>({ resolver: zodResolver(passwordSchema) })
 
   function handleEdit() {
     reset({
@@ -150,25 +177,42 @@ export function ProfileCard({ profile, role }: ProfileCardProps) {
     })
   }
 
-  return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between pb-3">
-        <CardTitle className="text-base">About you</CardTitle>
-        {!isEditing && (
-          <button
-            onClick={handleEdit}
-            className="text-muted-foreground hover:text-foreground transition-colors"
-            aria-label="Edit profile"
-          >
-            <Pencil className="h-4 w-4" />
-          </button>
-        )}
-      </CardHeader>
+  function handlePasswordCancel() {
+    setIsPasswordOpen(false)
+    setPasswordServerError(null)
+    resetPassword()
+  }
 
-      <CardContent>
+  function onPasswordSubmit(values: PasswordFormValues) {
+    setPasswordServerError(null)
+    startPasswordTransition(async () => {
+      const result = await updatePassword(values)
+      if (!result.success) {
+        setPasswordServerError(result.error)
+      } else {
+        setPasswordSuccess(true)
+        setIsPasswordOpen(false)
+        resetPassword()
+      }
+    })
+  }
+
+  return (
+    <Card className="relative">
+      {!isEditing && (
+        <button
+          onClick={handleEdit}
+          className="absolute right-4 top-4 text-muted-foreground hover:text-foreground transition-colors z-10"
+          aria-label="Edit profile"
+        >
+          <Pencil className="h-4 w-4" />
+        </button>
+      )}
+
+      <CardContent className="pt-6 space-y-4">
         {isEditing ? (
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            {/* Always-editable fields */}
+            {/* Row 1: First name, Last name */}
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
                 <Label htmlFor="first_name">First name</Label>
@@ -186,43 +230,22 @@ export function ProfileCard({ profile, role }: ProfileCardProps) {
               </div>
             </div>
 
-            <div className="space-y-1.5">
-              <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" {...register('email')} />
-              {errors.email && (
-                <p className="text-xs text-destructive">{errors.email.message}</p>
-              )}
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="bio">Bio</Label>
-              <textarea
-                id="bio"
-                className={cn(textareaClass, errors.bio && 'border-destructive')}
-                {...register('bio')}
-              />
-              {errors.bio && (
-                <p className="text-xs text-destructive">{errors.bio.message}</p>
-              )}
-            </div>
-
-            {/* Paid-only fields */}
-            <div className="space-y-1.5">
-              <Label htmlFor="grandma_name" className="block">
-                {isPaid ? 'Grandma name' : <LockedLabel>Grandma name</LockedLabel>}
-              </Label>
-              <Input
-                id="grandma_name"
-                disabled={!isPaid}
-                placeholder={isPaid ? '' : 'Upgrade to unlock'}
-                {...register('grandma_name')}
-              />
-              {errors.grandma_name && (
-                <p className="text-xs text-destructive">{errors.grandma_name.message}</p>
-              )}
-            </div>
-
+            {/* Row 2: Grandma name, Birthday */}
             <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label htmlFor="grandma_name" className="block">
+                  {isPaid ? 'Grandma name' : <LockedLabel>Grandma name</LockedLabel>}
+                </Label>
+                <Input
+                  id="grandma_name"
+                  disabled={!isPaid}
+                  placeholder={isPaid ? '' : 'Upgrade to unlock'}
+                  {...register('grandma_name')}
+                />
+                {errors.grandma_name && (
+                  <p className="text-xs text-destructive">{errors.grandma_name.message}</p>
+                )}
+              </div>
               <div className="space-y-1.5">
                 <Label htmlFor="birthday" className="block">
                   {isPaid ? 'Birthday' : <LockedLabel>Birthday</LockedLabel>}
@@ -233,6 +256,17 @@ export function ProfileCard({ profile, role }: ProfileCardProps) {
                   disabled={!isPaid}
                   {...register('birthday')}
                 />
+              </div>
+            </div>
+
+            {/* Row 3: Email, Phone */}
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label htmlFor="email">Email</Label>
+                <Input id="email" type="email" {...register('email')} />
+                {errors.email && (
+                  <p className="text-xs text-destructive">{errors.email.message}</p>
+                )}
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="phone_number" className="block">
@@ -248,35 +282,39 @@ export function ProfileCard({ profile, role }: ProfileCardProps) {
               </div>
             </div>
 
-            <div className={cn('flex items-center gap-2.5', !isPaid && 'opacity-50')}>
-              <input
-                id="text_updates_opt_in"
-                type="checkbox"
-                disabled={!isPaid}
-                className="h-4 w-4 rounded border-input accent-foreground disabled:cursor-not-allowed"
-                {...register('text_updates_opt_in')}
-              />
-              <Label
-                htmlFor="text_updates_opt_in"
-                className={cn('font-normal', isPaid ? 'cursor-pointer' : 'cursor-not-allowed')}
-              >
-                {isPaid ? (
-                  'Receive text updates'
-                ) : (
-                  <span className="flex items-center gap-1.5">
-                    <Lock className="h-3 w-3" />
-                    Receive text updates
-                  </span>
+            {/* Row 4: Bio, Text updates */}
+            <div className="grid gap-4 sm:grid-cols-2 items-start">
+              <div className="space-y-1.5">
+                <Label htmlFor="bio">Bio</Label>
+                <textarea
+                  id="bio"
+                  className={cn(textareaClass, errors.bio && 'border-destructive')}
+                  {...register('bio')}
+                />
+                {errors.bio && (
+                  <p className="text-xs text-destructive">{errors.bio.message}</p>
                 )}
-              </Label>
-              {!isPaid && (
-                <a
-                  href="/subscribe"
-                  className="ml-auto text-xs text-muted-foreground/60 underline underline-offset-2 hover:text-muted-foreground transition-colors"
-                >
-                  Upgrade
-                </a>
-              )}
+              </div>
+              <div className="space-y-1.5 pt-0.5">
+                <Label className="block">
+                  {isPaid ? 'Text updates' : <LockedLabel>Text updates</LockedLabel>}
+                </Label>
+                <div className={cn('flex items-center gap-2.5', !isPaid && 'opacity-50')}>
+                  <input
+                    id="text_updates_opt_in"
+                    type="checkbox"
+                    disabled={!isPaid}
+                    className="h-4 w-4 rounded border-input accent-foreground disabled:cursor-not-allowed"
+                    {...register('text_updates_opt_in')}
+                  />
+                  <Label
+                    htmlFor="text_updates_opt_in"
+                    className={cn('font-normal', isPaid ? 'cursor-pointer' : 'cursor-not-allowed')}
+                  >
+                    Receive text updates
+                  </Label>
+                </div>
+              </div>
             </div>
 
             {serverError && (
@@ -287,19 +325,14 @@ export function ProfileCard({ profile, role }: ProfileCardProps) {
               <Button type="submit" disabled={isPending} size="sm">
                 {isPending ? 'Saving…' : 'Save changes'}
               </Button>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={handleCancel}
-                disabled={isPending}
-              >
+              <Button type="button" variant="outline" size="sm" onClick={handleCancel} disabled={isPending}>
                 Cancel
               </Button>
             </div>
           </form>
         ) : (
           <dl className="space-y-4 text-sm">
+            {/* Row 1: First name, Last name */}
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
                 <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">First name</dt>
@@ -311,33 +344,20 @@ export function ProfileCard({ profile, role }: ProfileCardProps) {
               </div>
             </div>
 
-            <div>
-              <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Email</dt>
-              <dd className="mt-0.5">{profile.email}</dd>
-            </div>
-
-            {(profile.bio || isPaid) && (
-              <div>
-                <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Bio</dt>
-                <dd className="mt-0.5 leading-relaxed text-muted-foreground">{profile.bio || '—'}</dd>
-              </div>
-            )}
-
-            {/* Paid-only fields */}
-            <div>
-              <dt className={cn(
-                'text-xs font-medium uppercase tracking-wide flex items-center gap-1',
-                isPaid ? 'text-muted-foreground' : 'text-muted-foreground/50'
-              )}>
-                {!isPaid && <Lock className="h-3 w-3" />}
-                Grandma name
-              </dt>
-              <dd className={cn('mt-0.5', !isPaid && 'text-muted-foreground/40')}>
-                {profile.grandma_name || '—'}
-              </dd>
-            </div>
-
+            {/* Row 2: Grandma name, Birthday */}
             <div className="grid gap-3 sm:grid-cols-2">
+              <div>
+                <dt className={cn(
+                  'text-xs font-medium uppercase tracking-wide flex items-center gap-1',
+                  isPaid ? 'text-muted-foreground' : 'text-muted-foreground/50'
+                )}>
+                  {!isPaid && <Lock className="h-3 w-3" />}
+                  Grandma name
+                </dt>
+                <dd className={cn('mt-0.5', !isPaid && 'text-muted-foreground/40')}>
+                  {profile.grandma_name || '—'}
+                </dd>
+              </div>
               <div>
                 <dt className={cn(
                   'text-xs font-medium uppercase tracking-wide flex items-center gap-1',
@@ -350,6 +370,14 @@ export function ProfileCard({ profile, role }: ProfileCardProps) {
                   {profile.birthday ? formatBirthday(profile.birthday) : '—'}
                 </dd>
               </div>
+            </div>
+
+            {/* Row 3: Email, Phone */}
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div>
+                <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Email</dt>
+                <dd className="mt-0.5">{profile.email}</dd>
+              </div>
               <div>
                 <dt className={cn(
                   'text-xs font-medium uppercase tracking-wide flex items-center gap-1',
@@ -361,6 +389,14 @@ export function ProfileCard({ profile, role }: ProfileCardProps) {
                 <dd className={cn('mt-0.5', !isPaid && 'text-muted-foreground/40')}>
                   {profile.phone_number || '—'}
                 </dd>
+              </div>
+            </div>
+
+            {/* Row 4: Bio, Text updates */}
+            <div className="grid gap-3 sm:grid-cols-2 items-start">
+              <div>
+                <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Bio</dt>
+                <dd className="mt-0.5 leading-relaxed text-muted-foreground">{profile.bio || '—'}</dd>
               </div>
               <div>
                 <dt className={cn(
@@ -381,6 +417,60 @@ export function ProfileCard({ profile, role }: ProfileCardProps) {
             </div>
           </dl>
         )}
+
+        {/* Row 5: Password — always present */}
+        <div className="border-t pt-4">
+          {isPasswordOpen ? (
+            <form onSubmit={handlePasswordSubmit(onPasswordSubmit)} className="space-y-4">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-1.5">
+                  <Label htmlFor="password">New password</Label>
+                  <Input id="password" type="password" autoComplete="new-password" {...registerPassword('password')} />
+                  {passwordErrors.password && (
+                    <p className="text-xs text-destructive">{passwordErrors.password.message}</p>
+                  )}
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="confirmPassword">Confirm password</Label>
+                  <Input id="confirmPassword" type="password" autoComplete="new-password" {...registerPassword('confirmPassword')} />
+                  {passwordErrors.confirmPassword && (
+                    <p className="text-xs text-destructive">{passwordErrors.confirmPassword.message}</p>
+                  )}
+                </div>
+              </div>
+              {passwordServerError && (
+                <p className="text-sm text-destructive">{passwordServerError}</p>
+              )}
+              <div className="flex gap-2">
+                <Button type="submit" size="sm" disabled={isPasswordPending}>
+                  {isPasswordPending ? 'Saving…' : 'Update password'}
+                </Button>
+                <Button type="button" variant="outline" size="sm" onClick={handlePasswordCancel} disabled={isPasswordPending}>
+                  Cancel
+                </Button>
+              </div>
+            </form>
+          ) : (
+            <div className="flex items-center justify-between text-sm">
+              <div>
+                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Password</p>
+                <p className="mt-0.5">
+                  {passwordSuccess ? (
+                    <span className="text-emerald-700">Updated successfully</span>
+                  ) : (
+                    '••••••••'
+                  )}
+                </p>
+              </div>
+              <button
+                onClick={() => { setIsPasswordOpen(true); setPasswordSuccess(false) }}
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Change
+              </button>
+            </div>
+          )}
+        </div>
       </CardContent>
     </Card>
   )
