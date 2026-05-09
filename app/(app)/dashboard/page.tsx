@@ -115,15 +115,8 @@ export default async function DashboardPage() {
           <div>
             <p className="text-sm text-muted-foreground">Welcome back</p>
             <h1 className="text-3xl font-semibold tracking-tight">
-              {isPaid && profile.grandma_name
-                ? profile.grandma_name
-                : profile.first_name || user.email}
+              {profile.grandma_name || profile.first_name || user.email}
             </h1>
-            {isPaid && (
-              <p className="mt-1 text-sm text-muted-foreground">
-                {profile.first_name} {profile.last_name}
-              </p>
-            )}
           </div>
           <Badge
             variant={subscriptionStatus === 'active' ? 'default' : 'secondary'}
