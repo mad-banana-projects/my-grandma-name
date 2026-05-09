@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
-import { updatePassword } from '@/app/(app)/grandma-profile/actions'
+import { updatePassword } from '@/app/(app)/dashboard/actions'
 
 const schema = z
   .object({

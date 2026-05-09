@@ -1,7 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
-const PROTECTED_ROUTES = ['/grandma-profile', '/registry']
+const PROTECTED_ROUTES = ['/dashboard', '/registry']
 const SUBSCRIPTION_REQUIRED_ROUTES: string[] = []
 const AUTH_ROUTES = ['/login', '/signup']
 const SIGNUP_SUB_ROUTES = ['/signup/grandma', '/signup/family']
@@ -52,9 +52,9 @@ export async function proxy(request: NextRequest) {
 
     const url = request.nextUrl.clone()
     if (profile?.role === 'grandma') {
-      url.pathname = '/grandma-profile'
+      url.pathname = '/dashboard'
     } else if (profile?.role === 'family') {
-      url.pathname = '/grandma-profile'
+      url.pathname = '/browse-products'
     } else {
       url.pathname = '/browse-products'
     }

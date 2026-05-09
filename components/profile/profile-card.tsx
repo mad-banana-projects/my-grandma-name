@@ -15,7 +15,7 @@ import {
   updateFreeProfile,
   type PaidProfileFormValues,
   type FreeProfileFormValues,
-} from '@/app/(app)/grandma-profile/actions'
+} from '@/app/(app)/dashboard/actions'
 import { cn } from '@/lib/utils'
 
 const paidSchema = z.object({

@@ -4,8 +4,10 @@ import { Badge } from '@/components/ui/badge'
 import { ProfileCard, type UnifiedProfile } from '@/components/profile/profile-card'
 import { ChangePasswordCard } from '@/components/profile/change-password-card'
 import { InviteForm } from '@/components/dashboard/grandma/invite-form'
+import { EmailRemindersCard } from '@/components/dashboard/email-reminders-card'
+import { LockedFeatureCard } from '@/components/dashboard/locked-feature-card'
 
-export default async function GrandmaProfilePage() {
+export default async function DashboardPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -25,6 +27,14 @@ export default async function GrandmaProfilePage() {
 
   let profile: UnifiedProfile
   let grandmaProfileId: string | null = null
+  let reminderSettings: {
+    reminder_grandparents_day: boolean
+    reminder_mothers_day: boolean
+    reminder_birthday: boolean
+    reminder_christmas: boolean
+    reminder_custom_dates: { label: string; date: string }[]
+    reminder_frequency: number[]
+  } | null = null
   let members: {
     id: string
     first_name: string | null
@@ -37,7 +47,11 @@ export default async function GrandmaProfilePage() {
   if (isPaid) {
     const { data: grandmaProfile } = await service
       .from('grandma_profiles')
-      .select('id, first_name, last_name, grandma_name, bio, birthday, phone_number, email, text_updates_opt_in')
+      .select(`
+        id, first_name, last_name, grandma_name, bio, birthday, phone_number, email, text_updates_opt_in,
+        reminder_grandparents_day, reminder_mothers_day, reminder_birthday, reminder_christmas,
+        reminder_custom_dates, reminder_frequency
+      `)
       .eq('user_id', user.id)
       .single()
 
@@ -63,6 +77,15 @@ export default async function GrandmaProfilePage() {
       birthday: grandmaProfile.birthday,
       phone_number: grandmaProfile.phone_number,
       text_updates_opt_in: grandmaProfile.text_updates_opt_in,
+    }
+
+    reminderSettings = {
+      reminder_grandparents_day: grandmaProfile.reminder_grandparents_day ?? false,
+      reminder_mothers_day: grandmaProfile.reminder_mothers_day ?? false,
+      reminder_birthday: grandmaProfile.reminder_birthday ?? false,
+      reminder_christmas: grandmaProfile.reminder_christmas ?? false,
+      reminder_custom_dates: (grandmaProfile.reminder_custom_dates as { label: string; date: string }[] | null) ?? [],
+      reminder_frequency: (grandmaProfile.reminder_frequency as number[] | null) ?? [30, 14, 7],
     }
   } else {
     const { data: freeProfile } = await service
@@ -115,12 +138,22 @@ export default async function GrandmaProfilePage() {
           </Badge>
         </div>
 
+        {/* Profile */}
         <ProfileCard profile={profile} role={isPaid ? 'grandma' : 'free'} />
-
         {isPaid && <ChangePasswordCard />}
 
-        {/* Family — paid users only */}
-        {isPaid && (
+        {/* Email Reminders */}
+        {isPaid && reminderSettings ? (
+          <EmailRemindersCard initial={reminderSettings} />
+        ) : (
+          <LockedFeatureCard
+            title="Email Reminders"
+            description="Get reminders before birthdays, holidays, and custom dates — so family never misses a gift opportunity."
+          />
+        )}
+
+        {/* Family Members */}
+        {isPaid ? (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold">Your family</h2>
@@ -162,6 +195,11 @@ export default async function GrandmaProfilePage() {
 
             <InviteForm memberCount={members.length} />
           </div>
+        ) : (
+          <LockedFeatureCard
+            title="Family Members"
+            description="Invite family members to view your registry. They'll get a link directly to your wishlist."
+          />
         )}
 
       </div>

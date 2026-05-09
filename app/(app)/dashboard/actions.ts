@@ -32,8 +32,23 @@ const passwordSchema = z
     path: ['confirmPassword'],
   })
 
+const customDateSchema = z.object({
+  label: z.string().min(1).max(100),
+  date: z.string().min(1),
+})
+
+const remindersSchema = z.object({
+  reminder_grandparents_day: z.boolean(),
+  reminder_mothers_day: z.boolean(),
+  reminder_birthday: z.boolean(),
+  reminder_christmas: z.boolean(),
+  reminder_custom_dates: z.array(customDateSchema),
+  reminder_frequency: z.array(z.number().int().min(1).max(365)),
+})
+
 export type PaidProfileFormValues = z.infer<typeof paidProfileSchema>
 export type FreeProfileFormValues = z.infer<typeof freeProfileSchema>
+export type ReminderFormValues = z.infer<typeof remindersSchema>
 
 export type UpdateProfileResult =
   | { success: true }
@@ -59,7 +74,7 @@ export async function updateProfile(
 
   if (error) return { success: false, error: error.message }
 
-  revalidatePath('/grandma-profile')
+  revalidatePath('/dashboard')
   return { success: true }
 }
 
@@ -91,7 +106,7 @@ export async function updateFreeProfile(
 
   if (error) return { success: false, error: error.message }
 
-  revalidatePath('/grandma-profile')
+  revalidatePath('/dashboard')
   return { success: true }
 }
 
@@ -110,5 +125,36 @@ export async function updatePassword(
   const { error } = await supabase.auth.updateUser({ password: parsed.data.password })
   if (error) return { success: false, error: error.message }
 
+  return { success: true }
+}
+
+export async function updateReminders(
+  data: ReminderFormValues
+): Promise<UpdateProfileResult> {
+  const parsed = remindersSchema.safeParse(data)
+  if (!parsed.success) {
+    return { success: false, error: parsed.error.issues[0].message }
+  }
+
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { success: false, error: 'Not authenticated' }
+
+  const service = createServiceClient()
+  const { error } = await service
+    .from('grandma_profiles')
+    .update({
+      reminder_grandparents_day: parsed.data.reminder_grandparents_day,
+      reminder_mothers_day: parsed.data.reminder_mothers_day,
+      reminder_birthday: parsed.data.reminder_birthday,
+      reminder_christmas: parsed.data.reminder_christmas,
+      reminder_custom_dates: parsed.data.reminder_custom_dates,
+      reminder_frequency: parsed.data.reminder_frequency,
+    })
+    .eq('user_id', user.id)
+
+  if (error) return { success: false, error: error.message }
+
+  revalidatePath('/dashboard')
   return { success: true }
 }

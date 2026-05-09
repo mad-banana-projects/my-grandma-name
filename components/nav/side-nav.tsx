@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils'
 import { signOut } from '@/lib/auth-actions'
 
 const BASE_NAV_ITEMS = [
-  { label: 'My Profile', href: '/grandma-profile' },
+  { label: 'Dashboard', href: '/dashboard' },
   { label: 'Name Generator', href: '/name-generator' },
   { label: 'Browse Gifts', href: '/browse-products' },
 ]
