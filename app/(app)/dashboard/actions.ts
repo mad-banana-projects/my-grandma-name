@@ -67,6 +67,17 @@ export async function updateProfile(
   if (!user) return { success: false, error: 'Not authenticated' }
 
   const service = createServiceClient()
+
+  const { data: userData } = await service
+    .from('users')
+    .select('role, subscription_status')
+    .eq('id', user.id)
+    .single()
+
+  if (userData?.role !== 'grandma' || userData?.subscription_status !== 'active') {
+    return { success: false, error: 'Not authorized' }
+  }
+
   const { error } = await service
     .from('grandma_profiles')
     .update(parsed.data)

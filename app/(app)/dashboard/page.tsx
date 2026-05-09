@@ -21,8 +21,8 @@ export default async function DashboardPage() {
     .single()
 
   const role = (userData?.role ?? 'free') as 'free' | 'grandma' | 'family'
-  const isPaid = role === 'grandma'
   const subscriptionStatus = userData?.subscription_status
+  const isPaid = role === 'grandma' && subscriptionStatus === 'active'
 
   let profile: UnifiedProfile
   let grandmaProfileId: string | null = null
@@ -138,12 +138,16 @@ export default async function DashboardPage() {
         </div>
 
         {/* Row 1: About You + Email Reminders */}
-        <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
 
           {/* About You */}
-          <div className="space-y-4">
+          <div className="flex flex-col gap-4">
             <h2 className="text-lg font-semibold">About you</h2>
-            <ProfileCard profile={profile} role={isPaid ? 'grandma' : 'free'} />
+            <ProfileCard
+              profile={profile}
+              role={isPaid ? 'grandma' : 'free'}
+              subscriptionStatus={subscriptionStatus ?? null}
+            />
           </div>
 
           {/* Email Reminders */}

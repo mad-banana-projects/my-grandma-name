@@ -9,7 +9,15 @@ import { z } from 'zod'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog'
 import {
   updateProfile,
   updateFreeProfile,
@@ -69,6 +77,7 @@ export interface UnifiedProfile {
 interface ProfileCardProps {
   profile: UnifiedProfile
   role: 'free' | 'grandma'
+  subscriptionStatus?: string | null
 }
 
 const textareaClass =
@@ -94,7 +103,7 @@ function LockedLabel({ children }: { children: React.ReactNode }) {
   )
 }
 
-export function ProfileCard({ profile, role }: ProfileCardProps) {
+export function ProfileCard({ profile, role, subscriptionStatus }: ProfileCardProps) {
   const router = useRouter()
   const isPaid = role === 'grandma'
 
@@ -108,6 +117,7 @@ export function ProfileCard({ profile, role }: ProfileCardProps) {
   const [passwordSuccess, setPasswordSuccess] = useState(false)
   const [passwordServerError, setPasswordServerError] = useState<string | null>(null)
   const [isPasswordPending, startPasswordTransition] = useTransition()
+  const [showSubscribePrompt, setShowSubscribePrompt] = useState(false)
 
   const {
     register,
@@ -236,12 +246,16 @@ export function ProfileCard({ profile, role }: ProfileCardProps) {
                 <Label htmlFor="grandma_name" className="block">
                   {isPaid ? 'Grandma name' : <LockedLabel>Grandma name</LockedLabel>}
                 </Label>
-                <Input
-                  id="grandma_name"
-                  disabled={!isPaid}
-                  placeholder={isPaid ? '' : 'Upgrade to unlock'}
-                  {...register('grandma_name')}
-                />
+                <div className="relative">
+                  <Input
+                    id="grandma_name"
+                    disabled={!isPaid}
+                    {...register('grandma_name')}
+                  />
+                  {!isPaid && (
+                    <div className="absolute inset-0 cursor-pointer" onClick={() => setShowSubscribePrompt(true)} />
+                  )}
+                </div>
                 {errors.grandma_name && (
                   <p className="text-xs text-destructive">{errors.grandma_name.message}</p>
                 )}
@@ -250,12 +264,17 @@ export function ProfileCard({ profile, role }: ProfileCardProps) {
                 <Label htmlFor="birthday" className="block">
                   {isPaid ? 'Birthday' : <LockedLabel>Birthday</LockedLabel>}
                 </Label>
-                <Input
-                  id="birthday"
-                  type="date"
-                  disabled={!isPaid}
-                  {...register('birthday')}
-                />
+                <div className="relative">
+                  <Input
+                    id="birthday"
+                    type="date"
+                    disabled={!isPaid}
+                    {...register('birthday')}
+                  />
+                  {!isPaid && (
+                    <div className="absolute inset-0 cursor-pointer" onClick={() => setShowSubscribePrompt(true)} />
+                  )}
+                </div>
               </div>
             </div>
 
@@ -272,13 +291,17 @@ export function ProfileCard({ profile, role }: ProfileCardProps) {
                 <Label htmlFor="phone_number" className="block">
                   {isPaid ? 'Phone number' : <LockedLabel>Phone number</LockedLabel>}
                 </Label>
-                <Input
-                  id="phone_number"
-                  type="tel"
-                  disabled={!isPaid}
-                  placeholder={isPaid ? '' : 'Upgrade to unlock'}
-                  {...register('phone_number')}
-                />
+                <div className="relative">
+                  <Input
+                    id="phone_number"
+                    type="tel"
+                    disabled={!isPaid}
+                    {...register('phone_number')}
+                  />
+                  {!isPaid && (
+                    <div className="absolute inset-0 cursor-pointer" onClick={() => setShowSubscribePrompt(true)} />
+                  )}
+                </div>
               </div>
             </div>
 
@@ -299,7 +322,7 @@ export function ProfileCard({ profile, role }: ProfileCardProps) {
                 <Label className="block">
                   {isPaid ? 'Text updates' : <LockedLabel>Text updates</LockedLabel>}
                 </Label>
-                <div className={cn('flex items-center gap-2.5', !isPaid && 'opacity-50')}>
+                <div className={cn('relative flex items-center gap-2.5', !isPaid && 'opacity-50')}>
                   <input
                     id="text_updates_opt_in"
                     type="checkbox"
@@ -313,6 +336,9 @@ export function ProfileCard({ profile, role }: ProfileCardProps) {
                   >
                     Receive text updates
                   </Label>
+                  {!isPaid && (
+                    <div className="absolute inset-0 cursor-pointer" onClick={() => setShowSubscribePrompt(true)} />
+                  )}
                 </div>
               </div>
             </div>
@@ -471,6 +497,34 @@ export function ProfileCard({ profile, role }: ProfileCardProps) {
             </div>
           )}
         </div>
+
+        {/* Row 6: Subscription status */}
+        <div className="border-t pt-4 text-sm">
+          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Subscription</p>
+          <p className="mt-0.5">
+            {subscriptionStatus === 'active'
+              ? 'Active'
+              : subscriptionStatus === 'trialing'
+              ? 'Trial'
+              : 'Free'}
+          </p>
+        </div>
+
+        <Dialog open={showSubscribePrompt} onOpenChange={setShowSubscribePrompt}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Upgrade to unlock</DialogTitle>
+              <DialogDescription>
+                Grandma name, birthday, phone, and text updates are available on paid plans.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter showCloseButton>
+              <a href="/subscribe" className={cn(buttonVariants())}>
+                Upgrade
+              </a>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </CardContent>
     </Card>
   )
