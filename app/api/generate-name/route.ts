@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { cookies } from 'next/headers'
 import { anthropic, GRANDMA_NAME_MODEL } from '@/lib/claude'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 
 const VALID_STYLES = ['classic', 'playful', 'modern'] as const
 const VALID_VIBES = ['timeless', 'sweet', 'stylish', 'playful', 'cozy'] as const
+const ANON_COOKIE = 'anon_gen_count'
+const ANON_LIMIT = 2
 
 function sanitize(value: string, maxLen: number): string {
   return value.replace(/[<>"'`\\]/g, '').trim().slice(0, maxLen)
@@ -34,6 +37,19 @@ export async function POST(request: NextRequest) {
 
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
+
+  // Anonymous rate limit — enforced via cookie
+  let anonCount = 0
+  if (!user) {
+    const cookieStore = await cookies()
+    anonCount = parseInt(cookieStore.get(ANON_COOKIE)?.value ?? '0', 10)
+    if (anonCount >= ANON_LIMIT) {
+      return NextResponse.json(
+        { error: "You've used your 2 free generations. Create a free account for more." },
+        { status: 429 }
+      )
+    }
+  }
 
   if (user) {
     const serviceClient = createServiceClient()
@@ -101,7 +117,7 @@ Rules:
     return NextResponse.json({ error: 'Failed to generate name. Please try again.' }, { status: 500 })
   }
 
-  // Decrement counter for free signed-in users after a successful generation
+  // Decrement counter for free signed-in users
   if (user) {
     const serviceClient = createServiceClient()
     const { data: profile } = await serviceClient
@@ -116,7 +132,20 @@ Rules:
         .update({ generator_uses_remaining: Math.max(0, (profile.generator_uses_remaining ?? 0) - 1) })
         .eq('id', user.id)
     }
+    return NextResponse.json(result)
   }
 
-  return NextResponse.json(result)
+  // Increment anonymous cookie counter and return remaining count
+  const newCount = anonCount + 1
+  const response = NextResponse.json({
+    ...result,
+    usesRemaining: Math.max(0, ANON_LIMIT - newCount),
+  })
+  response.cookies.set(ANON_COOKIE, String(newCount), {
+    httpOnly: true,
+    sameSite: 'lax',
+    path: '/',
+    maxAge: 60 * 60 * 24 * 30,
+  })
+  return response
 }

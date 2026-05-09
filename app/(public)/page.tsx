@@ -79,6 +79,12 @@ export default function LandingPage() {
           >
             Try name generator
           </Link>
+          <Link
+            href="/browse-products"
+            className={cn(buttonVariants({ size: 'lg', variant: 'outline' }), 'w-full sm:w-auto')}
+          >
+            Browse products
+          </Link>
         </div>
       </section>
 

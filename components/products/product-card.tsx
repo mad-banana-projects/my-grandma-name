@@ -7,6 +7,14 @@ import { ChevronLeft, ChevronRight, Bookmark, BookmarkCheck } from 'lucide-react
 import { Badge } from '@/components/ui/badge'
 import { buttonVariants } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog'
 import { cn } from '@/lib/utils'
 import { toggleRegistryItem } from '@/app/(app)/registry/actions'
 
@@ -49,7 +57,7 @@ interface ProductCardProps {
   priority?: boolean
   isSaved?: boolean
   savedVariantId?: string | null
-  isPaidUser?: boolean
+  bookmarkMode?: 'active' | 'login' | 'upgrade'
 }
 
 export function ProductCard({
@@ -57,7 +65,7 @@ export function ProductCard({
   priority = false,
   isSaved = false,
   savedVariantId = null,
-  isPaidUser = false,
+  bookmarkMode = 'login',
 }: ProductCardProps) {
   const variants = product.product_variants ?? []
   const hasVariants = variants.length > 0
@@ -69,6 +77,7 @@ export function ProductCard({
   const [saved, setSaved] = useState(isSaved)
   const [localSavedVariantId, setLocalSavedVariantId] = useState<string | null>(savedVariantId)
   const [isPending, startTransition] = useTransition()
+  const [showPrompt, setShowPrompt] = useState(false)
 
   const activeImages: string[] = (
     selectedVariant?.image_urls?.length ? selectedVariant.image_urls :
@@ -99,9 +108,6 @@ export function ProductCard({
 
     const currentVariantId = selectedVariant?.id ?? null
 
-    // Saved and same variant selected → unsave
-    // Saved and different variant selected → update to new variant (stay saved)
-    // Not saved → save with current variant
     const isSameVariant = saved && currentVariantId === localSavedVariantId
     const wantsToSave = !isSameVariant
 
@@ -223,7 +229,9 @@ export function ProductCard({
             {CATEGORY_LABELS[product.category]}
           </Badge>
           <div className="flex items-center gap-2">
-            {isPaidUser && (
+
+            {/* Active bookmark — paid users */}
+            {bookmarkMode === 'active' && (
               <button
                 onClick={handleToggleSave}
                 disabled={isPending}
@@ -242,6 +250,53 @@ export function ProductCard({
                 }
               </button>
             )}
+
+            {/* Locked bookmark — anonymous or free users */}
+            {(bookmarkMode === 'login' || bookmarkMode === 'upgrade') && (
+              <>
+                <button
+                  onClick={() => setShowPrompt(true)}
+                  aria-label="Save to registry"
+                  className="rounded-md p-1 text-muted-foreground/50 transition-colors hover:text-muted-foreground"
+                >
+                  <Bookmark className="h-4 w-4" />
+                </button>
+
+                <Dialog open={showPrompt} onOpenChange={setShowPrompt}>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>
+                        {bookmarkMode === 'login'
+                          ? 'Save to your wishlist'
+                          : 'Upgrade to save products'}
+                      </DialogTitle>
+                      <DialogDescription>
+                        {bookmarkMode === 'login'
+                          ? 'Create a free account, then upgrade to build your personal gift registry and share it with family.'
+                          : 'Upgrade your account to save products to your registry and share your wishlist with family.'}
+                      </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter showCloseButton>
+                      {bookmarkMode === 'login' ? (
+                        <>
+                          <a href="/signup/grandma" className={cn(buttonVariants())}>
+                            Create free account
+                          </a>
+                          <a href="/login" className={cn(buttonVariants({ variant: 'outline' }))}>
+                            Sign in
+                          </a>
+                        </>
+                      ) : (
+                        <a href="/subscribe" className={cn(buttonVariants())}>
+                          Upgrade
+                        </a>
+                      )}
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              </>
+            )}
+
             <a
               href={outboundUrl}
               target="_blank"

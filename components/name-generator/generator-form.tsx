@@ -1,20 +1,27 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { useRouter } from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-
-const ANON_LIMIT = 2
-const SESSION_KEY = 'grandma_name_uses'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog'
+import { buttonVariants } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 
 type Result = {
   winner: { name: string }
   runnerUp: { name: string }
   explanation: string
+  usesRemaining?: number
 }
 
 const STYLES = [
@@ -31,25 +38,13 @@ const VIBES = [
   { value: 'cozy', label: 'Cozy' },
 ] as const
 
-function getSessionUses(): number {
-  try {
-    return parseInt(sessionStorage.getItem(SESSION_KEY) ?? '0', 10)
-  } catch {
-    return 0
-  }
+interface GeneratorFormProps {
+  isSignedIn: boolean
+  isPaidGrandma: boolean
+  anonUsesRemaining: number | null
 }
 
-function incrementSessionUses() {
-  try {
-    sessionStorage.setItem(SESSION_KEY, String(getSessionUses() + 1))
-  } catch {
-    // sessionStorage unavailable — fail silently
-  }
-}
-
-export function GeneratorForm({ isSignedIn, isPaidGrandma }: { isSignedIn: boolean; isPaidGrandma: boolean }) {
-  const router = useRouter()
-
+export function GeneratorForm({ isSignedIn, isPaidGrandma, anonUsesRemaining }: GeneratorFormProps) {
   const [firstName, setFirstName] = useState('')
   const [nameToAvoid, setNameToAvoid] = useState('')
   const [style, setStyle] = useState<string>('')
@@ -59,6 +54,11 @@ export function GeneratorForm({ isSignedIn, isPaidGrandma }: { isSignedIn: boole
   const [error, setError] = useState<string | null>(null)
   const [result, setResult] = useState<Result | null>(null)
 
+  // Tracks remaining anonymous uses; initialized from server-read cookie
+  const [anonUsesLeft, setAnonUsesLeft] = useState<number | null>(anonUsesRemaining)
+
+  const [showAccountPrompt, setShowAccountPrompt] = useState(false)
+
   const [emailInput, setEmailInput] = useState('')
   const [emailSending, setEmailSending] = useState(false)
   const [emailSent, setEmailSent] = useState(false)
@@ -66,7 +66,6 @@ export function GeneratorForm({ isSignedIn, isPaidGrandma }: { isSignedIn: boole
 
   const resultRef = useRef<HTMLDivElement>(null)
 
-  // Scroll to results when they appear
   useEffect(() => {
     if (result) {
       resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -78,9 +77,9 @@ export function GeneratorForm({ isSignedIn, isPaidGrandma }: { isSignedIn: boole
     setError(null)
     setResult(null)
 
-    // Anonymous session limit check
-    if (!isSignedIn && getSessionUses() >= ANON_LIMIT) {
-      setError("You've used your free generations. Sign up for 2 more — it's free.")
+    // Pre-flight check so we don't hit the API unnecessarily
+    if (!isSignedIn && anonUsesLeft !== null && anonUsesLeft <= 0) {
+      setShowAccountPrompt(true)
       return
     }
 
@@ -98,14 +97,22 @@ export function GeneratorForm({ isSignedIn, isPaidGrandma }: { isSignedIn: boole
       const data = await res.json()
 
       if (!res.ok) {
+        if (res.status === 429 && !isSignedIn) {
+          setShowAccountPrompt(true)
+          return
+        }
         setError(data.error ?? 'Something went wrong. Please try again.')
         return
       }
 
-      if (!isSignedIn) incrementSessionUses()
       setResult(data)
       setEmailSent(false)
       setEmailError(null)
+
+      // Keep client count in sync with the authoritative server value
+      if (!isSignedIn && typeof data.usesRemaining === 'number') {
+        setAnonUsesLeft(data.usesRemaining)
+      }
     } catch {
       setError('Something went wrong. Please try again.')
     } finally {
@@ -116,6 +123,10 @@ export function GeneratorForm({ isSignedIn, isPaidGrandma }: { isSignedIn: boole
   async function handleEmailCertificate(e: React.FormEvent) {
     e.preventDefault()
     if (!result) return
+    if (!isSignedIn) {
+      setShowAccountPrompt(true)
+      return
+    }
     setEmailSending(true)
     setEmailError(null)
 
@@ -147,11 +158,13 @@ export function GeneratorForm({ isSignedIn, isPaidGrandma }: { isSignedIn: boole
   function handleSaveToProfile() {
     if (!result) return
     if (!isSignedIn) {
-      const params = new URLSearchParams({ grandmaName: result.winner.name })
-      router.push(`/signup/grandma?${params.toString()}`)
+      setShowAccountPrompt(true)
+      return
     }
     // Free and paid grandma save flows handled in future iterations
   }
+
+  const limitReached = !isSignedIn && anonUsesLeft !== null && anonUsesLeft <= 0
 
   return (
     <div className="mx-auto w-full max-w-2xl space-y-8">
@@ -238,15 +251,22 @@ export function GeneratorForm({ isSignedIn, isPaidGrandma }: { isSignedIn: boole
         {error && (
           <div className="rounded-lg border border-destructive/20 bg-destructive/10 px-3 py-2 text-sm text-destructive" role="alert">
             {error}
-            {error.includes('Sign up') && (
-              <a href="/signup/grandma" className="ml-1 underline underline-offset-2">Sign up free →</a>
-            )}
           </div>
         )}
 
-        <Button type="submit" size="lg" className="w-full" disabled={loading}>
-          {loading ? 'Finding your name…' : 'Find my grandma name'}
-        </Button>
+        <div className="space-y-2">
+          <Button type="submit" size="lg" className="w-full" disabled={loading}>
+            {loading ? 'Finding your name…' : 'Find my grandma name'}
+          </Button>
+          {!isSignedIn && anonUsesLeft !== null && (
+            <p className="text-center text-xs text-muted-foreground">
+              {limitReached
+                ? <>Limit reached. <a href="/signup/grandma" className="underline underline-offset-2 hover:text-foreground">Create a free account</a> for more.</>
+                : <>{anonUsesLeft} free {anonUsesLeft === 1 ? 'generation' : 'generations'} remaining</>
+              }
+            </p>
+          )}
+        </div>
       </form>
 
       {result && (
@@ -265,7 +285,7 @@ export function GeneratorForm({ isSignedIn, isPaidGrandma }: { isSignedIn: boole
 
               <div className="flex flex-col gap-2 pt-2 sm:flex-row">
                 <Button size="sm" onClick={handleSaveToProfile}>
-                  {isSignedIn && isPaidGrandma ? 'Save to profile' : 'Save to profile'}
+                  Save to profile
                 </Button>
                 <Button
                   size="sm"
@@ -275,6 +295,31 @@ export function GeneratorForm({ isSignedIn, isPaidGrandma }: { isSignedIn: boole
                   Try again
                 </Button>
               </div>
+
+              <Dialog open={showAccountPrompt} onOpenChange={setShowAccountPrompt}>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Create a free account</DialogTitle>
+                    <DialogDescription>
+                      Sign up to save your grandma name, email your results, and build your gift registry.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <DialogFooter showCloseButton>
+                    <a
+                      href={`/signup/grandma?grandmaName=${encodeURIComponent(result?.winner.name ?? '')}`}
+                      className={cn(buttonVariants())}
+                    >
+                      Create free account
+                    </a>
+                    <a
+                      href="/login"
+                      className={cn(buttonVariants({ variant: 'outline' }))}
+                    >
+                      Sign in
+                    </a>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </CardContent>
           </Card>
 
@@ -306,6 +351,28 @@ export function GeneratorForm({ isSignedIn, isPaidGrandma }: { isSignedIn: boole
             </CardContent>
           </Card>
         </div>
+      )}
+
+      {/* Shown when limit is hit before a result is visible */}
+      {!result && (
+        <Dialog open={showAccountPrompt} onOpenChange={setShowAccountPrompt}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Create a free account</DialogTitle>
+              <DialogDescription>
+                Sign up to save your grandma name, email your results, and build your gift registry.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter showCloseButton>
+              <a href="/signup/grandma" className={cn(buttonVariants())}>
+                Create free account
+              </a>
+              <a href="/login" className={cn(buttonVariants({ variant: 'outline' }))}>
+                Sign in
+              </a>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       )}
     </div>
   )

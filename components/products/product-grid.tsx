@@ -40,7 +40,8 @@ export function ProductGrid({
   const visible = isAnonymous ? filtered.slice(0, previewLimit) : filtered
   const hiddenCount = isAnonymous ? Math.max(0, filtered.length - previewLimit) : 0
 
-  const isPaidUser = grandmaProfileId !== null
+  const bookmarkMode: 'active' | 'login' | 'upgrade' =
+    grandmaProfileId !== null ? 'active' : isAnonymous ? 'login' : 'upgrade'
 
   return (
     <div className="space-y-6">
@@ -72,7 +73,7 @@ export function ProductGrid({
               priority={i === 0}
               isSaved={savedItems.has(product.id)}
               savedVariantId={savedItems.get(product.id) ?? null}
-              isPaidUser={isPaidUser}
+              bookmarkMode={bookmarkMode}
             />
           ))}
         </div>
