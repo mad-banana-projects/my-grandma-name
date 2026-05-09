@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 
+import { Lock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -42,9 +43,10 @@ interface GeneratorFormProps {
   isSignedIn: boolean
   isPaidGrandma: boolean
   anonUsesRemaining: number | null
+  freeUsesRemaining: number | null
 }
 
-export function GeneratorForm({ isSignedIn, isPaidGrandma, anonUsesRemaining }: GeneratorFormProps) {
+export function GeneratorForm({ isSignedIn, isPaidGrandma, anonUsesRemaining, freeUsesRemaining }: GeneratorFormProps) {
   const [firstName, setFirstName] = useState('')
   const [nameToAvoid, setNameToAvoid] = useState('')
   const [style, setStyle] = useState<string>('')
@@ -56,8 +58,11 @@ export function GeneratorForm({ isSignedIn, isPaidGrandma, anonUsesRemaining }: 
 
   // Tracks remaining anonymous uses; initialized from server-read cookie
   const [anonUsesLeft, setAnonUsesLeft] = useState<number | null>(anonUsesRemaining)
+  // Tracks remaining free-tier uses; initialized from server-read DB value
+  const [freeUsesLeft, setFreeUsesLeft] = useState<number | null>(freeUsesRemaining)
 
   const [showAccountPrompt, setShowAccountPrompt] = useState(false)
+  const [showUpgradePrompt, setShowUpgradePrompt] = useState(false)
 
   const [emailInput, setEmailInput] = useState('')
   const [emailSending, setEmailSending] = useState(false)
@@ -82,6 +87,10 @@ export function GeneratorForm({ isSignedIn, isPaidGrandma, anonUsesRemaining }: 
       setShowAccountPrompt(true)
       return
     }
+    if (isSignedIn && !isPaidGrandma && freeUsesLeft !== null && freeUsesLeft <= 0) {
+      setShowUpgradePrompt(true)
+      return
+    }
 
     if (!style) { setError('Choose a preferred style.'); return }
     if (!vibe) { setError('Choose a preferred vibe.'); return }
@@ -101,6 +110,10 @@ export function GeneratorForm({ isSignedIn, isPaidGrandma, anonUsesRemaining }: 
           setShowAccountPrompt(true)
           return
         }
+        if (res.status === 429 && isSignedIn && !isPaidGrandma) {
+          setShowUpgradePrompt(true)
+          return
+        }
         setError(data.error ?? 'Something went wrong. Please try again.')
         return
       }
@@ -109,9 +122,12 @@ export function GeneratorForm({ isSignedIn, isPaidGrandma, anonUsesRemaining }: 
       setEmailSent(false)
       setEmailError(null)
 
-      // Keep client count in sync with the authoritative server value
+      // Keep client counts in sync with authoritative server values
       if (!isSignedIn && typeof data.usesRemaining === 'number') {
         setAnonUsesLeft(data.usesRemaining)
+      }
+      if (isSignedIn && !isPaidGrandma && typeof data.usesRemaining === 'number') {
+        setFreeUsesLeft(data.usesRemaining)
       }
     } catch {
       setError('Something went wrong. Please try again.')
@@ -125,6 +141,10 @@ export function GeneratorForm({ isSignedIn, isPaidGrandma, anonUsesRemaining }: 
     if (!result) return
     if (!isSignedIn) {
       setShowAccountPrompt(true)
+      return
+    }
+    if (!isPaidGrandma) {
+      setShowUpgradePrompt(true)
       return
     }
     setEmailSending(true)
@@ -161,7 +181,11 @@ export function GeneratorForm({ isSignedIn, isPaidGrandma, anonUsesRemaining }: 
       setShowAccountPrompt(true)
       return
     }
-    // Free and paid grandma save flows handled in future iterations
+    if (!isPaidGrandma) {
+      setShowUpgradePrompt(true)
+      return
+    }
+    // Paid save flow — TODO
   }
 
   const limitReached = !isSignedIn && anonUsesLeft !== null && anonUsesLeft <= 0
@@ -266,6 +290,14 @@ export function GeneratorForm({ isSignedIn, isPaidGrandma, anonUsesRemaining }: 
               }
             </p>
           )}
+          {isSignedIn && !isPaidGrandma && freeUsesLeft !== null && (
+            <p className="text-center text-xs text-muted-foreground">
+              {freeUsesLeft <= 0
+                ? <>Limit reached. <a href="/subscribe" className="underline underline-offset-2 hover:text-foreground">Upgrade</a> for more.</>
+                : <>{freeUsesLeft} {freeUsesLeft === 1 ? 'generation' : 'generations'} remaining</>
+              }
+            </p>
+          )}
         </div>
       </form>
 
@@ -320,36 +352,74 @@ export function GeneratorForm({ isSignedIn, isPaidGrandma, anonUsesRemaining }: 
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
+
+              <Dialog open={showUpgradePrompt} onOpenChange={setShowUpgradePrompt}>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Upgrade to unlock</DialogTitle>
+                    <DialogDescription>
+                      Saving your grandma name and emailing your results are available on paid plans.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <DialogFooter showCloseButton>
+                    <a href="/subscribe" className={cn(buttonVariants())}>
+                      Upgrade
+                    </a>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </CardContent>
           </Card>
 
-          <Card className="rounded-lg">
-            <CardHeader>
-              <CardTitle className="text-base">Email this to yourself</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {emailSent ? (
-                <p className="text-sm text-emerald-700">Sent! Check your inbox for your grandma name certificate.</p>
-              ) : (
-                <form onSubmit={handleEmailCertificate} className="flex gap-2">
-                  <Input
-                    type="email"
-                    placeholder="you@example.com"
-                    required
-                    value={emailInput}
-                    onChange={(e) => setEmailInput(e.target.value)}
-                    className="flex-1"
-                  />
-                  <Button type="submit" size="sm" variant="outline" disabled={emailSending}>
-                    {emailSending ? 'Sending…' : 'Send'}
-                  </Button>
-                </form>
-              )}
-              {emailError && (
-                <p className="mt-2 text-sm text-destructive">{emailError}</p>
-              )}
-            </CardContent>
-          </Card>
+          {isSignedIn && !isPaidGrandma ? (
+            <Card className="rounded-lg border-dashed opacity-80">
+              <CardContent className="flex items-start gap-4 py-6">
+                <div className="mt-0.5 rounded-full bg-muted p-2 shrink-0">
+                  <Lock className="h-4 w-4 text-muted-foreground" />
+                </div>
+                <div className="flex-1 space-y-1">
+                  <p className="text-sm font-semibold">Email this to yourself</p>
+                  <p className="text-sm text-muted-foreground">
+                    Email your grandma name certificate with a paid subscription.
+                  </p>
+                </div>
+                <a
+                  href="/subscribe"
+                  className={cn(buttonVariants({ size: 'sm', variant: 'outline' }), 'shrink-0')}
+                >
+                  Upgrade
+                </a>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card className="rounded-lg">
+              <CardHeader>
+                <CardTitle className="text-base">Email this to yourself</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {emailSent ? (
+                  <p className="text-sm text-emerald-700">Sent! Check your inbox for your grandma name certificate.</p>
+                ) : (
+                  <form onSubmit={handleEmailCertificate} className="flex gap-2">
+                    <Input
+                      type="email"
+                      placeholder="you@example.com"
+                      required
+                      value={emailInput}
+                      onChange={(e) => setEmailInput(e.target.value)}
+                      className="flex-1"
+                    />
+                    <Button type="submit" size="sm" variant="outline" disabled={emailSending}>
+                      {emailSending ? 'Sending…' : 'Send'}
+                    </Button>
+                  </form>
+                )}
+                {emailError && (
+                  <p className="mt-2 text-sm text-destructive">{emailError}</p>
+                )}
+              </CardContent>
+            </Card>
+          )}
         </div>
       )}
 

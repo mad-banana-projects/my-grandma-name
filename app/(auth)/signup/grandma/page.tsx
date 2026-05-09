@@ -6,9 +6,9 @@ export default function GrandmaSignupPage() {
       <div className="w-full max-w-md">
         <div className="mb-6 space-y-2 text-center">
           <p className="text-sm font-medium text-muted-foreground">GrandmaGifts</p>
-          <h1 className="text-3xl font-semibold tracking-normal">Start your wish list</h1>
+          <h1 className="text-3xl font-semibold tracking-normal">Create your free account</h1>
           <p className="text-sm text-muted-foreground">
-            Create your profile, choose your grandma name, and get ready to share gifts your family can shop from.
+            Find your grandma name, browse gifts, and build a wishlist your family will love.
           </p>
         </div>
         <GrandmaSignupForm />

@@ -13,44 +13,16 @@ export type GrandmaSignupState = {
     password?: string[]
     firstName?: string[]
     lastName?: string[]
-    grandmaName?: string[]
-    birthday?: string[]
-    phoneNumber?: string[]
     bio?: string[]
   }
 }
 
-const grandmaSignupSchema = z.object({
+const signupSchema = z.object({
   email: z.email('Enter a valid email address.').trim().toLowerCase(),
   password: z.string().min(8, 'Use at least 8 characters.'),
   firstName: z.string().trim().min(1, 'Enter your first name.').max(80),
   lastName: z.string().trim().min(1, 'Enter your last name.').max(80),
-  grandmaName: z
-    .string()
-    .trim()
-    .min(2, 'Enter at least 2 characters.')
-    .max(40, 'Keep the name under 40 characters.'),
-  birthday: z
-    .string()
-    .trim()
-    .min(1, 'Enter your birthday.')
-    .refine((value) => !Number.isNaN(Date.parse(value)), {
-      message: 'Enter a valid birthday.',
-    }),
-  phoneNumber: z
-    .string()
-    .trim()
-    .min(7, 'Enter a valid phone number.')
-    .max(20, 'Enter a valid phone number.'),
-  bio: z
-    .string()
-    .trim()
-    .min(1, 'Tell us a little about yourself.')
-    .max(500, 'Keep your bio under 500 characters.'),
-  textUpdatesOptIn: z
-    .string()
-    .optional()
-    .transform((v) => v === 'on'),
+  bio: z.string().trim().min(1, 'Tell us a little about yourself.').max(500, 'Keep your bio under 500 characters.'),
 })
 
 function getAppUrl() {
@@ -61,16 +33,12 @@ export async function signUpGrandma(
   _prevState: GrandmaSignupState,
   formData: FormData
 ): Promise<GrandmaSignupState> {
-  const parsed = grandmaSignupSchema.safeParse({
+  const parsed = signupSchema.safeParse({
     email: formData.get('email'),
     password: formData.get('password'),
     firstName: formData.get('firstName'),
     lastName: formData.get('lastName'),
-    grandmaName: formData.get('grandmaName'),
-    birthday: formData.get('birthday'),
-    phoneNumber: formData.get('phoneNumber'),
     bio: formData.get('bio'),
-    textUpdatesOptIn: formData.get('textUpdatesOptIn'),
   })
 
   if (!parsed.success) {
@@ -81,15 +49,15 @@ export async function signUpGrandma(
     }
   }
 
-  const { email, password, firstName, lastName, grandmaName, birthday, phoneNumber, bio, textUpdatesOptIn } = parsed.data
+  const { email, password, firstName, lastName, bio } = parsed.data
   const supabase = await createClient()
 
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
-      data: { role: 'grandma' },
-      emailRedirectTo: `${getAppUrl()}/api/auth/callback?next=/subscribe`,
+      data: { role: 'free' },
+      emailRedirectTo: `${getAppUrl()}/api/auth/callback?next=/dashboard`,
     },
   })
 
@@ -103,18 +71,14 @@ export async function signUpGrandma(
 
   const serviceClient = createServiceClient()
   const { error: profileError } = await serviceClient
-    .from('grandma_profiles')
+    .from('free_profiles')
     .upsert(
       {
         user_id: data.user.id,
         email,
         first_name: firstName,
         last_name: lastName,
-        grandma_name: grandmaName,
-        birthday,
-        phone_number: phoneNumber,
         bio,
-        text_updates_opt_in: textUpdatesOptIn,
       },
       { onConflict: 'user_id' }
     )
@@ -124,11 +88,11 @@ export async function signUpGrandma(
   }
 
   if (data.session) {
-    redirect('/subscribe')
+    redirect('/dashboard')
   }
 
   return {
     status: 'success',
-    message: 'Account created. Check your email to confirm your signup, then continue to your subscription.',
+    message: 'Account created. Check your email to confirm your signup, then log in to continue.',
   }
 }

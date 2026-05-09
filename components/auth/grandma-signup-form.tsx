@@ -22,7 +22,7 @@ function SubmitButton() {
   const { pending } = useFormStatus()
   return (
     <Button type="submit" size="lg" className="w-full" disabled={pending}>
-      {pending ? 'Creating account...' : 'Create grandma account'}
+      {pending ? 'Creating account…' : 'Create free account'}
     </Button>
   )
 }
@@ -38,9 +38,9 @@ export function GrandmaSignupForm() {
   return (
     <Card className="w-full max-w-lg rounded-lg">
       <CardHeader>
-        <CardTitle className="text-xl">Create your registry</CardTitle>
+        <CardTitle className="text-xl">Create your account</CardTitle>
         <CardDescription>
-          Set up your grandma profile so family can find the right gifts.
+          Free to join. You can add more details and upgrade anytime.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -73,45 +73,6 @@ export function GrandmaSignupForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="grandmaName">Grandma name</Label>
-            <Input
-              id="grandmaName"
-              name="grandmaName"
-              type="text"
-              placeholder="Mimi, Nana, Gigi…"
-              autoComplete="nickname"
-              required
-              aria-invalid={Boolean(state.fieldErrors?.grandmaName)}
-            />
-            <FieldError errors={state.fieldErrors?.grandmaName} />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="birthday">Birthday</Label>
-            <Input
-              id="birthday"
-              name="birthday"
-              type="date"
-              required
-              aria-invalid={Boolean(state.fieldErrors?.birthday)}
-            />
-            <FieldError errors={state.fieldErrors?.birthday} />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="phoneNumber">Phone number</Label>
-            <Input
-              id="phoneNumber"
-              name="phoneNumber"
-              type="tel"
-              autoComplete="tel"
-              required
-              aria-invalid={Boolean(state.fieldErrors?.phoneNumber)}
-            />
-            <FieldError errors={state.fieldErrors?.phoneNumber} />
-          </div>
-
-          <div className="space-y-2">
             <Label htmlFor="bio">About you</Label>
             <textarea
               id="bio"
@@ -124,18 +85,6 @@ export function GrandmaSignupForm() {
               className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
             />
             <FieldError errors={state.fieldErrors?.bio} />
-          </div>
-
-          <div className="flex items-center gap-2">
-            <input
-              id="textUpdatesOptIn"
-              name="textUpdatesOptIn"
-              type="checkbox"
-              className="h-4 w-4 rounded border-input"
-            />
-            <Label htmlFor="textUpdatesOptIn" className="font-normal">
-              I'd like to receive text updates (optional)
-            </Label>
           </div>
 
           <hr className="border-border" />

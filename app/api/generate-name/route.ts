@@ -127,10 +127,12 @@ Rules:
       .single()
 
     if (profile?.role === 'free') {
+      const newCount = Math.max(0, (profile.generator_uses_remaining ?? 0) - 1)
       await serviceClient
         .from('users')
-        .update({ generator_uses_remaining: Math.max(0, (profile.generator_uses_remaining ?? 0) - 1) })
+        .update({ generator_uses_remaining: newCount })
         .eq('id', user.id)
+      return NextResponse.json({ ...result, usesRemaining: newCount })
     }
     return NextResponse.json(result)
   }

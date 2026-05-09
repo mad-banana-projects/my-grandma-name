@@ -10,15 +10,20 @@ export default async function NameGeneratorPage() {
   const { data: { user } } = await supabase.auth.getUser()
 
   let isPaidGrandma = false
+  let freeUsesRemaining: number | null = null
   if (user) {
     const { data: profile } = await supabase
       .from('users')
-      .select('role, subscription_status')
+      .select('role, subscription_status, generator_uses_remaining')
       .eq('id', user.id)
       .single()
 
     isPaidGrandma =
       profile?.role === 'grandma' && profile?.subscription_status === 'active'
+
+    if (profile?.role === 'free') {
+      freeUsesRemaining = profile?.generator_uses_remaining ?? 0
+    }
   }
 
   let anonUsesRemaining: number | null = null
@@ -41,6 +46,7 @@ export default async function NameGeneratorPage() {
           isSignedIn={Boolean(user)}
           isPaidGrandma={isPaidGrandma}
           anonUsesRemaining={anonUsesRemaining}
+          freeUsesRemaining={freeUsesRemaining}
         />
       </div>
     </main>
