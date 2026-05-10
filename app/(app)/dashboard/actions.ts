@@ -139,6 +139,36 @@ export async function updatePassword(
   return { success: true }
 }
 
+export async function saveGrandmaName(name: string): Promise<UpdateProfileResult> {
+  const trimmed = name.trim().slice(0, 100)
+  if (!trimmed) return { success: false, error: 'Name is required' }
+
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { success: false, error: 'Not authenticated' }
+
+  const service = createServiceClient()
+  const { data: userData } = await service
+    .from('users')
+    .select('role, subscription_status')
+    .eq('id', user.id)
+    .single()
+
+  if (userData?.role !== 'grandma' || userData?.subscription_status !== 'active') {
+    return { success: false, error: 'Not authorized' }
+  }
+
+  const { error } = await service
+    .from('grandma_profiles')
+    .update({ grandma_name: trimmed })
+    .eq('user_id', user.id)
+
+  if (error) return { success: false, error: error.message }
+
+  revalidatePath('/dashboard')
+  return { success: true }
+}
+
 export async function updateReminders(
   data: ReminderFormValues
 ): Promise<UpdateProfileResult> {

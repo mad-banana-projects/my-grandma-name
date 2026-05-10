@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useTransition } from 'react'
 
 import { Lock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/dialog'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { saveGrandmaName } from '@/app/(app)/dashboard/actions'
 
 type Result = {
   winner: { name: string }
@@ -68,6 +69,11 @@ export function GeneratorForm({ isSignedIn, isPaidGrandma, anonUsesRemaining, fr
   const [emailSending, setEmailSending] = useState(false)
   const [emailSent, setEmailSent] = useState(false)
   const [emailError, setEmailError] = useState<string | null>(null)
+
+  const [pendingName, setPendingName] = useState<string | null>(null)
+  const [savedName, setSavedName] = useState<string | null>(null)
+  const [saveError, setSaveError] = useState<string | null>(null)
+  const [isSavePending, startSaveTransition] = useTransition()
 
   const resultRef = useRef<HTMLDivElement>(null)
 
@@ -121,6 +127,8 @@ export function GeneratorForm({ isSignedIn, isPaidGrandma, anonUsesRemaining, fr
       setResult(data)
       setEmailSent(false)
       setEmailError(null)
+      setSavedName(null)
+      setSaveError(null)
 
       // Keep client counts in sync with authoritative server values
       if (!isSignedIn && typeof data.usesRemaining === 'number') {
@@ -175,17 +183,26 @@ export function GeneratorForm({ isSignedIn, isPaidGrandma, anonUsesRemaining, fr
     }
   }
 
-  function handleSaveToProfile() {
-    if (!result) return
-    if (!isSignedIn) {
-      setShowAccountPrompt(true)
-      return
-    }
-    if (!isPaidGrandma) {
-      setShowUpgradePrompt(true)
-      return
-    }
-    // Paid save flow — TODO
+  function handleSaveClick(name: string) {
+    if (!isSignedIn) { setShowAccountPrompt(true); return }
+    if (!isPaidGrandma) { setShowUpgradePrompt(true); return }
+    setSaveError(null)
+    setPendingName(name)
+  }
+
+  function handleConfirmSave() {
+    if (!pendingName) return
+    const nameToSave = pendingName
+    startSaveTransition(async () => {
+      const res = await saveGrandmaName(nameToSave)
+      if (res.success) {
+        setSavedName(nameToSave)
+        setPendingName(null)
+      } else {
+        setSaveError(res.error)
+        setPendingName(null)
+      }
+    })
   }
 
   const limitReached = !isSignedIn && anonUsesLeft !== null && anonUsesLeft <= 0
@@ -306,19 +323,35 @@ export function GeneratorForm({ isSignedIn, isPaidGrandma, anonUsesRemaining, fr
           <Card className="rounded-lg">
             <CardHeader>
               <p className="text-sm text-muted-foreground">Your grandma name is</p>
-              <CardTitle className="text-4xl font-semibold tracking-tight">{result.winner.name}</CardTitle>
+              <div className="flex items-center justify-between gap-4">
+                <CardTitle className="text-4xl font-semibold tracking-tight">{result.winner.name}</CardTitle>
+                <Button size="sm" variant="outline" className="shrink-0" onClick={() => handleSaveClick(result.winner.name)}>
+                  Save to profile
+                </Button>
+              </div>
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-sm leading-7 text-muted-foreground">{result.explanation}</p>
-              <div className="rounded-md bg-muted/40 px-3 py-2 text-sm">
-                <span className="text-muted-foreground">Runner-up: </span>
-                <span className="font-medium">{result.runnerUp.name}</span>
-              </div>
-
-              <div className="flex flex-col gap-2 pt-2 sm:flex-row">
-                <Button size="sm" onClick={handleSaveToProfile}>
+              <div className="flex items-center justify-between rounded-md bg-muted/40 px-3 py-2 text-sm">
+                <div>
+                  <span className="text-muted-foreground">Runner-up: </span>
+                  <span className="font-medium">{result.runnerUp.name}</span>
+                </div>
+                <Button size="sm" variant="ghost" className="h-7 px-2 text-xs shrink-0" onClick={() => handleSaveClick(result.runnerUp.name)}>
                   Save to profile
                 </Button>
+              </div>
+
+              {savedName && (
+                <p className="text-sm text-emerald-700">
+                  <strong>{savedName}</strong> saved to your profile.
+                </p>
+              )}
+              {saveError && (
+                <p className="text-sm text-destructive">{saveError}</p>
+              )}
+
+              <div className="flex flex-col gap-2 pt-2 sm:flex-row">
                 <Button
                   size="sm"
                   variant="outline"
@@ -327,6 +360,22 @@ export function GeneratorForm({ isSignedIn, isPaidGrandma, anonUsesRemaining, fr
                   Try again
                 </Button>
               </div>
+
+              <Dialog open={!!pendingName} onOpenChange={(open) => { if (!open) setPendingName(null) }}>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Save to profile</DialogTitle>
+                    <DialogDescription>
+                      Please confirm saving <strong>{pendingName}</strong> to your profile.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <DialogFooter showCloseButton>
+                    <Button onClick={handleConfirmSave} disabled={isSavePending}>
+                      {isSavePending ? 'Saving…' : 'Confirm'}
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
 
               <Dialog open={showAccountPrompt} onOpenChange={setShowAccountPrompt}>
                 <DialogContent>
