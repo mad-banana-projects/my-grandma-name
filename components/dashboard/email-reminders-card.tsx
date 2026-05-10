@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { Plus, X, Check } from 'lucide-react'
+import { Pencil, Plus, X, Check } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -37,6 +37,8 @@ const PRESET_FREQUENCY = [
 type OccasionKey = (typeof OCCASIONS)[number]['key']
 
 export function EmailRemindersCard({ initial }: EmailRemindersCardProps) {
+  const [isEditing, setIsEditing] = useState(false)
+
   const [occasions, setOccasions] = useState<Record<OccasionKey, boolean>>({
     reminder_grandparents_day: initial.reminder_grandparents_day,
     reminder_mothers_day: initial.reminder_mothers_day,
@@ -46,60 +48,82 @@ export function EmailRemindersCard({ initial }: EmailRemindersCardProps) {
   const [customDates, setCustomDates] = useState<CustomDate[]>(initial.reminder_custom_dates)
   const [frequency, setFrequency] = useState<number[]>(initial.reminder_frequency)
 
+  // draft state while editing
+  const [draftOccasions, setDraftOccasions] = useState(occasions)
+  const [draftCustomDates, setDraftCustomDates] = useState(customDates)
+  const [draftFrequency, setDraftFrequency] = useState(frequency)
+
   const [newLabel, setNewLabel] = useState('')
   const [newDate, setNewDate] = useState('')
   const [newCustomDays, setNewCustomDays] = useState('')
   const [showDateForm, setShowDateForm] = useState(false)
 
-  const [saved, setSaved] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
 
-  function toggleOccasion(key: OccasionKey) {
-    setOccasions((prev) => ({ ...prev, [key]: !prev[key] }))
+  function startEdit() {
+    setDraftOccasions({ ...occasions })
+    setDraftCustomDates([...customDates])
+    setDraftFrequency([...frequency])
+    setNewLabel('')
+    setNewDate('')
+    setNewCustomDays('')
+    setShowDateForm(false)
+    setError(null)
+    setIsEditing(true)
   }
 
-  function toggleFrequency(days: number) {
-    setFrequency((prev) =>
+  function cancelEdit() {
+    setIsEditing(false)
+    setError(null)
+  }
+
+  function toggleDraftOccasion(key: OccasionKey) {
+    setDraftOccasions((prev) => ({ ...prev, [key]: !prev[key] }))
+  }
+
+  function toggleDraftFrequency(days: number) {
+    setDraftFrequency((prev) =>
       prev.includes(days) ? prev.filter((d) => d !== days) : [...prev, days].sort((a, b) => b - a)
     )
   }
 
   function addCustomFrequency() {
     const days = parseInt(newCustomDays, 10)
-    if (!isNaN(days) && days >= 1 && days <= 365 && !frequency.includes(days)) {
-      setFrequency((prev) => [...prev, days].sort((a, b) => b - a))
+    if (!isNaN(days) && days >= 1 && days <= 365 && !draftFrequency.includes(days)) {
+      setDraftFrequency((prev) => [...prev, days].sort((a, b) => b - a))
     }
     setNewCustomDays('')
   }
 
   function addCustomDate() {
     if (!newLabel.trim() || !newDate) return
-    setCustomDates((prev) => [...prev, { label: newLabel.trim(), date: newDate }])
+    setDraftCustomDates((prev) => [...prev, { label: newLabel.trim(), date: newDate }])
     setNewLabel('')
     setNewDate('')
     setShowDateForm(false)
   }
 
-  function removeCustomDate(index: number) {
-    setCustomDates((prev) => prev.filter((_, i) => i !== index))
+  function removeDraftCustomDate(index: number) {
+    setDraftCustomDates((prev) => prev.filter((_, i) => i !== index))
   }
 
   function handleSave() {
-    setSaved(false)
     setError(null)
 
     const data: ReminderFormValues = {
-      ...occasions,
-      reminder_custom_dates: customDates,
-      reminder_frequency: frequency,
+      ...draftOccasions,
+      reminder_custom_dates: draftCustomDates,
+      reminder_frequency: draftFrequency,
     }
 
     startTransition(async () => {
       const result = await updateReminders(data)
       if (result.success) {
-        setSaved(true)
-        setTimeout(() => setSaved(false), 3000)
+        setOccasions({ ...draftOccasions })
+        setCustomDates([...draftCustomDates])
+        setFrequency([...draftFrequency])
+        setIsEditing(false)
       } else {
         setError(result.error)
       }
@@ -107,13 +131,33 @@ export function EmailRemindersCard({ initial }: EmailRemindersCardProps) {
   }
 
   const presetDays = PRESET_FREQUENCY.map((p) => p.days)
-  const customFrequencyValues = frequency.filter((d) => !presetDays.includes(d))
 
   return (
     <div className="flex flex-col gap-4 h-full">
       <h2 className="text-lg font-semibold">Email Reminders</h2>
 
-      <Card className="flex-1 flex flex-col">
+      <Card className="flex-1 flex flex-col relative">
+        {/* Edit / Cancel pencil button */}
+        {!isEditing ? (
+          <button
+            type="button"
+            onClick={startEdit}
+            className="absolute right-4 top-4 rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            aria-label="Edit reminders"
+          >
+            <Pencil className="h-4 w-4" />
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={cancelEdit}
+            className="absolute right-4 top-4 rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            aria-label="Cancel editing"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        )}
+
         <CardContent className="flex flex-col flex-1 py-6 gap-6">
 
           {/* Two-column body */}
@@ -123,31 +167,31 @@ export function EmailRemindersCard({ initial }: EmailRemindersCardProps) {
             <div className="space-y-3">
               <p className="text-sm font-medium">Send reminders for</p>
               <div className="space-y-2">
-                {OCCASIONS.map(({ key, label }) => (
-                  <label
-                    key={key}
-                    className="flex cursor-pointer items-center gap-3 rounded-md border px-3 py-2.5 transition-colors hover:bg-muted/40"
-                  >
+                {OCCASIONS.map(({ key, label }) => {
+                  const checked = isEditing ? draftOccasions[key] : occasions[key]
+                  return (
                     <div
+                      key={key}
+                      onClick={isEditing ? () => toggleDraftOccasion(key) : undefined}
                       className={cn(
-                        'flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-colors',
-                        occasions[key]
-                          ? 'border-foreground bg-foreground text-background'
-                          : 'border-input bg-background'
+                        'flex items-center gap-3 rounded-md border px-3 py-2.5 transition-colors',
+                        isEditing ? 'cursor-pointer hover:bg-muted/40' : 'cursor-default'
                       )}
-                      onClick={() => toggleOccasion(key)}
                     >
-                      {occasions[key] && <Check className="h-3 w-3" />}
+                      <div
+                        className={cn(
+                          'flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-colors',
+                          checked
+                            ? 'border-foreground bg-foreground text-background'
+                            : 'border-input bg-background'
+                        )}
+                      >
+                        {checked && <Check className="h-3 w-3" />}
+                      </div>
+                      <span className="text-sm">{label}</span>
                     </div>
-                    <input
-                      type="checkbox"
-                      className="sr-only"
-                      checked={occasions[key]}
-                      onChange={() => toggleOccasion(key)}
-                    />
-                    <span className="text-sm">{label}</span>
-                  </label>
-                ))}
+                  )
+                })}
               </div>
             </div>
 
@@ -158,9 +202,9 @@ export function EmailRemindersCard({ initial }: EmailRemindersCardProps) {
               <div className="space-y-3">
                 <p className="text-sm font-medium">Custom dates</p>
 
-                {customDates.length > 0 && (
+                {(isEditing ? draftCustomDates : customDates).length > 0 && (
                   <div className="space-y-2">
-                    {customDates.map((cd, i) => (
+                    {(isEditing ? draftCustomDates : customDates).map((cd, i) => (
                       <div
                         key={i}
                         className="flex items-center justify-between rounded-md border px-3 py-2 text-sm"
@@ -168,69 +212,77 @@ export function EmailRemindersCard({ initial }: EmailRemindersCardProps) {
                         <span className="font-medium">{cd.label}</span>
                         <div className="flex items-center gap-3">
                           <span className="text-muted-foreground">{cd.date}</span>
-                          <button
-                            type="button"
-                            onClick={() => removeCustomDate(i)}
-                            className="text-muted-foreground hover:text-foreground transition-colors"
-                            aria-label="Remove date"
-                          >
-                            <X className="h-4 w-4" />
-                          </button>
+                          {isEditing && (
+                            <button
+                              type="button"
+                              onClick={() => removeDraftCustomDate(i)}
+                              className="text-muted-foreground hover:text-foreground transition-colors"
+                              aria-label="Remove date"
+                            >
+                              <X className="h-4 w-4" />
+                            </button>
+                          )}
                         </div>
                       </div>
                     ))}
                   </div>
                 )}
 
-                {showDateForm ? (
-                  <div className="rounded-md border p-3 space-y-3">
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="space-y-1">
-                        <Label className="text-xs">Label</Label>
-                        <Input
-                          value={newLabel}
-                          onChange={(e) => setNewLabel(e.target.value)}
-                          placeholder="e.g. Anniversary"
-                          className="h-8 text-sm"
-                        />
+                {isEditing && (
+                  showDateForm ? (
+                    <div className="rounded-md border p-3 space-y-3">
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="space-y-1">
+                          <Label className="text-xs">Label</Label>
+                          <Input
+                            value={newLabel}
+                            onChange={(e) => setNewLabel(e.target.value)}
+                            placeholder="e.g. Anniversary"
+                            className="h-8 text-sm"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <Label className="text-xs">Date</Label>
+                          <Input
+                            type="date"
+                            value={newDate}
+                            onChange={(e) => setNewDate(e.target.value)}
+                            className="h-8 text-sm"
+                          />
+                        </div>
                       </div>
-                      <div className="space-y-1">
-                        <Label className="text-xs">Date</Label>
-                        <Input
-                          type="date"
-                          value={newDate}
-                          onChange={(e) => setNewDate(e.target.value)}
-                          className="h-8 text-sm"
-                        />
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={addCustomDate}
+                          disabled={!newLabel.trim() || !newDate}
+                          className="rounded-md bg-foreground px-3 py-1.5 text-xs font-medium text-background disabled:opacity-40"
+                        >
+                          Add
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => { setShowDateForm(false); setNewLabel(''); setNewDate('') }}
+                          className="rounded-md border px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground"
+                        >
+                          Cancel
+                        </button>
                       </div>
                     </div>
-                    <div className="flex gap-2">
-                      <button
-                        type="button"
-                        onClick={addCustomDate}
-                        disabled={!newLabel.trim() || !newDate}
-                        className="rounded-md bg-foreground px-3 py-1.5 text-xs font-medium text-background disabled:opacity-40"
-                      >
-                        Add
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => { setShowDateForm(false); setNewLabel(''); setNewDate('') }}
-                        className="rounded-md border px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground"
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => setShowDateForm(true)}
-                    className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    <Plus className="h-4 w-4" />
-                    Add custom date
-                  </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setShowDateForm(true)}
+                      className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      <Plus className="h-4 w-4" />
+                      Add custom date
+                    </button>
+                  )
+                )}
+
+                {!isEditing && customDates.length === 0 && (
+                  <p className="text-sm text-muted-foreground">None added</p>
                 )}
               </div>
 
@@ -238,72 +290,93 @@ export function EmailRemindersCard({ initial }: EmailRemindersCardProps) {
               <div className="space-y-3">
                 <p className="text-sm font-medium">Remind me</p>
                 <div className="flex flex-wrap gap-2">
-                  {PRESET_FREQUENCY.map(({ days, label }) => (
-                    <button
-                      key={days}
-                      type="button"
-                      onClick={() => toggleFrequency(days)}
-                      className={cn(
-                        'rounded-full border px-3 py-1 text-xs transition-colors',
-                        frequency.includes(days)
-                          ? 'border-foreground bg-foreground text-background'
-                          : 'border-border bg-background text-foreground hover:border-foreground/40'
-                      )}
-                    >
-                      {label} before
-                    </button>
-                  ))}
-                  {customFrequencyValues.map((days) => (
-                    <button
-                      key={days}
-                      type="button"
-                      onClick={() => toggleFrequency(days)}
-                      className="flex items-center gap-1 rounded-full border border-foreground bg-foreground px-3 py-1 text-xs text-background"
-                    >
-                      {days}d before
-                      <X className="h-3 w-3" />
-                    </button>
-                  ))}
+                  {PRESET_FREQUENCY.map(({ days, label }) => {
+                    const active = (isEditing ? draftFrequency : frequency).includes(days)
+                    return (
+                      <button
+                        key={days}
+                        type="button"
+                        onClick={isEditing ? () => toggleDraftFrequency(days) : undefined}
+                        disabled={!isEditing}
+                        className={cn(
+                          'rounded-full border px-3 py-1 text-xs transition-colors',
+                          active
+                            ? 'border-foreground bg-foreground text-background'
+                            : 'border-border bg-background text-foreground',
+                          isEditing && !active && 'hover:border-foreground/40',
+                          !isEditing && 'cursor-default'
+                        )}
+                      >
+                        {label} before
+                      </button>
+                    )
+                  })}
+                  {(isEditing ? draftFrequency : frequency)
+                    .filter((d) => !presetDays.includes(d))
+                    .map((days) => (
+                      <button
+                        key={days}
+                        type="button"
+                        onClick={isEditing ? () => toggleDraftFrequency(days) : undefined}
+                        disabled={!isEditing}
+                        className="flex items-center gap-1 rounded-full border border-foreground bg-foreground px-3 py-1 text-xs text-background disabled:cursor-default"
+                      >
+                        {days}d before
+                        {isEditing && <X className="h-3 w-3" />}
+                      </button>
+                    ))}
                 </div>
-                <div className="flex items-center gap-2">
-                  <Input
-                    type="number"
-                    min={1}
-                    max={365}
-                    value={newCustomDays}
-                    onChange={(e) => setNewCustomDays(e.target.value)}
-                    placeholder="Custom days"
-                    className="h-8 w-32 text-sm"
-                    onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addCustomFrequency() } }}
-                  />
-                  <button
-                    type="button"
-                    onClick={addCustomFrequency}
-                    disabled={!newCustomDays}
-                    className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground disabled:opacity-40 transition-colors"
-                  >
-                    <Plus className="h-4 w-4" />
-                    Add
-                  </button>
-                </div>
+
+                {isEditing && (
+                  <div className="flex items-center gap-2">
+                    <Input
+                      type="number"
+                      min={1}
+                      max={365}
+                      value={newCustomDays}
+                      onChange={(e) => setNewCustomDays(e.target.value)}
+                      placeholder="Custom days"
+                      className="h-8 w-32 text-sm"
+                      onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addCustomFrequency() } }}
+                    />
+                    <button
+                      type="button"
+                      onClick={addCustomFrequency}
+                      disabled={!newCustomDays}
+                      className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground disabled:opacity-40 transition-colors"
+                    >
+                      <Plus className="h-4 w-4" />
+                      Add
+                    </button>
+                  </div>
+                )}
               </div>
 
             </div>
           </div>
 
-          {/* Save */}
-          <div className="flex items-center gap-3 border-t pt-4">
-            <button
-              type="button"
-              onClick={handleSave}
-              disabled={isPending}
-              className="rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background disabled:opacity-50 transition-opacity"
-            >
-              {isPending ? 'Saving…' : 'Save reminders'}
-            </button>
-            {saved && <p className="text-sm text-muted-foreground">Saved.</p>}
-            {error && <p className="text-sm text-destructive">{error}</p>}
-          </div>
+          {/* Save row — only in edit mode */}
+          {isEditing && (
+            <div className="flex items-center gap-3 border-t pt-4">
+              <button
+                type="button"
+                onClick={handleSave}
+                disabled={isPending}
+                className="rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background disabled:opacity-50 transition-opacity"
+              >
+                {isPending ? 'Saving…' : 'Save reminders'}
+              </button>
+              <button
+                type="button"
+                onClick={cancelEdit}
+                disabled={isPending}
+                className="rounded-md border px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground disabled:opacity-50 transition-colors"
+              >
+                Cancel
+              </button>
+              {error && <p className="text-sm text-destructive">{error}</p>}
+            </div>
+          )}
 
         </CardContent>
       </Card>

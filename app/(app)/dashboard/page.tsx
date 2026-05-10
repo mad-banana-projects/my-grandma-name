@@ -79,10 +79,10 @@ export default async function DashboardPage() {
     }
 
     reminderSettings = {
-      reminder_grandparents_day: grandmaProfile.reminder_grandparents_day ?? false,
-      reminder_mothers_day: grandmaProfile.reminder_mothers_day ?? false,
-      reminder_birthday: grandmaProfile.reminder_birthday ?? false,
-      reminder_christmas: grandmaProfile.reminder_christmas ?? false,
+      reminder_grandparents_day: grandmaProfile.reminder_grandparents_day ?? true,
+      reminder_mothers_day: grandmaProfile.reminder_mothers_day ?? true,
+      reminder_birthday: grandmaProfile.reminder_birthday ?? true,
+      reminder_christmas: grandmaProfile.reminder_christmas ?? true,
       reminder_custom_dates: (grandmaProfile.reminder_custom_dates as { label: string; date: string }[] | null) ?? [],
       reminder_frequency: (grandmaProfile.reminder_frequency as number[] | null) ?? [30, 14, 7],
     }
