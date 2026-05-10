@@ -22,6 +22,8 @@ import {
   updateProfile,
   updateFreeProfile,
   updatePassword,
+  activateSubscription,
+  cancelSubscription,
   type PaidProfileFormValues,
   type FreeProfileFormValues,
 } from '@/app/(app)/dashboard/actions'
@@ -119,6 +121,11 @@ export function ProfileCard({ profile, role, subscriptionStatus }: ProfileCardPr
   const [isPasswordPending, startPasswordTransition] = useTransition()
   const [showSubscribePrompt, setShowSubscribePrompt] = useState(false)
 
+  const [showManageDialog, setShowManageDialog] = useState(false)
+  const [manageError, setManageError] = useState<string | null>(null)
+  const [isManagePending, startManageTransition] = useTransition()
+  const isSubscribed = subscriptionStatus === 'active'
+
   const {
     register,
     handleSubmit,
@@ -183,6 +190,19 @@ export function ProfileCard({ profile, role, subscriptionStatus }: ProfileCardPr
       } else {
         setIsEditing(false)
         router.refresh()
+      }
+    })
+  }
+
+  function handleManageConfirm() {
+    setManageError(null)
+    startManageTransition(async () => {
+      const result = isSubscribed ? await cancelSubscription() : await activateSubscription()
+      if (result.success) {
+        setShowManageDialog(false)
+        router.refresh()
+      } else {
+        setManageError(result.error)
       }
     })
   }
@@ -500,15 +520,57 @@ export function ProfileCard({ profile, role, subscriptionStatus }: ProfileCardPr
 
         {/* Row 6: Subscription status */}
         <div className="border-t pt-4 text-sm">
-          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Subscription</p>
-          <p className="mt-0.5">
-            {subscriptionStatus === 'active'
-              ? 'Active'
-              : subscriptionStatus === 'trialing'
-              ? 'Trial'
-              : 'Free'}
-          </p>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Subscription</p>
+              <p className="mt-0.5">
+                {subscriptionStatus === 'active'
+                  ? 'Active'
+                  : subscriptionStatus === 'trialing'
+                  ? 'Trial'
+                  : 'Free'}
+              </p>
+            </div>
+            <button
+              onClick={() => { setManageError(null); setShowManageDialog(true) }}
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Manage
+            </button>
+          </div>
         </div>
+
+        {/* Manage subscription dialog */}
+        <Dialog open={showManageDialog} onOpenChange={setShowManageDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>
+                {isSubscribed ? 'Cancel subscription' : 'Subscribe'}
+              </DialogTitle>
+              <DialogDescription>
+                {isSubscribed
+                  ? "Are you sure you want to cancel? You'll lose access to premium features including your registry, email reminders, and family sharing."
+                  : "Subscribe to unlock your full profile, gift registry, email reminders, and family sharing."}
+              </DialogDescription>
+            </DialogHeader>
+            {manageError && (
+              <p className="text-sm text-destructive px-1">{manageError}</p>
+            )}
+            <DialogFooter showCloseButton>
+              <Button
+                variant={isSubscribed ? 'destructive' : 'default'}
+                onClick={handleManageConfirm}
+                disabled={isManagePending}
+              >
+                {isManagePending
+                  ? 'Saving…'
+                  : isSubscribed
+                  ? 'Cancel subscription'
+                  : 'Subscribe'}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
 
         <Dialog open={showSubscribePrompt} onOpenChange={setShowSubscribePrompt}>
           <DialogContent>

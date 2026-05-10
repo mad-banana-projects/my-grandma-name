@@ -139,6 +139,82 @@ export async function updatePassword(
   return { success: true }
 }
 
+export async function activateSubscription(): Promise<UpdateProfileResult> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { success: false, error: 'Not authenticated' }
+
+  const service = createServiceClient()
+
+  const { data: freeProfile } = await service
+    .from('free_profiles')
+    .select('first_name, last_name, email, bio')
+    .eq('user_id', user.id)
+    .single()
+
+  await service
+    .from('grandma_profiles')
+    .upsert(
+      {
+        user_id: user.id,
+        first_name: freeProfile?.first_name ?? '',
+        last_name: freeProfile?.last_name ?? '',
+        email: freeProfile?.email ?? user.email ?? '',
+        bio: freeProfile?.bio ?? '',
+      },
+      { onConflict: 'user_id' }
+    )
+
+  const { error } = await service
+    .from('users')
+    .update({ role: 'grandma', subscription_status: 'active' })
+    .eq('id', user.id)
+
+  if (error) return { success: false, error: error.message }
+
+  revalidatePath('/dashboard')
+  return { success: true }
+}
+
+export async function cancelSubscription(): Promise<UpdateProfileResult> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { success: false, error: 'Not authenticated' }
+
+  const service = createServiceClient()
+
+  const { data: grandmaProfile } = await service
+    .from('grandma_profiles')
+    .select('first_name, last_name, email, bio')
+    .eq('user_id', user.id)
+    .single()
+
+  if (grandmaProfile) {
+    await service
+      .from('free_profiles')
+      .upsert(
+        {
+          user_id: user.id,
+          first_name: grandmaProfile.first_name,
+          last_name: grandmaProfile.last_name,
+          email: grandmaProfile.email ?? user.email ?? '',
+          bio: grandmaProfile.bio ?? '',
+        },
+        { onConflict: 'user_id' }
+      )
+  }
+
+  const { error } = await service
+    .from('users')
+    .update({ role: 'free', subscription_status: 'inactive' })
+    .eq('id', user.id)
+
+  if (error) return { success: false, error: error.message }
+
+  revalidatePath('/dashboard')
+  return { success: true }
+}
+
 export async function saveGrandmaName(name: string): Promise<UpdateProfileResult> {
   const trimmed = name.trim().slice(0, 100)
   if (!trimmed) return { success: false, error: 'Name is required' }
