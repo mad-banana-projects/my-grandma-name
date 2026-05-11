@@ -14,7 +14,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { signUpGrandma, type GrandmaSignupState } from '@/app/(auth)/signup/grandma/actions'
+import { signUpGrandma, type GrandmaSignupState } from '@/app/(auth)/signup/actions'
 
 const initialState: GrandmaSignupState = { status: 'idle' }
 

@@ -54,7 +54,7 @@ export default async function DashboardPage() {
       .eq('user_id', user.id)
       .single()
 
-    if (!grandmaProfile) redirect('/signup/grandma')
+    if (!grandmaProfile) redirect('/signup')
 
     grandmaProfileId = grandmaProfile.id
 

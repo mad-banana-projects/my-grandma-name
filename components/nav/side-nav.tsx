@@ -21,9 +21,10 @@ interface SideNavProps {
   email?: string
   grandmaProfileId?: string | null
   isAnon?: boolean
+  isFreeUser?: boolean
 }
 
-export function SideNav({ email, grandmaProfileId, isAnon }: SideNavProps) {
+export function SideNav({ email, grandmaProfileId, isAnon, isFreeUser }: SideNavProps) {
   const pathname = usePathname()
 
   const navItems = isAnon
@@ -32,6 +33,8 @@ export function SideNav({ email, grandmaProfileId, isAnon }: SideNavProps) {
         ...BASE_NAV_ITEMS,
         ...(grandmaProfileId
           ? [{ label: 'My Registry', href: `/registry/${grandmaProfileId}` }]
+          : isFreeUser
+          ? [{ label: 'My Registry', href: '/registry' }]
           : []),
       ]
 
@@ -67,7 +70,7 @@ export function SideNav({ email, grandmaProfileId, isAnon }: SideNavProps) {
         <div className="border-t px-5 py-4 space-y-2">
           {isAnon ? (
             <div className="flex flex-col gap-2">
-              <Link href="/signup/grandma" className={cn(buttonVariants({ size: 'sm' }), 'w-full justify-center')}>
+              <Link href="/signup" className={cn(buttonVariants({ size: 'sm' }), 'w-full justify-center')}>
                 Create account
               </Link>
               <Link href="/login" className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'w-full justify-center')}>

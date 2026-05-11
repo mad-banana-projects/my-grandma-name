@@ -302,7 +302,7 @@ export function GeneratorForm({ isSignedIn, isPaidGrandma, anonUsesRemaining, fr
           {!isSignedIn && anonUsesLeft !== null && (
             <p className="text-center text-xs text-muted-foreground">
               {limitReached
-                ? <>Limit reached. <a href="/signup/grandma" className="underline underline-offset-2 hover:text-foreground">Create a free account</a> for more.</>
+                ? <>Limit reached. <a href="/signup" className="underline underline-offset-2 hover:text-foreground">Create a free account</a> for more.</>
                 : <>{anonUsesLeft} free {anonUsesLeft === 1 ? 'generation' : 'generations'} remaining</>
               }
             </p>
@@ -387,7 +387,7 @@ export function GeneratorForm({ isSignedIn, isPaidGrandma, anonUsesRemaining, fr
                   </DialogHeader>
                   <DialogFooter showCloseButton>
                     <a
-                      href={`/signup/grandma?grandmaName=${encodeURIComponent(result?.winner.name ?? '')}`}
+                      href={`/signup?grandmaName=${encodeURIComponent(result?.winner.name ?? '')}`}
                       className={cn(buttonVariants())}
                     >
                       Create free account
@@ -483,7 +483,7 @@ export function GeneratorForm({ isSignedIn, isPaidGrandma, anonUsesRemaining, fr
               </DialogDescription>
             </DialogHeader>
             <DialogFooter showCloseButton>
-              <a href="/signup/grandma" className={cn(buttonVariants())}>
+              <a href="/signup" className={cn(buttonVariants())}>
                 Create free account
               </a>
               <a href="/login" className={cn(buttonVariants({ variant: 'outline' }))}>

@@ -279,7 +279,7 @@ export function ProductCard({
                     <DialogFooter showCloseButton>
                       {bookmarkMode === 'login' ? (
                         <>
-                          <a href="/signup/grandma" className={cn(buttonVariants())}>
+                          <a href="/signup" className={cn(buttonVariants())}>
                             Create free account
                           </a>
                           <a href="/login" className={cn(buttonVariants({ variant: 'outline' }))}>

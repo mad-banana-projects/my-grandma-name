@@ -83,7 +83,7 @@ export function LoginForm() {
 
         <p className="mt-4 text-center text-sm text-muted-foreground">
           Don&apos;t have an account?{' '}
-          <Link href="/signup/grandma" className="font-medium text-foreground underline-offset-4 hover:underline">
+          <Link href="/signup" className="font-medium text-foreground underline-offset-4 hover:underline">
             Create one
           </Link>
         </p>

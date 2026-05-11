@@ -19,17 +19,20 @@ export default async function AppLayout({
   }
 
   const service = createServiceClient()
-  const { data: profile } = await service
-    .from('grandma_profiles')
-    .select('id')
-    .eq('user_id', user.id)
-    .single()
+
+  const [{ data: userProfile }, { data: grandmaProfile }] = await Promise.all([
+    service.from('users').select('role').eq('id', user.id).single(),
+    service.from('grandma_profiles').select('id').eq('user_id', user.id).single(),
+  ])
+
+  const isFreeUser = userProfile?.role === 'free'
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen">
       <SideNav
         email={user.email ?? ''}
-        grandmaProfileId={profile?.id ?? null}
+        grandmaProfileId={grandmaProfile?.id ?? null}
+        isFreeUser={isFreeUser}
       />
       <div className="flex-1 min-w-0">
         {children}

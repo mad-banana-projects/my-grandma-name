@@ -49,7 +49,7 @@ export default function LandingPage() {
           <Link href="/login" className={buttonVariants({ variant: 'ghost', size: 'sm' })}>
             Log in
           </Link>
-          <Link href="/signup/grandma" className={buttonVariants({ size: 'sm' })}>
+          <Link href="/signup" className={buttonVariants({ size: 'sm' })}>
             Get started
           </Link>
         </nav>
@@ -68,7 +68,7 @@ export default function LandingPage() {
         </p>
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Link
-            href="/signup/grandma"
+            href="/signup"
             className={cn(buttonVariants({ size: 'lg' }), 'w-full sm:w-auto')}
           >
             Create free account
@@ -126,7 +126,7 @@ export default function LandingPage() {
           <p className="text-sm text-muted-foreground">
             Create a free account and pick your grandma name in minutes.
           </p>
-          <Link href="/signup/grandma" className={cn(buttonVariants({ size: 'lg' }))}>
+          <Link href="/signup" className={cn(buttonVariants({ size: 'lg' }))}>
             Create free account
           </Link>
         </div>

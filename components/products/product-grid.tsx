@@ -88,7 +88,7 @@ export function ProductGrid({
             Create a free account to browse the full curated marketplace.
           </p>
           <div className="flex justify-center gap-3">
-            <Link href="/signup/grandma" className={buttonVariants()}>
+            <Link href="/signup" className={buttonVariants()}>
               Create free account
             </Link>
             <Link href="/login" className={buttonVariants({ variant: 'outline' })}>
