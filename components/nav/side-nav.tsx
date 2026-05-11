@@ -4,6 +4,12 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { signOut } from '@/lib/auth-actions'
+import { buttonVariants } from '@/components/ui/button'
+
+const ANON_NAV_ITEMS = [
+  { label: 'Name Generator', href: '/name-generator' },
+  { label: 'Browse Gifts', href: '/browse-products' },
+]
 
 const BASE_NAV_ITEMS = [
   { label: 'Dashboard', href: '/dashboard' },
@@ -12,19 +18,22 @@ const BASE_NAV_ITEMS = [
 ]
 
 interface SideNavProps {
-  email: string
-  grandmaProfileId: string | null
+  email?: string
+  grandmaProfileId?: string | null
+  isAnon?: boolean
 }
 
-export function SideNav({ email, grandmaProfileId }: SideNavProps) {
+export function SideNav({ email, grandmaProfileId, isAnon }: SideNavProps) {
   const pathname = usePathname()
 
-  const navItems = [
-    ...BASE_NAV_ITEMS,
-    ...(grandmaProfileId
-      ? [{ label: 'My Registry', href: `/registry/${grandmaProfileId}` }]
-      : []),
-  ]
+  const navItems = isAnon
+    ? ANON_NAV_ITEMS
+    : [
+        ...BASE_NAV_ITEMS,
+        ...(grandmaProfileId
+          ? [{ label: 'My Registry', href: `/registry/${grandmaProfileId}` }]
+          : []),
+      ]
 
   const isActive = (href: string) => pathname.startsWith(href)
 
@@ -56,15 +65,28 @@ export function SideNav({ email, grandmaProfileId }: SideNavProps) {
         </div>
 
         <div className="border-t px-5 py-4 space-y-2">
-          <p className="text-xs text-muted-foreground truncate">{email}</p>
-          <form action={signOut}>
-            <button
-              type="submit"
-              className="text-xs text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Sign out
-            </button>
-          </form>
+          {isAnon ? (
+            <div className="flex flex-col gap-2">
+              <Link href="/signup/grandma" className={cn(buttonVariants({ size: 'sm' }), 'w-full justify-center')}>
+                Create account
+              </Link>
+              <Link href="/login" className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'w-full justify-center')}>
+                Sign in
+              </Link>
+            </div>
+          ) : (
+            <>
+              <p className="text-xs text-muted-foreground truncate">{email}</p>
+              <form action={signOut}>
+                <button
+                  type="submit"
+                  className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Sign out
+                </button>
+              </form>
+            </>
+          )}
         </div>
       </nav>
 
@@ -73,7 +95,7 @@ export function SideNav({ email, grandmaProfileId }: SideNavProps) {
         <Link href="/" className="text-sm font-semibold tracking-tight">
           My Grandma Name
         </Link>
-        <nav className="flex items-center gap-4">
+        <nav className="flex items-center gap-3">
           {navItems.map((item) => (
             <Link
               key={item.href}
@@ -88,6 +110,11 @@ export function SideNav({ email, grandmaProfileId }: SideNavProps) {
               {item.label.split(' ')[0]}
             </Link>
           ))}
+          {isAnon && (
+            <Link href="/login" className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'h-7 px-2 text-xs')}>
+              Sign in
+            </Link>
+          )}
         </nav>
       </header>
     </>
