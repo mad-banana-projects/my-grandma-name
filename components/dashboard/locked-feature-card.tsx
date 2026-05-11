@@ -4,7 +4,7 @@ import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
 interface LockedFeatureCardProps {
-  title: string
+  title?: string
   description: string
   upgradeHref?: string
 }
@@ -21,7 +21,7 @@ export function LockedFeatureCard({
           <Lock className="h-4 w-4 text-muted-foreground" />
         </div>
         <div className="flex-1 space-y-1">
-          <p className="text-sm font-semibold">{title}</p>
+          {title && <p className="text-sm font-semibold">{title}</p>}
           <p className="text-sm text-muted-foreground">{description}</p>
         </div>
         <a

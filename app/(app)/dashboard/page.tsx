@@ -147,10 +147,12 @@ export default async function DashboardPage() {
           {isPaid && reminderSettings ? (
             <EmailRemindersCard initial={reminderSettings} />
           ) : (
-            <LockedFeatureCard
-              title="Email Reminders"
-              description="Get reminders before birthdays, holidays, and custom dates — so family never misses a gift opportunity."
-            />
+            <div className="flex flex-col gap-4">
+              <h2 className="text-lg font-semibold">Email Reminders</h2>
+              <LockedFeatureCard
+                description="Get reminders before birthdays, holidays, and custom dates — so family never misses a gift opportunity."
+              />
+            </div>
           )}
 
         </div>
