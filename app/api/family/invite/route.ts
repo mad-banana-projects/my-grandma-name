@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
-import { resend } from '@/lib/resend'
 import { randomUUID } from 'crypto'
 
 export async function POST(request: NextRequest) {
@@ -60,17 +59,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: insertError.message }, { status: 500 })
   }
 
-  // TODO: replace with FamilyInvite React Email template
-  const { error: emailError } = await resend.emails.send({
-    from: 'My Grandma Name <onboarding@resend.dev>',
-    to: email,
-    subject: `You've been invited to ${profile.grandma_name}'s gift registry`,
-    html: `<p>You've been invited! <a href="${inviteUrl}">Accept your invite</a></p>`,
-  })
+  // TODO: send invite email once domain is verified in Resend
+  // For now, return the invite URL so the dashboard can display a copyable link
 
-  if (emailError) {
-    return NextResponse.json({ error: 'Invite created but email failed' }, { status: 500 })
-  }
-
-  return NextResponse.json({ invited: true }, { status: 201 })
+  return NextResponse.json({ invited: true, inviteUrl }, { status: 201 })
 }

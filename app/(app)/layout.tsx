@@ -25,7 +25,28 @@ export default async function AppLayout({
     service.from('grandma_profiles').select('id').eq('user_id', user.id).single(),
   ])
 
-  const isFreeUser = userProfile?.role === 'free'
+  const role = userProfile?.role
+
+  if (role === 'family') {
+    const { data: membership } = await service
+      .from('family_members')
+      .select('grandma_id')
+      .eq('user_id', user.id)
+      .eq('invite_status', 'accepted')
+      .single()
+
+    return (
+      <div className="flex flex-col md:flex-row min-h-screen">
+        <SideNav
+          email={user.email ?? ''}
+          familyRegistryId={membership?.grandma_id ?? null}
+        />
+        <div className="flex-1 min-w-0">{children}</div>
+      </div>
+    )
+  }
+
+  const isFreeUser = role === 'free'
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen">

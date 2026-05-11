@@ -48,7 +48,7 @@ function RemoveButton({ itemId, onRemove }: { itemId: string; onRemove: () => vo
   )
 }
 
-export function RegistryItemList({ initialItems }: { initialItems: RegistryItem[] }) {
+export function RegistryItemList({ initialItems, isOwner = false }: { initialItems: RegistryItem[]; isOwner?: boolean }) {
   const [items, setItems] = useState(initialItems)
 
   function handleRemove(itemId: string) {
@@ -120,7 +120,7 @@ export function RegistryItemList({ initialItems }: { initialItems: RegistryItem[
               >
                 View
               </a>
-              <RemoveButton itemId={item.id} onRemove={() => handleRemove(item.id)} />
+              {isOwner && <RemoveButton itemId={item.id} onRemove={() => handleRemove(item.id)} />}
             </div>
           </div>
         )

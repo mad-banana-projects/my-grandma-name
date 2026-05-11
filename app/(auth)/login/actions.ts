@@ -54,7 +54,13 @@ export async function login(
   if (profile?.role === 'grandma') {
     redirect('/dashboard')
   } else if (profile?.role === 'family') {
-    redirect('/browse-products')
+    const { data: membership } = await supabase
+      .from('family_members')
+      .select('grandma_id')
+      .eq('user_id', data.user.id)
+      .eq('invite_status', 'accepted')
+      .single()
+    redirect(membership ? `/registry/${membership.grandma_id}` : '/browse-products')
   } else {
     redirect('/dashboard')
   }

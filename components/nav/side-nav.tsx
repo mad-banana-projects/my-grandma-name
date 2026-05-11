@@ -22,13 +22,16 @@ interface SideNavProps {
   grandmaProfileId?: string | null
   isAnon?: boolean
   isFreeUser?: boolean
+  familyRegistryId?: string | null
 }
 
-export function SideNav({ email, grandmaProfileId, isAnon, isFreeUser }: SideNavProps) {
+export function SideNav({ email, grandmaProfileId, isAnon, isFreeUser, familyRegistryId }: SideNavProps) {
   const pathname = usePathname()
 
   const navItems = isAnon
     ? ANON_NAV_ITEMS
+    : familyRegistryId
+    ? [{ label: 'My Registry', href: `/registry/${familyRegistryId}` }]
     : [
         ...BASE_NAV_ITEMS,
         ...(grandmaProfileId

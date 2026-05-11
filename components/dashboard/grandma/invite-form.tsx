@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { Check, Copy } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -14,7 +15,8 @@ export function InviteForm({ memberCount }: { memberCount: number }) {
   const [lastName, setLastName] = useState('')
   const [relationship, setRelationship] = useState('')
   const [loading, setLoading] = useState(false)
-  const [success, setSuccess] = useState(false)
+  const [inviteUrl, setInviteUrl] = useState<string | null>(null)
+  const [copied, setCopied] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   if (memberCount >= 10) {
@@ -25,7 +27,6 @@ export function InviteForm({ memberCount }: { memberCount: number }) {
     e.preventDefault()
     setLoading(true)
     setError(null)
-    setSuccess(false)
 
     try {
       const res = await fetch('/api/family/invite', {
@@ -37,20 +38,31 @@ export function InviteForm({ memberCount }: { memberCount: number }) {
       const data = await res.json()
 
       if (!res.ok) {
-        setError(data.error ?? 'Failed to send invite. Please try again.')
+        setError(data.error ?? 'Failed to create invite. Please try again.')
       } else {
-        setSuccess(true)
-        setEmail('')
-        setFirstName('')
-        setLastName('')
-        setRelationship('')
+        setInviteUrl(data.inviteUrl)
         router.refresh()
       }
     } catch {
-      setError('Failed to send invite. Please try again.')
+      setError('Failed to create invite. Please try again.')
     } finally {
       setLoading(false)
     }
+  }
+
+  async function handleCopy() {
+    if (!inviteUrl) return
+    await navigator.clipboard.writeText(inviteUrl)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  function handleInviteAnother() {
+    setInviteUrl(null)
+    setEmail('')
+    setFirstName('')
+    setLastName('')
+    setRelationship('')
   }
 
   return (
@@ -59,62 +71,93 @@ export function InviteForm({ memberCount }: { memberCount: number }) {
         <CardTitle className="text-base">Invite a family member</CardTitle>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid gap-4 sm:grid-cols-2">
+        {inviteUrl ? (
+          <div className="space-y-4">
             <div className="space-y-1.5">
-              <Label htmlFor="invite-first-name">First name</Label>
+              <p className="text-sm font-medium">
+                {firstName ? `${firstName} has been added.` : 'Member added.'} Share this link with them:
+              </p>
+              <div className="flex items-center gap-2">
+                <Input
+                  readOnly
+                  value={inviteUrl}
+                  className="font-mono text-xs text-muted-foreground"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleCopy}
+                  className="shrink-0"
+                >
+                  {copied ? <Check className="h-4 w-4 text-emerald-600" /> : <Copy className="h-4 w-4" />}
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Once they click the link and sign in, they'll have read-only access to your registry.
+              </p>
+            </div>
+            <Button type="button" variant="outline" className="w-full" onClick={handleInviteAnother}>
+              Invite another
+            </Button>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label htmlFor="invite-first-name">First name</Label>
+                <Input
+                  id="invite-first-name"
+                  placeholder="Jane"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="invite-last-name">Last name</Label>
+                <Input
+                  id="invite-last-name"
+                  placeholder="Smith"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="invite-email">
+                Email <span className="text-destructive">*</span>
+              </Label>
               <Input
-                id="invite-first-name"
-                placeholder="Jane"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
+                id="invite-email"
+                type="email"
+                placeholder="jane@example.com"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
+
             <div className="space-y-1.5">
-              <Label htmlFor="invite-last-name">Last name</Label>
+              <Label htmlFor="invite-relationship">
+                Relationship{' '}
+                <span className="font-normal text-muted-foreground">(optional)</span>
+              </Label>
               <Input
-                id="invite-last-name"
-                placeholder="Smith"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
+                id="invite-relationship"
+                placeholder="e.g. Daughter, Son-in-law"
+                value={relationship}
+                onChange={(e) => setRelationship(e.target.value)}
               />
             </div>
-          </div>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="invite-email">
-              Email <span className="text-destructive">*</span>
-            </Label>
-            <Input
-              id="invite-email"
-              type="email"
-              placeholder="jane@example.com"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
+            {error && <p className="text-sm text-destructive">{error}</p>}
 
-          <div className="space-y-1.5">
-            <Label htmlFor="invite-relationship">
-              Relationship{' '}
-              <span className="font-normal text-muted-foreground">(optional)</span>
-            </Label>
-            <Input
-              id="invite-relationship"
-              placeholder="e.g. Daughter, Son-in-law"
-              value={relationship}
-              onChange={(e) => setRelationship(e.target.value)}
-            />
-          </div>
-
-          {error && <p className="text-sm text-destructive">{error}</p>}
-          {success && <p className="text-sm text-emerald-700">Invite sent!</p>}
-
-          <Button type="submit" disabled={loading} className="w-full">
-            {loading ? 'Sending…' : 'Send invite'}
-          </Button>
-        </form>
+            <Button type="submit" disabled={loading} className="w-full">
+              {loading ? 'Creating…' : 'Create invite'}
+            </Button>
+          </form>
+        )}
       </CardContent>
     </Card>
   )

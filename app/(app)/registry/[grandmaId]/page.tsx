@@ -17,11 +17,25 @@ export default async function RegistryPage({
 
   const { data: profile } = await service
     .from('grandma_profiles')
-    .select('grandma_name, first_name, last_name')
+    .select('grandma_name, first_name, user_id')
     .eq('id', grandmaId)
     .single()
 
   if (!profile) redirect('/dashboard')
+
+  const isOwner = profile.user_id === user.id
+
+  if (!isOwner) {
+    const { data: membership } = await service
+      .from('family_members')
+      .select('id')
+      .eq('grandma_id', grandmaId)
+      .eq('user_id', user.id)
+      .eq('invite_status', 'accepted')
+      .single()
+
+    if (!membership) redirect('/dashboard')
+  }
 
   const { data: items } = await service
     .from('registry_items')
@@ -50,9 +64,9 @@ export default async function RegistryPage({
     <main className="bg-background px-4 py-12">
       <div className="mx-auto max-w-3xl space-y-8">
         <h1 className="text-3xl font-semibold tracking-tight">
-          {displayName}'s Registry
+          {displayName}&apos;s Registry
         </h1>
-        <RegistryItemList initialItems={savedItems} />
+        <RegistryItemList initialItems={savedItems} isOwner={isOwner} />
       </div>
     </main>
   )
