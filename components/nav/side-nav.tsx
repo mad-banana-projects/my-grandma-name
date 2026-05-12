@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { signOut } from '@/lib/auth-actions'
@@ -46,10 +47,17 @@ export function SideNav({ email, grandmaProfileId, isAnon, isFreeUser, familyReg
   return (
     <>
       {/* Desktop sidebar */}
-      <nav className="hidden md:flex flex-col w-56 shrink-0 border-r bg-background sticky top-0 h-screen">
-        <div className="px-5 py-5 border-b">
-          <Link href="/" className="text-sm font-semibold tracking-tight">
-            My Grandma Name
+      <nav className="hidden md:flex flex-col w-56 shrink-0 border-r border-border bg-muted sticky top-0 h-screen">
+        <div className="px-5 py-5 border-b border-border">
+          <Link href="/">
+            <Image
+              src="/images/wording/white-black-logo-with-wording.png"
+              alt="My Grandma Name"
+              width={176}
+              height={24}
+              className="h-6 w-auto"
+              priority
+            />
           </Link>
         </div>
 
@@ -59,10 +67,10 @@ export function SideNav({ email, grandmaProfileId, isAnon, isFreeUser, familyReg
               key={item.href}
               href={item.href}
               className={cn(
-                'flex items-center rounded-md px-3 py-2 text-sm transition-colors',
+                'flex items-center rounded-lg px-3 py-2 text-sm transition-colors',
                 isActive(item.href)
-                  ? 'bg-accent text-accent-foreground font-medium'
-                  : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                  ? 'bg-primary/20 text-foreground font-medium'
+                  : 'text-muted-foreground hover:bg-primary/10 hover:text-foreground'
               )}
             >
               {item.label}
@@ -70,7 +78,7 @@ export function SideNav({ email, grandmaProfileId, isAnon, isFreeUser, familyReg
           ))}
         </div>
 
-        <div className="border-t px-5 py-4 space-y-2">
+        <div className="border-t border-border px-5 py-4 space-y-2">
           {isAnon ? (
             <div className="flex flex-col gap-2">
               <Link href="/signup" className={cn(buttonVariants({ size: 'sm' }), 'w-full justify-center')}>
@@ -97,9 +105,16 @@ export function SideNav({ email, grandmaProfileId, isAnon, isFreeUser, familyReg
       </nav>
 
       {/* Mobile top bar */}
-      <header className="flex md:hidden items-center justify-between px-4 py-3 border-b bg-background sticky top-0 z-10">
-        <Link href="/" className="text-sm font-semibold tracking-tight">
-          My Grandma Name
+      <header className="flex md:hidden items-center justify-between px-4 py-3 border-b border-border bg-muted sticky top-0 z-10">
+        <Link href="/">
+          <Image
+            src="/images/wording/white-black-logo-with-wording.png"
+            alt="My Grandma Name"
+            width={140}
+            height={19}
+            className="h-[19px] w-auto"
+            priority
+          />
         </Link>
         <nav className="flex items-center gap-3">
           {navItems.map((item) => (
