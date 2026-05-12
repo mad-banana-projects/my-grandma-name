@@ -45,7 +45,7 @@ export default function LandingPage() {
     <main className="min-h-screen bg-background">
 
       {/* Hero — gradient wrapper contains header + hero content */}
-      <div className="bg-[linear-gradient(to_bottom,#f2eaec_15%,#dcb6c9_100%)]">
+      <div className="bg-[linear-gradient(to_bottom,#dcb6c9_0%,#ffffff_85%)]">
 
         {/* Header */}
         <header className="mx-auto flex max-w-5xl items-center justify-between px-4 pt-6 pb-2">
@@ -148,7 +148,7 @@ export default function LandingPage() {
       </section>
 
       {/* CTA footer */}
-      <section className="py-20 bg-[linear-gradient(to_bottom,#f2eaec_0%,#dcb6c9_100%)]">
+      <section className="py-20 bg-[linear-gradient(to_bottom,#dcb6c9_0%,#f2eaec_100%)]">
         <div className="mx-auto max-w-5xl px-4 text-center space-y-6">
           <h2 className="font-heading text-3xl font-light tracking-tight">
             Ready to get started?
