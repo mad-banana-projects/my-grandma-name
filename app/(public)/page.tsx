@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { HeroGenerator } from '@/components/name-generator/hero-generator'
+import { LandingNav } from '@/components/nav/landing-nav'
 
 const ANON_COOKIE = 'anon_gen_count'
 const ANON_LIMIT = 2
@@ -50,22 +51,6 @@ const FEATURES = [
   },
 ]
 
-function YouTubeIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className="size-5" aria-hidden>
-      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
-    </svg>
-  )
-}
-
-function TikTokIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className="size-5" aria-hidden>
-      <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.26 8.26 0 0 0 4.84 1.56V6.79a4.85 4.85 0 0 1-1.07-.1z" />
-    </svg>
-  )
-}
-
 export default async function LandingPage() {
   const cookieStore = await cookies()
   const anonCount = parseInt(cookieStore.get(ANON_COOKIE)?.value ?? '0', 10)
@@ -74,48 +59,7 @@ export default async function LandingPage() {
   return (
     <main className="min-h-screen bg-background">
 
-      {/* Top nav bar — fixed, always visible */}
-      <nav className="fixed left-0 right-0 top-0 z-50 flex w-full items-center justify-between bg-[#dcb6c9] px-6 py-4">
-        <Link href="/">
-          <Image
-            src="/images/wording/white-logo-with-wording.png"
-            alt="My Grandma Name"
-            width={168}
-            height={36}
-            className="h-9 w-auto"
-            priority
-          />
-        </Link>
-        <div className="flex items-center gap-6">
-          <Link href="/login" className="text-sm text-white/90 transition-colors hover:text-white">
-            Log in
-          </Link>
-          <Link href="#" className="text-sm text-white/90 transition-colors hover:text-white">
-            About
-          </Link>
-          <Link href="#" className="text-sm text-white/90 transition-colors hover:text-white">
-            Grandma Tips
-          </Link>
-          <a
-            href="https://www.youtube.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="YouTube"
-            className="flex size-8 items-center justify-center rounded-full bg-white/20 text-white transition-colors hover:bg-white/30"
-          >
-            <YouTubeIcon />
-          </a>
-          <a
-            href="https://www.tiktok.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="TikTok"
-            className="flex size-8 items-center justify-center rounded-full bg-white/20 text-white transition-colors hover:bg-white/30"
-          >
-            <TikTokIcon />
-          </a>
-        </div>
-      </nav>
+      <LandingNav />
 
       {/* Hero — gradient wrapper, offset by nav height (68px) */}
       <div className="bg-[linear-gradient(to_bottom,#dcb6c9_0%,#ffffff_85%)] pt-[68px]">
@@ -208,6 +152,76 @@ export default async function LandingPage() {
                 <p className="text-sm leading-relaxed text-muted-foreground">{description}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* What is a Grandma Name */}
+      <section className="bg-white py-20">
+        <div className="mx-auto max-w-5xl px-4">
+
+          {/* Logo + heading */}
+          <div className="mb-12 flex flex-col items-center gap-4 text-center">
+            <Image
+              src="/images/wording/purple-logo-with-words.png"
+              alt="My Grandma Name"
+              width={80}
+              height={80}
+              className="h-20 w-auto"
+            />
+            <h2 className="font-heading text-4xl font-light tracking-tight">
+              What <em>is</em> a Grandma Name?
+            </h2>
+            <p className="text-sm tracking-widest text-muted-foreground">
+              - It&apos;s more than what they call you -
+            </p>
+          </div>
+
+          {/* Two-column body */}
+          <div className="grid gap-10 text-sm leading-relaxed text-foreground/80 sm:grid-cols-2 sm:gap-16">
+            <div className="space-y-4">
+              <p>
+                A grandma name is the name your family comes to know you by, the one that shows up in memories, traditions, and the everyday moments that matter most.
+              </p>
+              <p>
+                For some, it&apos;s something they&apos;ve always known.<br />
+                For others, it&apos;s something that evolves naturally over time.
+              </p>
+              <p>But when it feels right, it sticks.</p>
+              <p>
+                It becomes part of how you&apos;re remembered – in the little voices calling for you, in handwritten cards, and in the way your role takes shape within your family.
+              </p>
+            </div>
+            <div className="space-y-4">
+              <p>
+                Whether you choose something timeless, playful, or entirely your own, your <em>grandma</em> name becomes a small but meaningful part of your identity, and a thread that carries through every gift, every visit, and every celebration.
+              </p>
+              <p>
+                This platform is built to support that. To help you find it, define it, and carry it forward in thoughtful ways.
+              </p>
+              <p>
+                <Link
+                  href="/about"
+                  className="text-muted-foreground underline underline-offset-4 hover:text-foreground transition-colors"
+                >
+                  Learn more about My Grandma Name &gt;&gt;
+                </Link>
+              </p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* Founder quote */}
+      <section className="bg-[#618985] py-16">
+        <div className="mx-auto max-w-3xl px-8 text-center">
+          <blockquote className="font-heading text-3xl font-light leading-snug text-white sm:text-4xl">
+            &ldquo;Your <em>grandma</em>{' '}name is more than a title. It&apos;s a connection to your loved ones.&rdquo;
+          </blockquote>
+          <div className="mt-6 flex items-center justify-end gap-3">
+            <span className="h-px w-10 bg-white/60" />
+            <cite className="not-italic text-sm text-white/80">Crya, founder</cite>
           </div>
         </div>
       </section>
