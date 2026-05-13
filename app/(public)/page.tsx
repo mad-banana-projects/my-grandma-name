@@ -1,7 +1,12 @@
+import { cookies } from 'next/headers'
 import Link from 'next/link'
 import Image from 'next/image'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { HeroGenerator } from '@/components/name-generator/hero-generator'
+
+const ANON_COOKIE = 'anon_gen_count'
+const ANON_LIMIT = 2
 
 const GRANDMA_NAMES = [
   'Berry', 'Crya', 'Lola', 'Yaya', 'Memaw', 'Lolli', 'KiKi', 'Gemma',
@@ -61,7 +66,11 @@ function TikTokIcon() {
   )
 }
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const cookieStore = await cookies()
+  const anonCount = parseInt(cookieStore.get(ANON_COOKIE)?.value ?? '0', 10)
+  const anonUsesRemaining = Math.max(0, ANON_LIMIT - anonCount)
+
   return (
     <main className="min-h-screen bg-background">
 
@@ -81,16 +90,13 @@ export default function LandingPage() {
             />
           </Link>
           <div className="flex items-center gap-6">
-            <Link
-              href="#"
-              className="text-sm text-white/90 transition-colors hover:text-white"
-            >
+            <Link href="/login" className="text-sm text-white/90 transition-colors hover:text-white">
+              Log in
+            </Link>
+            <Link href="#" className="text-sm text-white/90 transition-colors hover:text-white">
               About
             </Link>
-            <Link
-              href="#"
-              className="text-sm text-white/90 transition-colors hover:text-white"
-            >
+            <Link href="#" className="text-sm text-white/90 transition-colors hover:text-white">
               Grandma Tips
             </Link>
             <a
@@ -115,47 +121,26 @@ export default function LandingPage() {
         </nav>
 
         {/* Hero content */}
-        <section className="mx-auto max-w-5xl px-4 pt-10 pb-20 text-center">
-          <div className="mx-auto mb-10 flex justify-center">
-            <Image
-              src="/images/logo/white-pink-logo.png"
-              alt=""
-              aria-hidden
-              width={120}
-              height={144}
-              className="h-28 w-auto opacity-90"
-            />
-          </div>
-          <h1 className="font-heading mx-auto max-w-2xl text-5xl font-light tracking-tight sm:text-6xl">
+        <section className="pb-20 pt-8 text-center">
+          <h1 className="font-heading mx-auto px-4 text-5xl font-light tracking-tight lg:whitespace-nowrap sm:text-6xl">
             Find Your Unique Grandma Name
           </h1>
-          <p className="font-heading mx-auto mt-4 max-w-2xl text-xl font-light italic text-foreground/80 sm:text-2xl">
+          <p className="font-heading mx-auto mt-4 px-4 text-lg font-light italic text-foreground/80 lg:whitespace-nowrap sm:text-xl">
             A name that feels like you: thoughtful, personal, and just right for the role you&apos;re stepping into
           </p>
-          <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
+
+          {/* Embedded generator */}
+          <div className="mt-8">
+            <HeroGenerator anonUsesRemaining={anonUsesRemaining} />
+          </div>
+
+          {/* Secondary CTAs */}
+          <div className="mt-10 flex flex-col items-center justify-center gap-3 px-4 sm:flex-row">
             <Link
               href="/signup"
               className={cn(buttonVariants({ size: 'lg' }), 'w-full sm:w-auto')}
             >
               Create free account
-            </Link>
-            <Link
-              href="/login"
-              className={cn(
-                buttonVariants({ size: 'lg', variant: 'outline' }),
-                'w-full sm:w-auto border-foreground/30 text-foreground/80 hover:bg-foreground/10 hover:text-foreground'
-              )}
-            >
-              Log in
-            </Link>
-            <Link
-              href="/name-generator"
-              className={cn(
-                buttonVariants({ size: 'lg', variant: 'outline' }),
-                'w-full sm:w-auto border-foreground/30 text-foreground/80 hover:bg-foreground/10 hover:text-foreground'
-              )}
-            >
-              Try name generator
             </Link>
             <Link
               href="/browse-products"
