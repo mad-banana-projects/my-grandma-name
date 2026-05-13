@@ -21,20 +21,21 @@ function TikTokIcon() {
   )
 }
 
-export function LandingNav() {
+export function LandingNav({ alwaysSolid = false }: { alwaysSolid?: boolean }) {
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
+    if (alwaysSolid) return
     const onScroll = () => setScrolled(window.scrollY > 10)
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
-  }, [])
+  }, [alwaysSolid])
 
   return (
     <nav
       className={cn(
         'fixed left-0 right-0 top-0 z-50 flex w-full items-center justify-between px-6 py-4 transition-colors duration-300',
-        scrolled ? 'bg-[#dcb6c9]' : 'bg-transparent'
+        alwaysSolid || scrolled ? 'bg-[#dcb6c9]' : 'bg-transparent'
       )}
     >
       <Link href="/">
@@ -51,10 +52,10 @@ export function LandingNav() {
         <Link href="/login" className="text-sm text-white/90 transition-colors hover:text-white">
           Log in
         </Link>
-        <Link href="#" className="text-sm text-white/90 transition-colors hover:text-white">
+        <Link href="/about" className="text-sm text-white/90 transition-colors hover:text-white">
           About
         </Link>
-        <Link href="#" className="text-sm text-white/90 transition-colors hover:text-white">
+        <Link href="/grandma-tips" className="text-sm text-white/90 transition-colors hover:text-white">
           Grandma Tips
         </Link>
         <a
