@@ -40,15 +40,31 @@ const FEATURES = [
   },
 ]
 
+function YouTubeIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className="size-5" aria-hidden>
+      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+    </svg>
+  )
+}
+
+function TikTokIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className="size-5" aria-hidden>
+      <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.26 8.26 0 0 0 4.84 1.56V6.79a4.85 4.85 0 0 1-1.07-.1z" />
+    </svg>
+  )
+}
+
 export default function LandingPage() {
   return (
     <main className="min-h-screen bg-background">
 
-      {/* Hero — gradient wrapper contains header + hero content */}
+      {/* Hero — gradient wrapper contains nav + hero content */}
       <div className="bg-[linear-gradient(to_bottom,#dcb6c9_0%,#ffffff_85%)]">
 
-        {/* Header */}
-        <header className="mx-auto flex max-w-5xl items-center justify-between px-4 pt-6 pb-2">
+        {/* Top nav bar — transparent, scrolls with page */}
+        <nav className="flex w-full items-center justify-between px-6 py-4">
           <Link href="/">
             <Image
               src="/images/wording/white-logo-with-wording.png"
@@ -59,18 +75,42 @@ export default function LandingPage() {
               priority
             />
           </Link>
-          <nav className="flex items-center gap-2">
-            <Link href="/login" className={buttonVariants({ variant: 'ghost', size: 'sm' })}>
-              Log in
+          <div className="flex items-center gap-6">
+            <Link
+              href="#"
+              className="text-sm text-foreground/80 transition-colors hover:text-foreground"
+            >
+              About
             </Link>
-            <Link href="/signup" className={buttonVariants({ size: 'sm' })}>
-              Get started
+            <Link
+              href="#"
+              className="text-sm text-foreground/80 transition-colors hover:text-foreground"
+            >
+              Grandma Tips
             </Link>
-          </nav>
-        </header>
+            <a
+              href="https://www.youtube.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="YouTube"
+              className="flex size-8 items-center justify-center rounded-full bg-foreground/10 text-foreground/80 transition-colors hover:bg-foreground/20 hover:text-foreground"
+            >
+              <YouTubeIcon />
+            </a>
+            <a
+              href="https://www.tiktok.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="TikTok"
+              className="flex size-8 items-center justify-center rounded-full bg-foreground/10 text-foreground/80 transition-colors hover:bg-foreground/20 hover:text-foreground"
+            >
+              <TikTokIcon />
+            </a>
+          </div>
+        </nav>
 
         {/* Hero content */}
-        <section className="mx-auto max-w-5xl px-4 pt-12 pb-20 text-center">
+        <section className="mx-auto max-w-5xl px-4 pt-10 pb-20 text-center">
           <div className="mx-auto mb-10 flex justify-center">
             <Image
               src="/images/logo/white-pink-logo.png"
@@ -95,6 +135,15 @@ export default function LandingPage() {
               Create free account
             </Link>
             <Link
+              href="/login"
+              className={cn(
+                buttonVariants({ size: 'lg', variant: 'outline' }),
+                'w-full sm:w-auto border-foreground/30 text-foreground/80 hover:bg-foreground/10 hover:text-foreground'
+              )}
+            >
+              Log in
+            </Link>
+            <Link
               href="/name-generator"
               className={cn(
                 buttonVariants({ size: 'lg', variant: 'outline' }),
@@ -102,6 +151,15 @@ export default function LandingPage() {
               )}
             >
               Try name generator
+            </Link>
+            <Link
+              href="/browse-products"
+              className={cn(
+                buttonVariants({ size: 'lg', variant: 'outline' }),
+                'w-full sm:w-auto border-foreground/30 text-foreground/80 hover:bg-foreground/10 hover:text-foreground'
+              )}
+            >
+              Browse gifts
             </Link>
           </div>
         </section>
