@@ -74,51 +74,51 @@ export default async function LandingPage() {
   return (
     <main className="min-h-screen bg-background">
 
-      {/* Hero — gradient wrapper contains nav + hero content */}
-      <div className="bg-[linear-gradient(to_bottom,#dcb6c9_0%,#ffffff_85%)]">
-
-        {/* Top nav bar — transparent, scrolls with page */}
-        <nav className="flex w-full items-center justify-between px-6 py-4">
-          <Link href="/">
-            <Image
-              src="/images/wording/white-logo-with-wording.png"
-              alt="My Grandma Name"
-              width={168}
-              height={36}
-              className="h-9 w-auto"
-              priority
-            />
+      {/* Top nav bar — fixed, always visible */}
+      <nav className="fixed left-0 right-0 top-0 z-50 flex w-full items-center justify-between bg-[#dcb6c9] px-6 py-4">
+        <Link href="/">
+          <Image
+            src="/images/wording/white-logo-with-wording.png"
+            alt="My Grandma Name"
+            width={168}
+            height={36}
+            className="h-9 w-auto"
+            priority
+          />
+        </Link>
+        <div className="flex items-center gap-6">
+          <Link href="/login" className="text-sm text-white/90 transition-colors hover:text-white">
+            Log in
           </Link>
-          <div className="flex items-center gap-6">
-            <Link href="/login" className="text-sm text-white/90 transition-colors hover:text-white">
-              Log in
-            </Link>
-            <Link href="#" className="text-sm text-white/90 transition-colors hover:text-white">
-              About
-            </Link>
-            <Link href="#" className="text-sm text-white/90 transition-colors hover:text-white">
-              Grandma Tips
-            </Link>
-            <a
-              href="https://www.youtube.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="YouTube"
-              className="flex size-8 items-center justify-center rounded-full bg-white/20 text-white transition-colors hover:bg-white/30"
-            >
-              <YouTubeIcon />
-            </a>
-            <a
-              href="https://www.tiktok.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="TikTok"
-              className="flex size-8 items-center justify-center rounded-full bg-white/20 text-white transition-colors hover:bg-white/30"
-            >
-              <TikTokIcon />
-            </a>
-          </div>
-        </nav>
+          <Link href="#" className="text-sm text-white/90 transition-colors hover:text-white">
+            About
+          </Link>
+          <Link href="#" className="text-sm text-white/90 transition-colors hover:text-white">
+            Grandma Tips
+          </Link>
+          <a
+            href="https://www.youtube.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="YouTube"
+            className="flex size-8 items-center justify-center rounded-full bg-white/20 text-white transition-colors hover:bg-white/30"
+          >
+            <YouTubeIcon />
+          </a>
+          <a
+            href="https://www.tiktok.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="TikTok"
+            className="flex size-8 items-center justify-center rounded-full bg-white/20 text-white transition-colors hover:bg-white/30"
+          >
+            <TikTokIcon />
+          </a>
+        </div>
+      </nav>
+
+      {/* Hero — gradient wrapper, offset by nav height (68px) */}
+      <div className="bg-[linear-gradient(to_bottom,#dcb6c9_0%,#ffffff_85%)] pt-[68px]">
 
         {/* Hero content */}
         <section className="pb-20 pt-8 text-center">

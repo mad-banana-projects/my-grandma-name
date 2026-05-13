@@ -36,10 +36,12 @@ export default async function NameGeneratorPage() {
   return (
     <main className="bg-background px-4 py-12">
       <div className="mx-auto max-w-2xl space-y-8">
-        <div className="space-y-2">
-          <h1 className="text-3xl font-semibold tracking-tight">Find your grandma name</h1>
-          <p className="text-muted-foreground">
-            Answer a few quick questions and we'll find the perfect name for your grandchildren to call you.
+        <div className="space-y-3">
+          <h1 className="font-heading text-4xl font-light tracking-tight sm:text-5xl">
+            Find Your Unique Grandma Name
+          </h1>
+          <p className="font-heading text-lg font-light italic text-foreground/70 sm:text-xl">
+            A name that feels like you: thoughtful, personal, and just right for the role you&apos;re stepping into
           </p>
         </div>
         <GeneratorForm

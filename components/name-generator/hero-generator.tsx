@@ -176,36 +176,43 @@ export function HeroGenerator({ anonUsesRemaining }: { anonUsesRemaining: number
             <p className="text-center text-sm text-destructive">{error}</p>
           )}
         </form>
-      </div>
 
-      {/* Results — shown below the card */}
-      {result && (
-        <div className="mt-10 space-y-4 text-center">
-          <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
-            Your grandma name is
-          </p>
-          <h2 className="font-heading text-6xl font-light tracking-tight">
-            {result.winner.name}
-          </h2>
-          <p className="text-base text-muted-foreground">
-            Runner-up:{' '}
-            <span className="font-heading text-2xl font-light italic text-foreground">
-              {result.runnerUp.name}
-            </span>
-          </p>
-          <p className="mx-auto max-w-md text-sm leading-relaxed text-muted-foreground">
-            {result.explanation}
-          </p>
-          <div className="flex flex-col items-center justify-center gap-3 pt-2 sm:flex-row">
-            <Button variant="outline" onClick={() => setResult(null)}>
-              Try again
-            </Button>
-            <Link href="/signup" className={cn(buttonVariants())}>
-              Subscribe to save it
-            </Link>
+        {/* Results — inside the card, below the form */}
+        {result && (
+          <div className="mt-8 border-t border-border pt-8">
+            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 sm:items-center">
+              {/* Col 1: name + runner-up */}
+              <div className="space-y-3 text-center sm:text-left">
+                <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
+                  Your grandma name is
+                </p>
+                <h2 className="font-heading text-6xl font-light tracking-tight">
+                  {result.winner.name}
+                </h2>
+                <p className="text-base text-muted-foreground">
+                  Runner-up:{' '}
+                  <span className="font-heading text-2xl font-light italic text-foreground">
+                    {result.runnerUp.name}
+                  </span>
+                </p>
+              </div>
+              {/* Col 2: explanation */}
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                {result.explanation}
+              </p>
+            </div>
+            <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
+              <Button variant="outline" onClick={() => setResult(null)}>
+                Try again
+              </Button>
+              <Link href="/signup" className={cn(buttonVariants())}>
+                Subscribe to save it
+              </Link>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+
+      </div>
 
     </div>
   )
