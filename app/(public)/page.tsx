@@ -3,6 +3,11 @@ import Image from 'next/image'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
+const GRANDMA_NAMES = [
+  'Berry', 'Crya', 'Lola', 'Yaya', 'Memaw', 'Lolli', 'KiKi', 'Gemma',
+  'Mimi', 'Gigi', 'Lolla', 'Candy Gram', 'ChaCha', 'Granny', 'Nana', 'Glamma',
+]
+
 const HOW_IT_WORKS = [
   {
     step: '1',
@@ -78,13 +83,13 @@ export default function LandingPage() {
           <div className="flex items-center gap-6">
             <Link
               href="#"
-              className="text-sm text-foreground/80 transition-colors hover:text-foreground"
+              className="text-sm text-white/90 transition-colors hover:text-white"
             >
               About
             </Link>
             <Link
               href="#"
-              className="text-sm text-foreground/80 transition-colors hover:text-foreground"
+              className="text-sm text-white/90 transition-colors hover:text-white"
             >
               Grandma Tips
             </Link>
@@ -93,7 +98,7 @@ export default function LandingPage() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="YouTube"
-              className="flex size-8 items-center justify-center rounded-full bg-foreground/10 text-foreground/80 transition-colors hover:bg-foreground/20 hover:text-foreground"
+              className="flex size-8 items-center justify-center rounded-full bg-white/20 text-white transition-colors hover:bg-white/30"
             >
               <YouTubeIcon />
             </a>
@@ -102,7 +107,7 @@ export default function LandingPage() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="TikTok"
-              className="flex size-8 items-center justify-center rounded-full bg-foreground/10 text-foreground/80 transition-colors hover:bg-foreground/20 hover:text-foreground"
+              className="flex size-8 items-center justify-center rounded-full bg-white/20 text-white transition-colors hover:bg-white/30"
             >
               <TikTokIcon />
             </a>
@@ -163,6 +168,23 @@ export default function LandingPage() {
             </Link>
           </div>
         </section>
+      </div>
+
+      {/* Scrolling grandma names */}
+      <div className="overflow-hidden py-10">
+        <div
+          className="flex whitespace-nowrap"
+          style={{ animation: 'marquee 40s linear infinite' }}
+        >
+          {[...GRANDMA_NAMES, ...GRANDMA_NAMES].map((name, i) => (
+            <span
+              key={i}
+              className="font-heading px-10 text-3xl italic text-foreground"
+            >
+              {name}
+            </span>
+          ))}
+        </div>
       </div>
 
       {/* How it works */}
