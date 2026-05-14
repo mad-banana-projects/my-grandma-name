@@ -226,6 +226,55 @@ export default async function LandingPage() {
         </div>
       </section>
 
+      {/* Background image section */}
+      <section className="relative overflow-hidden py-64 text-center">
+        <Image
+          src="/images/home-page/home-page-section-pic.jpg"
+          alt=""
+          fill
+          className="object-cover object-top"
+          aria-hidden
+        />
+        <div className="absolute inset-0 bg-white/55" />
+        <div className="relative z-10 mx-auto max-w-3xl px-6">
+          <h2 className="font-heading text-4xl font-light tracking-tight sm:text-5xl">
+            Where a name becomes part of something bigger
+          </h2>
+          <p className="font-heading mt-4 text-lg font-light italic text-foreground/80">
+            Thoughtful gifting, reminders, and meaningful moments, all built around you.
+          </p>
+        </div>
+      </section>
+
+      {/* About section */}
+      <section className="bg-[linear-gradient(135deg,#f5eef2_0%,#faf7f8_50%,#f0edf5_100%)] py-24">
+        <div className="mx-auto max-w-2xl px-8">
+          <Image
+            src="/images/wording/white-black-logo-with-wording.png"
+            alt="My Grandma Name"
+            width={320}
+            height={80}
+            className="h-16 w-auto"
+          />
+          <div className="mt-8 space-y-4 text-sm leading-relaxed text-foreground/80">
+            <p>
+              My Grandma Name is being built to make gifting feel thoughtful again — with curated ideas, gentle reminders, and personalized touches that reflect who you are and how your family knows you.
+            </p>
+            <p>
+              Everything is centered around your grandma name, so every gift, every moment, and every memory feels a little more intentional.
+            </p>
+          </div>
+          <div className="mt-8">
+            <Link
+              href="/about"
+              className={cn(buttonVariants({ size: 'lg', variant: 'outline' }), 'border-foreground/30 text-foreground/80 hover:bg-foreground/10 hover:text-foreground')}
+            >
+              About My Grandma Name
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* CTA footer */}
       <section className="py-20 bg-[linear-gradient(to_bottom,#dcb6c9_0%,#f2eaec_100%)]">
         <div className="mx-auto max-w-5xl px-4 text-center space-y-6">
