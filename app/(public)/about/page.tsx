@@ -12,8 +12,8 @@ export default function AboutPage() {
         {/* Left: photo — full image, no crop */}
         <div className="w-full sm:w-1/2">
           <Image
-            src="/images/about-page/about-page.jpg"
-            alt="Two women smiling together"
+            src="/images/about-page/grandmother-with-grandkid.jpg"
+            alt="Grandmother with grandchild"
             width={821}
             height={583}
             className="h-auto w-full"
@@ -96,15 +96,24 @@ export default function AboutPage() {
       </section>
 
       {/* Personal, Thoughtful, and Entirely Yours */}
-      <section className="bg-[#353330] px-8 py-20 sm:py-28">
-        <div className="mx-auto grid max-w-5xl gap-12 sm:grid-cols-2 sm:items-center">
+      <section className="relative overflow-hidden px-8 py-20 sm:py-28">
+        <Image
+          src="/images/about-page/grandmother-running.jpg"
+          alt=""
+          fill
+          className="object-cover object-center"
+          aria-hidden
+        />
+        <div className="absolute inset-0 bg-black/50" />
+        <div className="relative z-10 mx-auto grid max-w-5xl gap-12 sm:grid-cols-2 sm:items-center">
           <h2 className="font-heading text-4xl font-light leading-tight text-white sm:text-5xl">
             Personal,<br />
             Thoughtful, and<br />
             Entirely Yours
           </h2>
           <p className="text-base leading-relaxed text-white/80 sm:text-right">
-            From the name they call you to the way you&apos;re celebrated, every detail should feel like it fits.
+            From the name they call you to the way you&apos;re celebrated,<br />
+            every detail should feel like it fits.
           </p>
         </div>
       </section>
@@ -160,6 +169,106 @@ export default function AboutPage() {
             <span className="h-px w-10 bg-white/60" />
             <cite className="not-italic text-sm text-white/80">Crya, founder</cite>
           </div>
+        </div>
+      </section>
+
+      {/* Closing about section */}
+      <section className="bg-[linear-gradient(135deg,#f5eef2_0%,#faf7f8_50%,#f0edf5_100%)] py-24">
+        <div className="mx-auto max-w-2xl px-8">
+          <Image
+            src="/images/wording/white-black-logo-with-wording.png"
+            alt="My Grandma Name"
+            width={320}
+            height={80}
+            className="h-16 w-auto"
+          />
+          <div className="mt-8 space-y-4 text-sm leading-relaxed text-foreground/80">
+            <p>
+              My Grandma Name is being built to make gifting feel thoughtful again — with curated ideas, gentle reminders, and personalized touches that reflect who you are and how your family knows you.
+            </p>
+            <p>
+              Everything is centered around your grandma name, so every gift, every moment, and every memory feels a little more intentional.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* 3-photo grid + quote */}
+      <section className="bg-white">
+
+        {/* Images */}
+        <div className="grid grid-cols-3 gap-2">
+          <div className="relative aspect-[4/3]">
+            <Image
+              src="/images/about-page/grandmother-with-family-gifting.jpg"
+              alt="Grandmother receiving a gift from family"
+              fill
+              className="object-cover object-top"
+            />
+          </div>
+          <div className="relative aspect-[4/3]">
+            <Image
+              src="/images/about-page/grandmother-with-family-hugging.jpg"
+              alt="Grandmother hugging family member"
+              fill
+              className="object-cover object-center"
+            />
+          </div>
+          <div className="relative aspect-[4/3]">
+            <Image
+              src="/images/about-page/grandmother-with-family-cooking.jpg"
+              alt="Grandmother cooking with family"
+              fill
+              className="object-cover object-center"
+            />
+          </div>
+        </div>
+
+        {/* Quote */}
+        <div className="mx-auto w-[80%] py-16 text-center">
+          <blockquote className="font-heading text-3xl font-light leading-snug text-foreground sm:text-4xl">
+            &ldquo;It becomes part of how you&apos;re remembered &ndash; in the little voices calling for you, in handwritten cards, and in the way your role takes shape within your family.&rdquo;
+          </blockquote>
+          <div className="mt-6 flex items-center justify-end gap-3">
+            <span className="h-px w-10 bg-foreground/40" />
+            <cite className="not-italic text-sm text-foreground/60">Crya, founder</cite>
+          </div>
+        </div>
+
+      </section>
+
+      {/* Fixed parallax background section */}
+      <section
+        className="bg-fixed bg-cover bg-center py-24"
+        style={{ backgroundImage: "url('/images/about-page/grandmother-with-family.jpg')" }}
+      >
+        <div className="mx-auto max-w-4xl rounded-2xl bg-white px-12 py-14 shadow-[0_4px_40px_rgba(53,51,48,0.15)]">
+
+          {/* Heading */}
+          <h2 className="font-heading text-center text-4xl font-light tracking-tight sm:text-5xl">
+            <em>Why</em> we started this platform
+          </h2>
+          <p className="mt-3 text-center text-sm tracking-widest text-muted-foreground">
+            - About Us -
+          </p>
+
+          {/* 2-col body */}
+          <div className="mt-10 grid gap-10 text-sm leading-relaxed text-foreground/80 sm:grid-cols-2 sm:gap-16">
+            <div className="space-y-4">
+              <p>A grandma name is the name your family comes to know you by, the one that shows up in memories, traditions, and the everyday moments that matter most.</p>
+              <p>
+                For some, it&apos;s something they&apos;ve always known.<br />
+                For others, it&apos;s something that evolves naturally over time.
+              </p>
+              <p>But when it feels right, it sticks.</p>
+              <p>It becomes part of how you&apos;re remembered &ndash; in the little voices calling for you, in handwritten cards, and in the way your role takes shape within your family.</p>
+            </div>
+            <div className="space-y-4">
+              <p>Whether you choose something timeless, playful, or entirely your own, your <em>grandma</em> name becomes a small but meaningful part of your identity, and a thread that carries through every gift, every visit, and every celebration.</p>
+              <p>This platform is built to support that. To help you find it, define it, and carry it forward in thoughtful ways.</p>
+            </div>
+          </div>
+
         </div>
       </section>
     </>
