@@ -37,7 +37,17 @@ export async function POST(request: NextRequest) {
     case 'customer.subscription.created':
     case 'customer.subscription.updated': {
       const sub = event.data.object as Stripe.Subscription
-      const userId = sub.metadata?.user_id
+      let userId = sub.metadata?.user_id
+
+      // Fallback: look up user by stripe_customer_id if metadata is missing
+      if (!userId && sub.customer) {
+        const { data: userRow } = await supabase
+          .from('users')
+          .select('id')
+          .eq('stripe_customer_id', sub.customer as string)
+          .single()
+        userId = userRow?.id
+      }
 
       if (!userId) break
 
@@ -45,6 +55,8 @@ export async function POST(request: NextRequest) {
       // Treat trialing as active for feature access
       const isActive = sub.status === 'active' || sub.status === 'trialing'
       const subscriptionStatus = isActive ? 'active' : sub.status
+
+      const periodEnd = sub.items.data[0]?.current_period_end ?? (sub as any).current_period_end
 
       await supabase.from('subscriptions').upsert(
         {
@@ -55,7 +67,9 @@ export async function POST(request: NextRequest) {
           trial_end: sub.trial_end
             ? new Date(sub.trial_end * 1000).toISOString()
             : null,
-          current_period_end: new Date((sub as any).current_period_end * 1000).toISOString(),
+          current_period_end: periodEnd
+            ? new Date(periodEnd * 1000).toISOString()
+            : null,
         },
         { onConflict: 'stripe_subscription_id' }
       )
@@ -67,14 +81,50 @@ export async function POST(request: NextRequest) {
           ...(isActive ? { role: 'grandma' } : {}),
         })
         .eq('id', userId)
+
+      // Seed grandma_profiles from free_profiles when going active for the first time
+      if (isActive) {
+        const { data: existing } = await supabase
+          .from('grandma_profiles')
+          .select('id')
+          .eq('user_id', userId)
+          .single()
+
+        if (!existing) {
+          const { data: freeProfile } = await supabase
+            .from('free_profiles')
+            .select('first_name, last_name, email, bio')
+            .eq('user_id', userId)
+            .single()
+
+          await supabase.from('grandma_profiles').insert({
+            user_id: userId,
+            first_name: freeProfile?.first_name ?? '',
+            last_name: freeProfile?.last_name ?? '',
+            email: freeProfile?.email ?? '',
+            bio: freeProfile?.bio ?? '',
+          })
+        }
+      }
       break
     }
 
     case 'customer.subscription.deleted': {
       const sub = event.data.object as Stripe.Subscription
-      const userId = sub.metadata?.user_id
+      let userId = sub.metadata?.user_id
+
+      if (!userId && sub.customer) {
+        const { data: userRow } = await supabase
+          .from('users')
+          .select('id')
+          .eq('stripe_customer_id', sub.customer as string)
+          .single()
+        userId = userRow?.id
+      }
 
       if (!userId) break
+
+      const deletedPeriodEnd = sub.items.data[0]?.current_period_end ?? (sub as any).current_period_end
 
       await supabase.from('subscriptions').upsert(
         {
@@ -82,7 +132,9 @@ export async function POST(request: NextRequest) {
           stripe_subscription_id: sub.id,
           plan: sub.items.data[0].price.recurring?.interval === 'year' ? 'annual' : 'monthly',
           status: sub.status,
-          current_period_end: new Date((sub as any).current_period_end * 1000).toISOString(),
+          current_period_end: deletedPeriodEnd
+            ? new Date(deletedPeriodEnd * 1000).toISOString()
+            : null,
         },
         { onConflict: 'stripe_subscription_id' }
       )

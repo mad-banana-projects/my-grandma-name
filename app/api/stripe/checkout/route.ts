@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
       trial_period_days: 7,
       metadata: { user_id: user.id },
     },
-    success_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/grandma?checkout=success`,
+    success_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?checkout=success`,
     cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/subscribe`,
     metadata: { user_id: user.id },
   })
