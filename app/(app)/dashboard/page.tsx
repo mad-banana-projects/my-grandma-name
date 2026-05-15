@@ -5,6 +5,7 @@ import { ProfileCard, type UnifiedProfile } from '@/components/profile/profile-c
 import { InviteForm } from '@/components/dashboard/grandma/invite-form'
 import { EmailRemindersCard } from '@/components/dashboard/email-reminders-card'
 import { LockedFeatureCard } from '@/components/dashboard/locked-feature-card'
+import { RegistryPreviewCard, type RegistryPreviewItem } from '@/components/dashboard/registry-preview-card'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -42,6 +43,7 @@ export default async function DashboardPage() {
     relationship: string | null
     invite_status: string | null
   }[] = []
+  let registryFirstItem: RegistryPreviewItem | null = null
 
   if (isPaid) {
     const { data: grandmaProfile } = await service
@@ -58,13 +60,22 @@ export default async function DashboardPage() {
 
     grandmaProfileId = grandmaProfile.id
 
-    const { data: familyMembers } = await service
-      .from('family_members')
-      .select('id, first_name, last_name, email, relationship, invite_status')
-      .eq('grandma_id', grandmaProfile.id)
-      .order('created_at', { ascending: true })
+    const [{ data: familyMembers }, { data: regItems }] = await Promise.all([
+      service
+        .from('family_members')
+        .select('id, first_name, last_name, email, relationship, invite_status')
+        .eq('grandma_id', grandmaProfile.id)
+        .order('created_at', { ascending: true }),
+      service
+        .from('registry_items')
+        .select('id, product:products(name, image_urls, price, brand, affiliate_url, product_url), variant:product_variants(id, label)')
+        .eq('grandma_id', grandmaProfile.id)
+        .order('added_at', { ascending: false })
+        .limit(1),
+    ])
 
     members = familyMembers ?? []
+    registryFirstItem = (regItems?.[0] ?? null) as RegistryPreviewItem | null
 
     profile = {
       id: grandmaProfile.id,
@@ -130,12 +141,12 @@ export default async function DashboardPage() {
           </Badge>
         </div>
 
-        {/* Row 1: About You + Email Reminders */}
+        {/* 2×2 grid */}
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
 
-          {/* About You */}
+          {/* Col 1, Row 1: About Me */}
           <div className="flex flex-col gap-4">
-            <h2 className="text-lg font-semibold">About you</h2>
+            <h2 className="text-lg font-semibold">About me</h2>
             <ProfileCard
               profile={profile}
               role={isPaid ? 'grandma' : 'free'}
@@ -143,7 +154,22 @@ export default async function DashboardPage() {
             />
           </div>
 
-          {/* Email Reminders */}
+          {/* Col 2, Row 1: My Registry */}
+          <div className="flex flex-col gap-4">
+            <h2 className="text-lg font-semibold">My Registry</h2>
+            {isPaid && grandmaProfileId ? (
+              <RegistryPreviewCard
+                grandmaProfileId={grandmaProfileId}
+                firstItem={registryFirstItem}
+              />
+            ) : (
+              <LockedFeatureCard
+                description="Save gift ideas to your personal registry and share it with family."
+              />
+            )}
+          </div>
+
+          {/* Col 1, Row 2: Email Reminders */}
           {isPaid && reminderSettings ? (
             <EmailRemindersCard initial={reminderSettings} />
           ) : (
@@ -155,58 +181,57 @@ export default async function DashboardPage() {
             </div>
           )}
 
-        </div>
-
-        {/* Row 2: Family Members — full width */}
-        {isPaid ? (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold">Your family</h2>
-              <span className="text-sm text-muted-foreground">{members.length} / 10 members</span>
-            </div>
-
-            {members.length > 0 && (
-              <div className="space-y-2">
-                {members.map((member) => (
-                  <div
-                    key={member.id}
-                    className="flex items-center justify-between rounded-lg border px-4 py-3"
-                  >
-                    <div className="min-w-0">
-                      <p className="truncate text-sm font-medium">
-                        {member.first_name && member.last_name
-                          ? `${member.first_name} ${member.last_name}`
-                          : member.email}
-                      </p>
-                      {member.first_name && (
-                        <p className="truncate text-xs text-muted-foreground">{member.email}</p>
-                      )}
-                      {member.relationship && (
-                        <p className="text-xs capitalize text-muted-foreground">
-                          {member.relationship}
-                        </p>
-                      )}
-                    </div>
-                    <Badge
-                      variant={member.invite_status === 'accepted' ? 'default' : 'secondary'}
-                      className="ml-4 shrink-0"
-                    >
-                      {member.invite_status === 'accepted' ? 'Joined' : 'Invited'}
-                    </Badge>
-                  </div>
-                ))}
+          {/* Col 2, Row 2: My Family */}
+          {isPaid ? (
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-semibold">My family</h2>
+                <span className="text-sm text-muted-foreground">{members.length} / 10 members</span>
               </div>
-            )}
 
-            <InviteForm memberCount={members.length} />
-          </div>
-        ) : (
-          <LockedFeatureCard
-            title="Family Members"
-            description="Invite family members to view your registry. They'll get a link directly to your wishlist."
-          />
-        )}
+              {members.length > 0 && (
+                <div className="space-y-2">
+                  {members.map((member) => (
+                    <div
+                      key={member.id}
+                      className="flex items-center justify-between rounded-lg border px-4 py-3"
+                    >
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-medium">
+                          {member.first_name && member.last_name
+                            ? `${member.first_name} ${member.last_name}`
+                            : member.email}
+                        </p>
+                        {member.first_name && (
+                          <p className="truncate text-xs text-muted-foreground">{member.email}</p>
+                        )}
+                        {member.relationship && (
+                          <p className="text-xs capitalize text-muted-foreground">
+                            {member.relationship}
+                          </p>
+                        )}
+                      </div>
+                      <Badge
+                        variant={member.invite_status === 'accepted' ? 'default' : 'secondary'}
+                        className="ml-4 shrink-0"
+                      >
+                        {member.invite_status === 'accepted' ? 'Joined' : 'Invited'}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              )}
 
+              <InviteForm memberCount={members.length} />
+            </div>
+          ) : (
+            <LockedFeatureCard
+              title="My Family"
+              description="Invite family members to view your registry. They'll get a link directly to your wishlist."
+            />
+          )}
+
+        </div>
       </div>
     </main>
   )

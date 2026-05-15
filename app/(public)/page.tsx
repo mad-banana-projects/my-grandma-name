@@ -4,7 +4,6 @@ import Image from 'next/image'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { HeroGenerator } from '@/components/name-generator/hero-generator'
-import { LandingNav } from '@/components/nav/landing-nav'
 
 const ANON_COOKIE = 'anon_gen_count'
 const ANON_LIMIT = 2
@@ -58,8 +57,6 @@ export default async function LandingPage() {
 
   return (
     <main className="min-h-screen bg-background">
-
-      <LandingNav />
 
       {/* Hero — gradient wrapper, offset by nav height (68px) */}
       <div className="bg-[linear-gradient(to_bottom,#dcb6c9_0%,#ffffff_85%)] pt-[68px]">

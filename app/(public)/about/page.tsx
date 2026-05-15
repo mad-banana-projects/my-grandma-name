@@ -1,11 +1,8 @@
 import Image from 'next/image'
-import { LandingNav } from '@/components/nav/landing-nav'
 
 export default function AboutPage() {
   return (
     <>
-      <LandingNav alwaysSolid />
-
       {/* Hero: image left, content right */}
       <section className="flex flex-col sm:flex-row sm:items-stretch">
 

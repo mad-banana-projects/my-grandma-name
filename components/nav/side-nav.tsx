@@ -33,14 +33,7 @@ export function SideNav({ email, grandmaProfileId, isAnon, isFreeUser, familyReg
     ? ANON_NAV_ITEMS
     : familyRegistryId
     ? [{ label: 'My Registry', href: `/registry/${familyRegistryId}` }]
-    : [
-        ...BASE_NAV_ITEMS,
-        ...(grandmaProfileId
-          ? [{ label: 'My Registry', href: `/registry/${grandmaProfileId}` }]
-          : isFreeUser
-          ? [{ label: 'My Registry', href: '/registry' }]
-          : []),
-      ]
+    : BASE_NAV_ITEMS
 
   const isActive = (href: string) => pathname.startsWith(href)
 
