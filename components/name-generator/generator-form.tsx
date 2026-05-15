@@ -289,7 +289,7 @@ export function GeneratorForm({ isSignedIn, isPaidGrandma, anonUsesRemaining, fr
         )}
 
         <div className="space-y-2">
-          <Button type="submit" size="lg" className="w-full" disabled={loading}>
+          <Button type="submit" size="lg" className="w-1/2 mx-auto block" disabled={loading}>
             {loading ? 'Finding your name…' : 'Find my grandma name'}
           </Button>
           {!isSignedIn && anonUsesLeft !== null && (

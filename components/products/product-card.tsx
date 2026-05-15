@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import Image from 'next/image'
-import { ChevronLeft, ChevronRight, Bookmark, BookmarkCheck } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Heart } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { buttonVariants } from '@/components/ui/button'
@@ -237,17 +237,11 @@ export function ProductCard({
                 disabled={isPending}
                 aria-label={saved ? 'Remove from registry' : 'Save to registry'}
                 className={cn(
-                  'rounded-md p-1 transition-colors',
-                  saved
-                    ? 'text-foreground'
-                    : 'text-muted-foreground hover:text-foreground',
+                  'rounded-md p-1 text-secondary transition-colors hover:text-secondary',
                   isPending && 'opacity-50'
                 )}
               >
-                {saved
-                  ? <BookmarkCheck className="h-4 w-4" />
-                  : <Bookmark className="h-4 w-4" />
-                }
+                <Heart className={cn('h-4 w-4', saved && 'fill-current')} />
               </button>
             )}
 
@@ -257,9 +251,9 @@ export function ProductCard({
                 <button
                   onClick={() => setShowPrompt(true)}
                   aria-label="Save to registry"
-                  className="rounded-md p-1 text-muted-foreground/50 transition-colors hover:text-muted-foreground"
+                  className="rounded-md p-1 text-secondary/40 transition-colors hover:text-secondary/70"
                 >
-                  <Bookmark className="h-4 w-4" />
+                  <Heart className="h-4 w-4" />
                 </button>
 
                 <Dialog open={showPrompt} onOpenChange={setShowPrompt}>
