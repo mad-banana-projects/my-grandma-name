@@ -543,32 +543,42 @@ export function ProfileCard({ profile, role, subscriptionStatus }: ProfileCardPr
         {/* Manage subscription dialog */}
         <Dialog open={showManageDialog} onOpenChange={setShowManageDialog}>
           <DialogContent>
-            <DialogHeader>
-              <DialogTitle>
-                {isSubscribed ? 'Cancel subscription' : 'Subscribe'}
-              </DialogTitle>
-              <DialogDescription>
-                {isSubscribed
-                  ? "Are you sure you want to cancel? You'll lose access to premium features including your registry, email reminders, and family sharing."
-                  : "Subscribe to unlock your full profile, gift registry, email reminders, and family sharing."}
-              </DialogDescription>
-            </DialogHeader>
-            {manageError && (
-              <p className="text-sm text-destructive px-1">{manageError}</p>
+            {isSubscribed ? (
+              <>
+                <DialogHeader>
+                  <DialogTitle>Cancel subscription</DialogTitle>
+                  <DialogDescription>
+                    Are you sure you want to cancel? You&apos;ll lose access to premium features including your registry, email reminders, and family sharing.
+                  </DialogDescription>
+                </DialogHeader>
+                {manageError && (
+                  <p className="text-sm text-destructive px-1">{manageError}</p>
+                )}
+                <DialogFooter showCloseButton>
+                  <Button
+                    variant="destructive"
+                    onClick={handleManageConfirm}
+                    disabled={isManagePending}
+                  >
+                    {isManagePending ? 'Saving…' : 'Cancel subscription'}
+                  </Button>
+                </DialogFooter>
+              </>
+            ) : (
+              <>
+                <DialogHeader>
+                  <DialogTitle>Upgrade your subscription</DialogTitle>
+                  <DialogDescription>
+                    You are currently using a free account. Would you like to upgrade to a paid subscription?
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter showCloseButton>
+                  <a href="/subscribe" className={cn(buttonVariants())}>
+                    Yes, upgrade now
+                  </a>
+                </DialogFooter>
+              </>
             )}
-            <DialogFooter showCloseButton>
-              <Button
-                variant={isSubscribed ? 'destructive' : 'default'}
-                onClick={handleManageConfirm}
-                disabled={isManagePending}
-              >
-                {isManagePending
-                  ? 'Saving…'
-                  : isSubscribed
-                  ? 'Cancel subscription'
-                  : 'Subscribe'}
-              </Button>
-            </DialogFooter>
           </DialogContent>
         </Dialog>
 

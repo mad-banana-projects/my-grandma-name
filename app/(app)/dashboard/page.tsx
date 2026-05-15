@@ -156,7 +156,7 @@ export default async function DashboardPage() {
           </div>
 
           {/* Col 2, Row 1: My Registry */}
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 h-full">
             <h2 className="text-lg font-semibold">My Registry</h2>
             {isPaid && grandmaProfileId ? (
               <RegistryPreviewCard
@@ -165,6 +165,7 @@ export default async function DashboardPage() {
               />
             ) : (
               <LockedFeatureCard
+                className="flex-1"
                 description="Save gift ideas to your personal registry and share it with family."
               />
             )}
