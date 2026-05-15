@@ -5,7 +5,8 @@ import { ProfileCard, type UnifiedProfile } from '@/components/profile/profile-c
 import { InviteForm } from '@/components/dashboard/grandma/invite-form'
 import { EmailRemindersCard } from '@/components/dashboard/email-reminders-card'
 import { LockedFeatureCard } from '@/components/dashboard/locked-feature-card'
-import { RegistryPreviewCard, type RegistryPreviewItem } from '@/components/dashboard/registry-preview-card'
+import { RegistryPreviewCard } from '@/components/dashboard/registry-preview-card'
+import type { RegistryPreviewItem } from '@/components/dashboard/registry-preview-card'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -43,7 +44,7 @@ export default async function DashboardPage() {
     relationship: string | null
     invite_status: string | null
   }[] = []
-  let registryFirstItem: RegistryPreviewItem | null = null
+  let registryItems: RegistryPreviewItem[] = []
 
   if (isPaid) {
     const { data: grandmaProfile } = await service
@@ -71,11 +72,11 @@ export default async function DashboardPage() {
         .select('id, product:products(name, image_urls, price, brand, affiliate_url, product_url), variant:product_variants(id, label)')
         .eq('grandma_id', grandmaProfile.id)
         .order('added_at', { ascending: false })
-        .limit(1),
+        .limit(3),
     ])
 
     members = familyMembers ?? []
-    registryFirstItem = (regItems?.[0] ?? null) as RegistryPreviewItem | null
+    registryItems = (regItems ?? []) as unknown as RegistryPreviewItem[]
 
     profile = {
       id: grandmaProfile.id,
@@ -146,7 +147,7 @@ export default async function DashboardPage() {
 
           {/* Col 1, Row 1: About Me */}
           <div className="flex flex-col gap-4">
-            <h2 className="text-lg font-semibold">About me</h2>
+            <h2 className="text-lg font-semibold">About Me</h2>
             <ProfileCard
               profile={profile}
               role={isPaid ? 'grandma' : 'free'}
@@ -160,7 +161,7 @@ export default async function DashboardPage() {
             {isPaid && grandmaProfileId ? (
               <RegistryPreviewCard
                 grandmaProfileId={grandmaProfileId}
-                firstItem={registryFirstItem}
+                items={registryItems}
               />
             ) : (
               <LockedFeatureCard
@@ -185,7 +186,7 @@ export default async function DashboardPage() {
           {isPaid ? (
             <div className="flex flex-col gap-4">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold">My family</h2>
+                <h2 className="text-lg font-semibold">My Family</h2>
                 <span className="text-sm text-muted-foreground">{members.length} / 10 members</span>
               </div>
 

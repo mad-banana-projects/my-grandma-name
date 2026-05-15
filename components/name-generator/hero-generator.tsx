@@ -100,18 +100,25 @@ export function HeroGenerator({ anonUsesRemaining }: { anonUsesRemaining: number
       <div className="rounded-3xl bg-white px-14 py-8 shadow-[0_4px_32px_rgba(53,51,48,0.12)]">
         <form onSubmit={handleSubmit} className="space-y-6">
 
-          {/* Row 1: first name + style */}
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-[2fr_3fr]">
-            <div className="space-y-1.5">
-              <Label htmlFor="hero-first-name">Your first name</Label>
-              <Input
-                id="hero-first-name"
-                placeholder="e.g. Susan"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                required
-              />
-            </div>
+          {/* Row 1: first name + name to avoid */}
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
+            <Input
+              id="hero-first-name"
+              placeholder="First Name"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              required
+            />
+            <Input
+              id="hero-name-avoid"
+              placeholder="Name to avoid (optional)"
+              value={nameToAvoid}
+              onChange={(e) => setNameToAvoid(e.target.value)}
+            />
+          </div>
+
+          {/* Row 2: preferred style + preferred vibe */}
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
             <div className="space-y-2">
               <Label>Preferred style</Label>
               <div className="flex flex-wrap gap-2">
@@ -125,19 +132,6 @@ export function HeroGenerator({ anonUsesRemaining }: { anonUsesRemaining: number
                   </PillButton>
                 ))}
               </div>
-            </div>
-          </div>
-
-          {/* Row 2: name to avoid + vibe */}
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-[2fr_3fr]">
-            <div className="space-y-1.5">
-              <Label htmlFor="hero-name-avoid">Name you don&apos;t want (optional)</Label>
-              <Input
-                id="hero-name-avoid"
-                placeholder="e.g. Granny"
-                value={nameToAvoid}
-                onChange={(e) => setNameToAvoid(e.target.value)}
-              />
             </div>
             <div className="space-y-2">
               <Label>Preferred vibe</Label>
