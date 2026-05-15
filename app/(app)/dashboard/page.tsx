@@ -174,9 +174,10 @@ export default async function DashboardPage() {
           {isPaid && reminderSettings ? (
             <EmailRemindersCard initial={reminderSettings} />
           ) : (
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 h-full">
               <h2 className="text-lg font-semibold">Email Reminders</h2>
               <LockedFeatureCard
+                className="flex-1"
                 description="Get reminders before birthdays, holidays, and custom dates — so family never misses a gift opportunity."
               />
             </div>
@@ -226,10 +227,13 @@ export default async function DashboardPage() {
               <InviteForm memberCount={members.length} className="flex-1" />
             </div>
           ) : (
-            <LockedFeatureCard
-              title="My Family"
-              description="Invite family members to view your registry. They'll get a link directly to your wishlist."
-            />
+            <div className="flex flex-col gap-4 h-full">
+              <h2 className="text-lg font-semibold">My Family</h2>
+              <LockedFeatureCard
+                className="flex-1"
+                description="Invite family members to view your registry. They'll get a link directly to your wishlist."
+              />
+            </div>
           )}
 
         </div>
