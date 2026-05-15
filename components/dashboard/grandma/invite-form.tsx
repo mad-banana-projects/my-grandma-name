@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
-export function InviteForm({ memberCount }: { memberCount: number }) {
+export function InviteForm({ memberCount, className }: { memberCount: number; className?: string }) {
   const router = useRouter()
   const [email, setEmail] = useState('')
   const [firstName, setFirstName] = useState('')
@@ -65,7 +65,7 @@ export function InviteForm({ memberCount }: { memberCount: number }) {
   }
 
   return (
-    <Card>
+    <Card className={className}>
       <CardHeader>
         <CardTitle className="text-base">Invite a family member</CardTitle>
       </CardHeader>

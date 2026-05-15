@@ -13,7 +13,6 @@ import {
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { signUpGrandma, type GrandmaSignupState } from '@/app/(auth)/signup/actions'
 
 const initialState: GrandmaSignupState = { status: 'idle' }
@@ -47,11 +46,11 @@ export function GrandmaSignupForm() {
         <form action={formAction} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="firstName">First name</Label>
               <Input
                 id="firstName"
                 name="firstName"
                 type="text"
+                placeholder="First Name"
                 autoComplete="given-name"
                 required
                 aria-invalid={Boolean(state.fieldErrors?.firstName)}
@@ -59,11 +58,11 @@ export function GrandmaSignupForm() {
               <FieldError errors={state.fieldErrors?.firstName} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="lastName">Last name</Label>
               <Input
                 id="lastName"
                 name="lastName"
                 type="text"
+                placeholder="Last Name"
                 autoComplete="family-name"
                 required
                 aria-invalid={Boolean(state.fieldErrors?.lastName)}
@@ -73,14 +72,13 @@ export function GrandmaSignupForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="bio">About you</Label>
             <textarea
               id="bio"
               name="bio"
               rows={3}
               maxLength={500}
               required
-              placeholder="Tell your family a little about yourself…"
+              placeholder="Tell a little about yourself..."
               aria-invalid={Boolean(state.fieldErrors?.bio)}
               className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
             />
@@ -90,11 +88,11 @@ export function GrandmaSignupForm() {
           <hr className="border-border" />
 
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
             <Input
               id="email"
               name="email"
               type="email"
+              placeholder="Email"
               autoComplete="email"
               required
               aria-invalid={Boolean(state.fieldErrors?.email)}
@@ -103,11 +101,11 @@ export function GrandmaSignupForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
             <Input
               id="password"
               name="password"
               type="password"
+              placeholder="Password"
               autoComplete="new-password"
               minLength={8}
               required

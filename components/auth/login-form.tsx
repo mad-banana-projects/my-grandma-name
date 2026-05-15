@@ -13,7 +13,6 @@ import {
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { login, type LoginState } from '@/app/(auth)/login/actions'
 
 const initialState: LoginState = { status: 'idle' }
@@ -44,11 +43,11 @@ export function LoginForm() {
       <CardContent>
         <form action={formAction} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
             <Input
               id="email"
               name="email"
               type="email"
+              placeholder="Email"
               autoComplete="email"
               required
               aria-invalid={Boolean(state.fieldErrors?.email)}
@@ -57,11 +56,11 @@ export function LoginForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
             <Input
               id="password"
               name="password"
               type="password"
+              placeholder="Password"
               autoComplete="current-password"
               required
               aria-invalid={Boolean(state.fieldErrors?.password)}
