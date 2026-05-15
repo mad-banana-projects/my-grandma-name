@@ -5,7 +5,6 @@ import { useEffect, useRef, useState, useTransition } from 'react'
 import { Lock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Dialog,
@@ -210,32 +209,26 @@ export function GeneratorForm({ isSignedIn, isPaidGrandma, anonUsesRemaining, fr
   return (
     <div className="mx-auto w-full max-w-2xl space-y-8">
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="space-y-2">
-          <Label htmlFor="firstName">Your first name</Label>
-          <Input
-            id="firstName"
-            name="firstName"
-            type="text"
-            placeholder="Margaret"
-            maxLength={50}
-            required
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-          />
-        </div>
+        <Input
+          id="firstName"
+          name="firstName"
+          type="text"
+          placeholder="First Name"
+          maxLength={50}
+          required
+          value={firstName}
+          onChange={(e) => setFirstName(e.target.value)}
+        />
 
-        <div className="space-y-2">
-          <Label htmlFor="nameToAvoid">Name you don't want to be called <span className="text-muted-foreground font-normal">(optional)</span></Label>
-          <Input
-            id="nameToAvoid"
-            name="nameToAvoid"
-            type="text"
-            placeholder="Grandma"
-            maxLength={50}
-            value={nameToAvoid}
-            onChange={(e) => setNameToAvoid(e.target.value)}
-          />
-        </div>
+        <Input
+          id="nameToAvoid"
+          name="nameToAvoid"
+          type="text"
+          placeholder="Name to avoid (optional)"
+          maxLength={50}
+          value={nameToAvoid}
+          onChange={(e) => setNameToAvoid(e.target.value)}
+        />
 
         <fieldset className="space-y-3">
           <legend className="text-sm font-medium leading-none">Preferred style</legend>
@@ -296,7 +289,7 @@ export function GeneratorForm({ isSignedIn, isPaidGrandma, anonUsesRemaining, fr
         )}
 
         <div className="space-y-2">
-          <Button type="submit" size="lg" className="w-full" disabled={loading}>
+          <Button type="submit" size="lg" className="w-1/2 mx-auto block" disabled={loading}>
             {loading ? 'Finding your name…' : 'Find my grandma name'}
           </Button>
           {!isSignedIn && anonUsesLeft !== null && (

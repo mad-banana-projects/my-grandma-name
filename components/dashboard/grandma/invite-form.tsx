@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 import { Check, Copy } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 export function InviteForm({ memberCount }: { memberCount: number }) {
@@ -104,56 +103,35 @@ export function InviteForm({ memberCount }: { memberCount: number }) {
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-1.5">
-                <Label htmlFor="invite-first-name">First name</Label>
-                <Input
-                  id="invite-first-name"
-                  placeholder="Jane"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="invite-last-name">Last name</Label>
-                <Input
-                  id="invite-last-name"
-                  placeholder="Smith"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                />
-              </div>
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="invite-email">
-                Email <span className="text-destructive">*</span>
-              </Label>
               <Input
-                id="invite-email"
-                type="email"
-                placeholder="jane@example.com"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                placeholder="First Name"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+              />
+              <Input
+                placeholder="Last Name"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
               />
             </div>
 
-            <div className="space-y-1.5">
-              <Label htmlFor="invite-relationship">
-                Relationship{' '}
-                <span className="font-normal text-muted-foreground">(optional)</span>
-              </Label>
-              <Input
-                id="invite-relationship"
-                placeholder="e.g. Daughter, Son-in-law"
-                value={relationship}
-                onChange={(e) => setRelationship(e.target.value)}
-              />
-            </div>
+            <Input
+              type="email"
+              placeholder="Email *"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+
+            <Input
+              placeholder="Relationship (optional)"
+              value={relationship}
+              onChange={(e) => setRelationship(e.target.value)}
+            />
 
             {error && <p className="text-sm text-destructive">{error}</p>}
 
-            <Button type="submit" disabled={loading} className="w-full">
+            <Button type="submit" disabled={loading} className="w-1/2 mx-auto block">
               {loading ? 'Creating…' : 'Create invite'}
             </Button>
           </form>

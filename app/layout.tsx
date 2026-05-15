@@ -20,6 +20,9 @@ const ebGaramond = EB_Garamond({
 export const metadata: Metadata = {
   title: "My Grandma Name",
   description: "Choose your grandma name. Share the gifts you actually want.",
+  icons: {
+    icon: "/images/logo/pink-black-logo.png",
+  },
 };
 
 export default function RootLayout({

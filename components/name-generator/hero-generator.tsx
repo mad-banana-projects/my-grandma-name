@@ -5,6 +5,14 @@ import Link from 'next/link'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog'
 import { cn } from '@/lib/utils'
 
 const STYLES = [
@@ -53,7 +61,19 @@ function PillButton({
   )
 }
 
-export function HeroGenerator({ anonUsesRemaining }: { anonUsesRemaining: number }) {
+interface HeroGeneratorProps {
+  anonUsesRemaining: number
+  isSignedIn?: boolean
+  isPaidGrandma?: boolean
+  freeUsesRemaining?: number | null
+}
+
+export function HeroGenerator({
+  anonUsesRemaining,
+  isSignedIn = false,
+  isPaidGrandma = false,
+  freeUsesRemaining = null,
+}: HeroGeneratorProps) {
   const [firstName, setFirstName] = useState('')
   const [nameToAvoid, setNameToAvoid] = useState('')
   const [style, setStyle] = useState('')
@@ -62,10 +82,22 @@ export function HeroGenerator({ anonUsesRemaining }: { anonUsesRemaining: number
   const [error, setError] = useState<string | null>(null)
   const [result, setResult] = useState<Result | null>(null)
   const [anonUsesLeft, setAnonUsesLeft] = useState(anonUsesRemaining)
+  const [freeUsesLeft, setFreeUsesLeft] = useState(freeUsesRemaining)
+  const [showUpgradePrompt, setShowUpgradePrompt] = useState(false)
+
+  const limitReached =
+    (!isSignedIn && anonUsesLeft <= 0) ||
+    (isSignedIn && !isPaidGrandma && freeUsesLeft !== null && freeUsesLeft <= 0)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (anonUsesLeft <= 0) return
+
+    if (!isSignedIn && anonUsesLeft <= 0) return
+    if (isSignedIn && !isPaidGrandma && freeUsesLeft !== null && freeUsesLeft <= 0) {
+      setShowUpgradePrompt(true)
+      return
+    }
+
     setLoading(true)
     setError(null)
     setResult(null)
@@ -79,11 +111,18 @@ export function HeroGenerator({ anonUsesRemaining }: { anonUsesRemaining: number
       const data = await res.json()
 
       if (!res.ok) {
+        if (res.status === 429 && isSignedIn && !isPaidGrandma) {
+          setShowUpgradePrompt(true)
+          return
+        }
         setError(data.error ?? 'Something went wrong. Please try again.')
       } else {
         setResult(data)
-        if (typeof data.usesRemaining === 'number') {
+        if (!isSignedIn && typeof data.usesRemaining === 'number') {
           setAnonUsesLeft(data.usesRemaining)
+        }
+        if (isSignedIn && !isPaidGrandma && typeof data.usesRemaining === 'number') {
+          setFreeUsesLeft(data.usesRemaining)
         }
       }
     } catch {
@@ -100,18 +139,25 @@ export function HeroGenerator({ anonUsesRemaining }: { anonUsesRemaining: number
       <div className="rounded-3xl bg-white px-14 py-8 shadow-[0_4px_32px_rgba(53,51,48,0.12)]">
         <form onSubmit={handleSubmit} className="space-y-6">
 
-          {/* Row 1: first name + style */}
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-[2fr_3fr]">
-            <div className="space-y-1.5">
-              <Label htmlFor="hero-first-name">Your first name</Label>
-              <Input
-                id="hero-first-name"
-                placeholder="e.g. Susan"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                required
-              />
-            </div>
+          {/* Row 1: first name + name to avoid */}
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
+            <Input
+              id="hero-first-name"
+              placeholder="First Name"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              required
+            />
+            <Input
+              id="hero-name-avoid"
+              placeholder="Name to avoid (optional)"
+              value={nameToAvoid}
+              onChange={(e) => setNameToAvoid(e.target.value)}
+            />
+          </div>
+
+          {/* Row 2: preferred style + preferred vibe */}
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
             <div className="space-y-2">
               <Label>Preferred style</Label>
               <div className="flex flex-wrap gap-2">
@@ -125,19 +171,6 @@ export function HeroGenerator({ anonUsesRemaining }: { anonUsesRemaining: number
                   </PillButton>
                 ))}
               </div>
-            </div>
-          </div>
-
-          {/* Row 2: name to avoid + vibe */}
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-[2fr_3fr]">
-            <div className="space-y-1.5">
-              <Label htmlFor="hero-name-avoid">Name you don&apos;t want (optional)</Label>
-              <Input
-                id="hero-name-avoid"
-                placeholder="e.g. Granny"
-                value={nameToAvoid}
-                onChange={(e) => setNameToAvoid(e.target.value)}
-              />
             </div>
             <div className="space-y-2">
               <Label>Preferred vibe</Label>
@@ -155,21 +188,34 @@ export function HeroGenerator({ anonUsesRemaining }: { anonUsesRemaining: number
             </div>
           </div>
 
-          {/* Row 3: submit + rate limit */}
+          {/* Row 3: submit + rate limit display */}
           <div className="flex flex-col items-center gap-2 pt-2">
             <Button
               type="submit"
               size="lg"
-              disabled={loading || !firstName || anonUsesLeft <= 0}
+              disabled={loading || !firstName || (!isSignedIn && anonUsesLeft <= 0)}
               className="w-full sm:w-auto"
             >
               {loading ? 'Finding your name…' : 'Find my grandma name'}
             </Button>
-            <p className="text-xs text-muted-foreground">
-              {anonUsesLeft > 0
-                ? `${anonUsesLeft} generation${anonUsesLeft === 1 ? '' : 's'} remaining`
-                : 'Limit reached — create an account for more'}
-            </p>
+
+            {/* Anon limit */}
+            {!isSignedIn && (
+              <p className="text-xs text-muted-foreground">
+                {anonUsesLeft > 0
+                  ? `${anonUsesLeft} free ${anonUsesLeft === 1 ? 'generation' : 'generations'} remaining`
+                  : 'Limit reached — create an account for more'}
+              </p>
+            )}
+
+            {/* Free-tier limit */}
+            {isSignedIn && !isPaidGrandma && freeUsesLeft !== null && (
+              <p className="text-xs text-muted-foreground">
+                {freeUsesLeft > 0
+                  ? `${freeUsesLeft} ${freeUsesLeft === 1 ? 'generation' : 'generations'} remaining`
+                  : <>Limit reached. <a href="/subscribe" className="underline underline-offset-2 hover:text-foreground">Upgrade</a> for more.</>}
+              </p>
+            )}
           </div>
 
           {error && (
@@ -177,11 +223,10 @@ export function HeroGenerator({ anonUsesRemaining }: { anonUsesRemaining: number
           )}
         </form>
 
-        {/* Results — inside the card, below the form */}
+        {/* Results */}
         {result && (
           <div className="mt-8 border-t border-border pt-8">
             <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 sm:items-center">
-              {/* Col 1: name + runner-up */}
               <div className="space-y-3 text-center sm:text-left">
                 <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
                   Your grandma name is
@@ -196,23 +241,46 @@ export function HeroGenerator({ anonUsesRemaining }: { anonUsesRemaining: number
                   </span>
                 </p>
               </div>
-              {/* Col 2: explanation */}
               <p className="text-sm leading-relaxed text-muted-foreground">
                 {result.explanation}
               </p>
             </div>
+
             <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Button variant="outline" onClick={() => setResult(null)}>
                 Try again
               </Button>
-              <Link href="/signup" className={cn(buttonVariants())}>
-                Subscribe to save it
-              </Link>
+              {!isSignedIn && (
+                <Link href="/signup" className={cn(buttonVariants())}>
+                  Create account to save
+                </Link>
+              )}
+              {isSignedIn && !isPaidGrandma && (
+                <Link href="/subscribe" className={cn(buttonVariants())}>
+                  Upgrade to save
+                </Link>
+              )}
             </div>
           </div>
         )}
-
       </div>
+
+      {/* Upgrade prompt dialog */}
+      <Dialog open={showUpgradePrompt} onOpenChange={setShowUpgradePrompt}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Upgrade to unlock</DialogTitle>
+            <DialogDescription>
+              You've reached your free generation limit. Upgrade for unlimited name generations.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter showCloseButton>
+            <a href="/subscribe" className={cn(buttonVariants())}>
+              Upgrade
+            </a>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
     </div>
   )

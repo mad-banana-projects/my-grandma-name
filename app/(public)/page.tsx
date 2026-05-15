@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { HeroGenerator } from '@/components/name-generator/hero-generator'
-import { LandingNav } from '@/components/nav/landing-nav'
+import { createClient, createServiceClient } from '@/lib/supabase/server'
 
 const ANON_COOKIE = 'anon_gen_count'
 const ANON_LIMIT = 2
@@ -43,7 +43,7 @@ const FEATURES = [
   },
   {
     title: 'Family Sharing',
-    description: 'Invite up to 10 family members to view your registry — no more duplicate gifts.',
+    description: 'Invite up to 10 family members to view your gift registry — no more duplicate gifts.',
   },
   {
     title: 'Smart Reminders',
@@ -52,14 +52,36 @@ const FEATURES = [
 ]
 
 export default async function LandingPage() {
-  const cookieStore = await cookies()
+  const supabase = await createClient()
+  const [cookieStore, { data: { user } }] = await Promise.all([
+    cookies(),
+    supabase.auth.getUser(),
+  ])
+
   const anonCount = parseInt(cookieStore.get(ANON_COOKIE)?.value ?? '0', 10)
   const anonUsesRemaining = Math.max(0, ANON_LIMIT - anonCount)
 
+  let isSignedIn = false
+  let isPaidGrandma = false
+  let freeUsesRemaining: number | null = null
+
+  if (user) {
+    isSignedIn = true
+    const service = createServiceClient()
+    const { data: userData } = await service
+      .from('users')
+      .select('role, subscription_status, generator_uses_remaining')
+      .eq('id', user.id)
+      .single()
+
+    isPaidGrandma = userData?.role === 'grandma' && userData?.subscription_status === 'active'
+    if (!isPaidGrandma) {
+      freeUsesRemaining = userData?.generator_uses_remaining ?? 0
+    }
+  }
+
   return (
     <main className="min-h-screen bg-background">
-
-      <LandingNav />
 
       {/* Hero — gradient wrapper, offset by nav height (68px) */}
       <div className="bg-[linear-gradient(to_bottom,#dcb6c9_0%,#ffffff_85%)] pt-[68px]">
@@ -75,27 +97,34 @@ export default async function LandingPage() {
 
           {/* Embedded generator */}
           <div className="mt-8">
-            <HeroGenerator anonUsesRemaining={anonUsesRemaining} />
+            <HeroGenerator
+              anonUsesRemaining={anonUsesRemaining}
+              isSignedIn={isSignedIn}
+              isPaidGrandma={isPaidGrandma}
+              freeUsesRemaining={freeUsesRemaining}
+            />
           </div>
 
-          {/* Secondary CTAs */}
-          <div className="mt-10 flex flex-col items-center justify-center gap-3 px-4 sm:flex-row">
-            <Link
-              href="/signup"
-              className={cn(buttonVariants({ size: 'lg' }), 'w-full sm:w-auto')}
-            >
-              Create free account
-            </Link>
-            <Link
-              href="/browse-products"
-              className={cn(
-                buttonVariants({ size: 'lg', variant: 'outline' }),
-                'w-full sm:w-auto border-foreground/30 text-foreground/80 hover:bg-foreground/10 hover:text-foreground'
-              )}
-            >
-              Browse gifts
-            </Link>
-          </div>
+          {/* Secondary CTAs — anon only */}
+          {!isSignedIn && (
+            <div className="mt-10 flex flex-col items-center justify-center gap-3 px-4 sm:flex-row">
+              <Link
+                href="/signup"
+                className={cn(buttonVariants({ size: 'lg' }), 'w-full sm:w-auto')}
+              >
+                Create free account
+              </Link>
+              <Link
+                href="/browse-products"
+                className={cn(
+                  buttonVariants({ size: 'lg', variant: 'outline' }),
+                  'w-full sm:w-auto border-foreground/30 text-foreground/80 hover:bg-foreground/10 hover:text-foreground'
+                )}
+              >
+                Browse gifts
+              </Link>
+            </div>
+          )}
         </section>
       </div>
 
@@ -278,17 +307,35 @@ export default async function LandingPage() {
       {/* CTA footer */}
       <section className="py-20 bg-[linear-gradient(to_bottom,#dcb6c9_0%,#f2eaec_100%)]">
         <div className="mx-auto max-w-5xl px-4 text-center space-y-6">
-          <h2 className="font-heading text-3xl font-light tracking-tight">
-            Ready to get started?
-          </h2>
-          <p className="text-base text-foreground/70">
-            Create a free account and pick your grandma name in minutes.
-          </p>
-          <div>
-            <Link href="/signup" className={cn(buttonVariants({ size: 'lg' }))}>
-              Create free account
-            </Link>
-          </div>
+          {isSignedIn ? (
+            <>
+              <h2 className="font-heading text-3xl font-light tracking-tight">
+                Welcome back
+              </h2>
+              <p className="text-base text-foreground/70">
+                Head to your dashboard to manage your name, registry, and family.
+              </p>
+              <div>
+                <Link href="/dashboard" className={cn(buttonVariants({ size: 'lg' }))}>
+                  Go to dashboard
+                </Link>
+              </div>
+            </>
+          ) : (
+            <>
+              <h2 className="font-heading text-3xl font-light tracking-tight">
+                Ready to get started?
+              </h2>
+              <p className="text-base text-foreground/70">
+                Create a free account and pick your grandma name in minutes.
+              </p>
+              <div>
+                <Link href="/signup" className={cn(buttonVariants({ size: 'lg' }))}>
+                  Create free account
+                </Link>
+              </div>
+            </>
+          )}
         </div>
       </section>
 

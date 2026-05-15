@@ -1,9 +1,8 @@
-import { LandingNav } from '@/components/nav/landing-nav'
+
 
 export default function PrivacyPolicyPage() {
   return (
     <>
-      <LandingNav alwaysSolid />
       <main className="min-h-screen bg-background px-4 pt-[88px] pb-20">
         <div className="mx-auto max-w-3xl space-y-8">
 

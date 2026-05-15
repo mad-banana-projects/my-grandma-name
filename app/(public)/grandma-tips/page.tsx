@@ -1,11 +1,8 @@
 import Image from 'next/image'
-import { LandingNav } from '@/components/nav/landing-nav'
 
 export default function GrandmaTipsPage() {
   return (
     <>
-      <LandingNav alwaysSolid />
-
       {/* Hero */}
       <section className="bg-white px-4 pb-20 pt-[108px] text-center">
         <div className="mx-auto max-w-3xl space-y-6">

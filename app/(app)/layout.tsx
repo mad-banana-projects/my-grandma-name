@@ -1,5 +1,12 @@
 import { createClient, createServiceClient } from '@/lib/supabase/server'
-import { SideNav } from '@/components/nav/side-nav'
+import { TopNav } from '@/components/nav/top-nav'
+import { FooterBar } from '@/components/footer/footer-bar'
+
+const APP_NAV = [
+  { label: 'Dashboard', href: '/dashboard' },
+  { label: 'Name Generator', href: '/name-generator' },
+  { label: 'Browse Products', href: '/browse-products' },
+]
 
 export default async function AppLayout({
   children,
@@ -11,19 +18,20 @@ export default async function AppLayout({
 
   if (!user) {
     return (
-      <div className="flex flex-col md:flex-row min-h-screen">
-        <SideNav isAnon />
-        <div className="flex-1 min-w-0">{children}</div>
+      <div className="flex min-h-screen flex-col">
+        <TopNav user={null} />
+        <div className="flex-1 pt-[68px]">{children}</div>
+        <FooterBar />
       </div>
     )
   }
 
   const service = createServiceClient()
-
-  const [{ data: userProfile }, { data: grandmaProfile }] = await Promise.all([
-    service.from('users').select('role').eq('id', user.id).single(),
-    service.from('grandma_profiles').select('id').eq('user_id', user.id).single(),
-  ])
+  const { data: userProfile } = await service
+    .from('users')
+    .select('role')
+    .eq('id', user.id)
+    .single()
 
   const role = userProfile?.role
 
@@ -35,29 +43,24 @@ export default async function AppLayout({
       .eq('invite_status', 'accepted')
       .single()
 
+    const familyNavItems = membership?.grandma_id
+      ? [{ label: 'My Registry', href: `/registry/${membership.grandma_id}` }]
+      : []
+
     return (
-      <div className="flex flex-col md:flex-row min-h-screen">
-        <SideNav
-          email={user.email ?? ''}
-          familyRegistryId={membership?.grandma_id ?? null}
-        />
-        <div className="flex-1 min-w-0">{children}</div>
+      <div className="flex min-h-screen flex-col">
+        <TopNav user={{ email: user.email ?? '' }} appNavItems={familyNavItems} />
+        <div className="flex-1 pt-[68px]">{children}</div>
+        <FooterBar />
       </div>
     )
   }
 
-  const isFreeUser = role === 'free'
-
   return (
-    <div className="flex flex-col md:flex-row min-h-screen">
-      <SideNav
-        email={user.email ?? ''}
-        grandmaProfileId={grandmaProfile?.id ?? null}
-        isFreeUser={isFreeUser}
-      />
-      <div className="flex-1 min-w-0">
-        {children}
-      </div>
+    <div className="flex min-h-screen flex-col">
+      <TopNav user={{ email: user.email ?? '' }} appNavItems={APP_NAV} />
+      <div className="flex-1 pt-[68px]">{children}</div>
+      <FooterBar />
     </div>
   )
 }
