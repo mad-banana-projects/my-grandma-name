@@ -97,12 +97,15 @@ export async function POST(request: NextRequest) {
             .eq('user_id', userId)
             .single()
 
+          const savedGrandmaName = sub.metadata?.grandma_name ?? ''
+
           await supabase.from('grandma_profiles').insert({
             user_id: userId,
             first_name: freeProfile?.first_name ?? '',
             last_name: freeProfile?.last_name ?? '',
             email: freeProfile?.email ?? '',
             bio: freeProfile?.bio ?? '',
+            grandma_name: savedGrandmaName,
           })
         }
       }

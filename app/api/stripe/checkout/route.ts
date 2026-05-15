@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const { plan } = await request.json() as { plan: 'monthly' | 'annual' }
+  const { plan, grandmaName } = await request.json() as { plan: 'monthly' | 'annual'; grandmaName?: string | null }
 
   if (plan !== 'monthly' && plan !== 'annual') {
     return NextResponse.json({ error: 'Invalid plan' }, { status: 400 })
@@ -34,11 +34,17 @@ export async function POST(request: NextRequest) {
     line_items: [{ price: priceId, quantity: 1 }],
     subscription_data: {
       trial_period_days: 7,
-      metadata: { user_id: user.id },
+      metadata: {
+        user_id: user.id,
+        ...(grandmaName ? { grandma_name: grandmaName } : {}),
+      },
     },
     success_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?checkout=success`,
     cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/subscribe`,
-    metadata: { user_id: user.id },
+    metadata: {
+      user_id: user.id,
+      ...(grandmaName ? { grandma_name: grandmaName } : {}),
+    },
   })
 
   return NextResponse.json({ url: session.url })

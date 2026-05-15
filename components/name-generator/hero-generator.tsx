@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import Link from 'next/link'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -225,42 +224,62 @@ export function HeroGenerator({
 
         {/* Results */}
         {result && (
-          <div className="mt-8 border-t border-border pt-8">
-            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 sm:items-center">
-              <div className="space-y-3 text-center sm:text-left">
-                <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
-                  Your grandma name is
-                </p>
-                <h2 className="font-heading text-6xl font-light tracking-tight">
+          <div className="mt-8 border-t border-border pt-8 space-y-6">
+
+            {/* Winner */}
+            <div>
+              <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
+                Your grandma name is
+              </p>
+              <div className="mt-2 flex items-center justify-between gap-4">
+                <h2 className="font-heading text-5xl font-light tracking-tight">
                   {result.winner.name}
                 </h2>
-                <p className="text-base text-muted-foreground">
-                  Runner-up:{' '}
-                  <span className="font-heading text-2xl font-light italic text-foreground">
-                    {result.runnerUp.name}
-                  </span>
-                </p>
+                {!isPaidGrandma && (
+                  <a
+                    href={
+                      isSignedIn
+                        ? `/subscribe?grandmaName=${encodeURIComponent(result.winner.name)}`
+                        : `/signup?grandmaName=${encodeURIComponent(result.winner.name)}&intent=subscribe`
+                    }
+                    className={cn(buttonVariants({ size: 'sm', variant: 'outline' }), 'shrink-0')}
+                  >
+                    {isSignedIn ? 'Upgrade to save' : 'Subscribe to save'}
+                  </a>
+                )}
               </div>
-              <p className="text-sm leading-relaxed text-muted-foreground">
-                {result.explanation}
-              </p>
             </div>
 
-            <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <Button variant="outline" onClick={() => setResult(null)}>
-                Try again
-              </Button>
-              {!isSignedIn && (
-                <Link href="/signup" className={cn(buttonVariants())}>
-                  Create account to save
-                </Link>
-              )}
-              {isSignedIn && !isPaidGrandma && (
-                <Link href="/subscribe" className={cn(buttonVariants())}>
-                  Upgrade to save
-                </Link>
+            {/* Explanation */}
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              {result.explanation}
+            </p>
+
+            {/* Runner-up */}
+            <div className="flex items-center justify-between rounded-md bg-muted/40 px-3 py-2 text-sm gap-4">
+              <div>
+                <span className="text-muted-foreground">Runner-up: </span>
+                <span className="font-medium">{result.runnerUp.name}</span>
+              </div>
+              {!isPaidGrandma && (
+                <a
+                  href={
+                    isSignedIn
+                      ? `/subscribe?grandmaName=${encodeURIComponent(result.runnerUp.name)}`
+                      : `/signup?grandmaName=${encodeURIComponent(result.runnerUp.name)}&intent=subscribe`
+                  }
+                  className={cn(buttonVariants({ size: 'sm', variant: 'ghost' }), 'shrink-0 h-7 px-2 text-xs')}
+                >
+                  {isSignedIn ? 'Upgrade to save' : 'Subscribe to save'}
+                </a>
               )}
             </div>
+
+            {/* Try again */}
+            <Button variant="outline" onClick={() => setResult(null)}>
+              Try again
+            </Button>
+
           </div>
         )}
       </div>

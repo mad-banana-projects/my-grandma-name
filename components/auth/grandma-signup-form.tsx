@@ -17,11 +17,13 @@ import { signUpGrandma, type GrandmaSignupState } from '@/app/(auth)/signup/acti
 
 const initialState: GrandmaSignupState = { status: 'idle' }
 
-function SubmitButton() {
+function SubmitButton({ isSubscribeIntent }: { isSubscribeIntent: boolean }) {
   const { pending } = useFormStatus()
   return (
     <Button type="submit" size="lg" className="w-full" disabled={pending}>
-      {pending ? 'Creating account…' : 'Create free account'}
+      {pending
+        ? isSubscribeIntent ? 'Creating account…' : 'Creating account…'
+        : isSubscribeIntent ? 'Create account & subscribe' : 'Create free account'}
     </Button>
   )
 }
@@ -31,19 +33,33 @@ function FieldError({ errors }: { errors?: string[] }) {
   return <p className="text-sm text-destructive">{errors[0]}</p>
 }
 
-export function GrandmaSignupForm() {
+interface GrandmaSignupFormProps {
+  grandmaName?: string | null
+  intent?: 'subscribe'
+}
+
+export function GrandmaSignupForm({ grandmaName, intent }: GrandmaSignupFormProps) {
   const [state, formAction] = useActionState(signUpGrandma, initialState)
+  const isSubscribeIntent = intent === 'subscribe'
 
   return (
     <Card className="w-full max-w-lg rounded-lg">
       <CardHeader>
-        <CardTitle className="text-xl">Create your account</CardTitle>
+        <CardTitle className="text-xl">
+          {isSubscribeIntent ? 'Your details' : 'Create your account'}
+        </CardTitle>
         <CardDescription>
-          Free to join. You can add more details and upgrade anytime.
+          {isSubscribeIntent
+            ? 'Free to join. You\'ll choose a plan on the next step.'
+            : 'Free to join. You can add more details and upgrade anytime.'}
         </CardDescription>
       </CardHeader>
       <CardContent>
         <form action={formAction} className="space-y-4">
+          {/* Hidden fields carry intent and grandmaName through the server action */}
+          {intent && <input type="hidden" name="intent" value={intent} />}
+          {grandmaName && <input type="hidden" name="grandmaName" value={grandmaName} />}
+
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Input
@@ -71,19 +87,20 @@ export function GrandmaSignupForm() {
             </div>
           </div>
 
-          <div className="space-y-2">
-            <textarea
-              id="bio"
-              name="bio"
-              rows={3}
-              maxLength={500}
-              required
-              placeholder="Tell a little about yourself..."
-              aria-invalid={Boolean(state.fieldErrors?.bio)}
-              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-            />
-            <FieldError errors={state.fieldErrors?.bio} />
-          </div>
+          {!isSubscribeIntent && (
+            <div className="space-y-2">
+              <textarea
+                id="bio"
+                name="bio"
+                rows={3}
+                maxLength={500}
+                placeholder="Tell a little about yourself..."
+                aria-invalid={Boolean(state.fieldErrors?.bio)}
+                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              />
+              <FieldError errors={state.fieldErrors?.bio} />
+            </div>
+          )}
 
           <hr className="border-border" />
 
@@ -127,7 +144,7 @@ export function GrandmaSignupForm() {
             </div>
           ) : null}
 
-          <SubmitButton />
+          <SubmitButton isSubscribeIntent={isSubscribeIntent} />
         </form>
 
         <p className="mt-4 text-center text-sm text-muted-foreground">

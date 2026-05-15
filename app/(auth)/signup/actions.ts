@@ -22,7 +22,7 @@ const signupSchema = z.object({
   password: z.string().min(8, 'Use at least 8 characters.'),
   firstName: z.string().trim().min(1, 'Enter your first name.').max(80),
   lastName: z.string().trim().min(1, 'Enter your last name.').max(80),
-  bio: z.string().trim().min(1, 'Tell us a little about yourself.').max(500, 'Keep your bio under 500 characters.'),
+  bio: z.string().trim().max(500, 'Keep your bio under 500 characters.').optional(),
 })
 
 function getAppUrl() {
@@ -33,12 +33,16 @@ export async function signUpGrandma(
   _prevState: GrandmaSignupState,
   formData: FormData
 ): Promise<GrandmaSignupState> {
+  const intent = formData.get('intent') as string | null
+  const grandmaName = formData.get('grandmaName') as string | null
+  const isSubscribeIntent = intent === 'subscribe'
+
   const parsed = signupSchema.safeParse({
     email: formData.get('email'),
     password: formData.get('password'),
     firstName: formData.get('firstName'),
     lastName: formData.get('lastName'),
-    bio: formData.get('bio'),
+    bio: formData.get('bio') || undefined,
   })
 
   if (!parsed.success) {
@@ -50,6 +54,13 @@ export async function signUpGrandma(
   }
 
   const { email, password, firstName, lastName, bio } = parsed.data
+
+  // Build the post-confirmation redirect destination
+  const nextUrl =
+    isSubscribeIntent && grandmaName
+      ? `/subscribe?grandmaName=${encodeURIComponent(grandmaName)}`
+      : '/dashboard'
+
   const supabase = await createClient()
 
   const { data, error } = await supabase.auth.signUp({
@@ -57,7 +68,7 @@ export async function signUpGrandma(
     password,
     options: {
       data: { role: 'free' },
-      emailRedirectTo: `${getAppUrl()}/api/auth/callback?next=/dashboard`,
+      emailRedirectTo: `${getAppUrl()}/api/auth/callback?next=${encodeURIComponent(nextUrl)}`,
     },
   })
 
@@ -78,7 +89,7 @@ export async function signUpGrandma(
         email,
         first_name: firstName,
         last_name: lastName,
-        bio,
+        bio: bio ?? '',
       },
       { onConflict: 'user_id' }
     )
@@ -87,8 +98,9 @@ export async function signUpGrandma(
     return { status: 'error', message: profileError.message }
   }
 
+  // Email confirmation disabled — user is immediately logged in
   if (data.session) {
-    redirect('/dashboard')
+    redirect(nextUrl)
   }
 
   return {
