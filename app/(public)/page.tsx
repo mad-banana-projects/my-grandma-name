@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { HeroGenerator } from '@/components/name-generator/hero-generator'
+import { DinnerPartySection } from '@/components/sections/dinner-party-section'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 
 const ANON_COOKIE = 'anon_gen_count'
@@ -276,7 +277,7 @@ export default async function LandingPage() {
       </section>
 
       {/* About section */}
-      <section className="bg-[linear-gradient(135deg,#f5eef2_0%,#faf7f8_50%,#f0edf5_100%)] py-24">
+      <section className="bg-white py-24">
         <div className="mx-auto max-w-2xl px-8">
           <Image
             src="/images/wording/white-black-logo-with-wording.png"
@@ -304,40 +305,7 @@ export default async function LandingPage() {
         </div>
       </section>
 
-      {/* CTA footer */}
-      <section className="py-20 bg-[linear-gradient(to_bottom,#dcb6c9_0%,#f2eaec_100%)]">
-        <div className="mx-auto max-w-5xl px-4 text-center space-y-6">
-          {isSignedIn ? (
-            <>
-              <h2 className="font-heading text-3xl font-light tracking-tight">
-                Welcome back
-              </h2>
-              <p className="text-base text-foreground/70">
-                Head to your dashboard to manage your name, registry, and family.
-              </p>
-              <div>
-                <Link href="/dashboard" className={cn(buttonVariants({ size: 'lg' }))}>
-                  Go to dashboard
-                </Link>
-              </div>
-            </>
-          ) : (
-            <>
-              <h2 className="font-heading text-3xl font-light tracking-tight">
-                Ready to get started?
-              </h2>
-              <p className="text-base text-foreground/70">
-                Create a free account and pick your grandma name in minutes.
-              </p>
-              <div>
-                <Link href="/signup" className={cn(buttonVariants({ size: 'lg' }))}>
-                  Create free account
-                </Link>
-              </div>
-            </>
-          )}
-        </div>
-      </section>
+      <DinnerPartySection />
 
     </main>
   )

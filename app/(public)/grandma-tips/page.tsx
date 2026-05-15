@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import { DinnerPartySection } from '@/components/sections/dinner-party-section'
 
 export default function GrandmaTipsPage() {
   return (
@@ -183,6 +184,8 @@ export default function GrandmaTipsPage() {
 
         </div>
       </section>
+
+      <DinnerPartySection />
     </>
   )
 }

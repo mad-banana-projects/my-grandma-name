@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import { DinnerPartySection } from '@/components/sections/dinner-party-section'
 
 export default function AboutPage() {
   return (
@@ -236,7 +237,7 @@ export default function AboutPage() {
 
       {/* Fixed parallax background section */}
       <section
-        className="bg-fixed bg-cover bg-center py-24"
+        className="relative bg-fixed bg-cover bg-center py-24"
         style={{ backgroundImage: "url('/images/about-page/grandmother-with-family.jpg')" }}
       >
         <div className="mx-auto max-w-4xl rounded-2xl bg-white px-12 py-14 shadow-[0_4px_40px_rgba(53,51,48,0.15)]">
@@ -267,7 +268,10 @@ export default function AboutPage() {
           </div>
 
         </div>
+        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-white to-transparent" />
       </section>
+
+      <DinnerPartySection />
     </>
   )
 }
