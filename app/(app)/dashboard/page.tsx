@@ -16,26 +16,44 @@ export default async function DashboardPage() {
 
   const service = createServiceClient()
 
-  const { data: userData } = await service
-    .from('users')
-    .select('role, subscription_status')
-    .eq('id', user.id)
-    .single()
+  const [{ data: userData }, { data: profileData }] = await Promise.all([
+    service.from('users').select('role, subscription_status').eq('id', user.id).single(),
+    service.from('profiles').select(`
+      id, first_name, last_name, grandma_name, bio, birthday, phone_number,
+      email, text_updates_opt_in, address,
+      reminder_grandparents_day, reminder_mothers_day, reminder_birthday, reminder_christmas,
+      reminder_custom_dates, reminder_frequency
+    `).eq('user_id', user.id).single(),
+  ])
 
   const role = (userData?.role ?? 'free') as 'free' | 'grandma' | 'family'
   const subscriptionStatus = userData?.subscription_status
   const isPaid = role === 'grandma' && subscriptionStatus === 'active'
 
-  let profile: UnifiedProfile
-  let grandmaProfileId: string | null = null
-  let reminderSettings: {
-    reminder_grandparents_day: boolean
-    reminder_mothers_day: boolean
-    reminder_birthday: boolean
-    reminder_christmas: boolean
-    reminder_custom_dates: { label: string; date: string }[]
-    reminder_frequency: number[]
-  } | null = null
+  if (!profileData) redirect('/login')
+
+  const profile: UnifiedProfile = {
+    id: profileData.id,
+    first_name: profileData.first_name,
+    last_name: profileData.last_name,
+    email: profileData.email,
+    phone_number: profileData.phone_number,
+    text_updates_opt_in: profileData.text_updates_opt_in,
+    grandma_name: profileData.grandma_name,
+    bio: profileData.bio,
+    birthday: profileData.birthday,
+    address: profileData.address,
+  }
+
+  const reminderSettings = isPaid ? {
+    reminder_grandparents_day: profileData.reminder_grandparents_day ?? true,
+    reminder_mothers_day: profileData.reminder_mothers_day ?? true,
+    reminder_birthday: profileData.reminder_birthday ?? true,
+    reminder_christmas: profileData.reminder_christmas ?? true,
+    reminder_custom_dates: (profileData.reminder_custom_dates as { label: string; date: string }[] | null) ?? [],
+    reminder_frequency: (profileData.reminder_frequency as number[] | null) ?? [30, 14, 7],
+  } : null
+
   let members: {
     id: string
     first_name: string | null
@@ -47,75 +65,22 @@ export default async function DashboardPage() {
   let registryItems: RegistryPreviewItem[] = []
 
   if (isPaid) {
-    const { data: grandmaProfile } = await service
-      .from('grandma_profiles')
-      .select(`
-        id, first_name, last_name, grandma_name, bio, birthday, phone_number, email, text_updates_opt_in,
-        reminder_grandparents_day, reminder_mothers_day, reminder_birthday, reminder_christmas,
-        reminder_custom_dates, reminder_frequency
-      `)
-      .eq('user_id', user.id)
-      .single()
-
-    if (!grandmaProfile) redirect('/signup')
-
-    grandmaProfileId = grandmaProfile.id
-
     const [{ data: familyMembers }, { data: regItems }] = await Promise.all([
       service
         .from('family_members')
         .select('id, first_name, last_name, email, relationship, invite_status')
-        .eq('grandma_id', grandmaProfile.id)
+        .eq('grandma_id', profileData.id)
         .order('created_at', { ascending: true }),
       service
         .from('registry_items')
         .select('id, product:products(name, image_urls, price, brand, affiliate_url, product_url), variant:product_variants(id, label)')
-        .eq('grandma_id', grandmaProfile.id)
+        .eq('grandma_id', profileData.id)
         .order('added_at', { ascending: false })
         .limit(3),
     ])
 
     members = familyMembers ?? []
     registryItems = (regItems ?? []) as unknown as RegistryPreviewItem[]
-
-    profile = {
-      id: grandmaProfile.id,
-      first_name: grandmaProfile.first_name,
-      last_name: grandmaProfile.last_name,
-      email: grandmaProfile.email,
-      bio: grandmaProfile.bio,
-      grandma_name: grandmaProfile.grandma_name,
-      birthday: grandmaProfile.birthday,
-      phone_number: grandmaProfile.phone_number,
-      text_updates_opt_in: grandmaProfile.text_updates_opt_in,
-    }
-
-    reminderSettings = {
-      reminder_grandparents_day: grandmaProfile.reminder_grandparents_day ?? true,
-      reminder_mothers_day: grandmaProfile.reminder_mothers_day ?? true,
-      reminder_birthday: grandmaProfile.reminder_birthday ?? true,
-      reminder_christmas: grandmaProfile.reminder_christmas ?? true,
-      reminder_custom_dates: (grandmaProfile.reminder_custom_dates as { label: string; date: string }[] | null) ?? [],
-      reminder_frequency: (grandmaProfile.reminder_frequency as number[] | null) ?? [30, 14, 7],
-    }
-  } else {
-    const { data: freeProfile } = await service
-      .from('free_profiles')
-      .select('id, email, first_name, last_name, bio')
-      .eq('user_id', user.id)
-      .single()
-
-    profile = {
-      id: freeProfile?.id ?? null,
-      first_name: freeProfile?.first_name ?? '',
-      last_name: freeProfile?.last_name ?? '',
-      email: freeProfile?.email ?? user.email ?? '',
-      bio: freeProfile?.bio ?? '',
-      grandma_name: null,
-      birthday: null,
-      phone_number: null,
-      text_updates_opt_in: null,
-    }
   }
 
   return (
@@ -150,7 +115,6 @@ export default async function DashboardPage() {
             <h2 className="text-lg font-semibold">About Me</h2>
             <ProfileCard
               profile={profile}
-              role={isPaid ? 'grandma' : 'free'}
               subscriptionStatus={subscriptionStatus ?? null}
             />
           </div>
@@ -158,9 +122,9 @@ export default async function DashboardPage() {
           {/* Col 2, Row 1: My Registry */}
           <div className="flex flex-col gap-4 h-full">
             <h2 className="text-lg font-semibold">My Registry</h2>
-            {isPaid && grandmaProfileId ? (
+            {isPaid ? (
               <RegistryPreviewCard
-                grandmaProfileId={grandmaProfileId}
+                grandmaProfileId={profileData.id}
                 items={registryItems}
               />
             ) : (

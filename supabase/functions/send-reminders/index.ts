@@ -122,7 +122,7 @@ Deno.serve(async (req: Request) => {
 
   // 2. Fetch grandma profiles + family members
   const { data: profiles, error: profilesErr } = await supabase
-    .from("grandma_profiles")
+    .from("profiles")
     .select(`
       id, first_name, grandma_name, birthday,
       reminder_grandparents_day, reminder_mothers_day,

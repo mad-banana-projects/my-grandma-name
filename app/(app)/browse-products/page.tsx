@@ -33,7 +33,7 @@ export default async function BrowseProductsPage() {
 
     if (isPaid) {
       const { data: profile } = await service
-        .from('grandma_profiles')
+        .from('profiles')
         .select('id')
         .eq('user_id', user.id)
         .single()

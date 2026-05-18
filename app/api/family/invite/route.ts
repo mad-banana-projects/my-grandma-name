@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
 
   // Verify the inviting user is a paid grandma
   const { data: profile } = await serviceClient
-    .from('grandma_profiles')
+    .from('profiles')
     .select('id, grandma_name')
     .eq('user_id', user.id)
     .single()

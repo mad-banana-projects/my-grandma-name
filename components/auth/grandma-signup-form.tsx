@@ -22,7 +22,7 @@ function SubmitButton({ isSubscribeIntent }: { isSubscribeIntent: boolean }) {
   return (
     <Button type="submit" size="lg" className="w-full" disabled={pending}>
       {pending
-        ? isSubscribeIntent ? 'Creating account…' : 'Creating account…'
+        ? 'Creating account…'
         : isSubscribeIntent ? 'Create account & subscribe' : 'Create free account'}
     </Button>
   )
@@ -50,16 +50,16 @@ export function GrandmaSignupForm({ grandmaName, intent }: GrandmaSignupFormProp
         </CardTitle>
         <CardDescription>
           {isSubscribeIntent
-            ? 'Free to join. You\'ll choose a plan on the next step.'
+            ? "Free to join. You'll choose a plan on the next step."
             : 'Free to join. You can add more details and upgrade anytime.'}
         </CardDescription>
       </CardHeader>
       <CardContent>
         <form action={formAction} className="space-y-4">
-          {/* Hidden fields carry intent and grandmaName through the server action */}
           {intent && <input type="hidden" name="intent" value={intent} />}
           {grandmaName && <input type="hidden" name="grandmaName" value={grandmaName} />}
 
+          {/* Name row */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Input
@@ -87,23 +87,36 @@ export function GrandmaSignupForm({ grandmaName, intent }: GrandmaSignupFormProp
             </div>
           </div>
 
-          {!isSubscribeIntent && (
-            <div className="space-y-2">
-              <textarea
-                id="bio"
-                name="bio"
-                rows={3}
-                maxLength={500}
-                placeholder="Tell a little about yourself..."
-                aria-invalid={Boolean(state.fieldErrors?.bio)}
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-              />
-              <FieldError errors={state.fieldErrors?.bio} />
-            </div>
-          )}
+          {/* Phone */}
+          <div className="space-y-2">
+            <Input
+              id="phone"
+              name="phone"
+              type="tel"
+              placeholder="Phone Number"
+              autoComplete="tel"
+              required
+              aria-invalid={Boolean(state.fieldErrors?.phone)}
+            />
+            <FieldError errors={state.fieldErrors?.phone} />
+          </div>
+
+          {/* Text opt-in */}
+          <div className="flex items-center gap-2.5">
+            <input
+              id="textUpdatesOptIn"
+              name="textUpdatesOptIn"
+              type="checkbox"
+              className="h-4 w-4 rounded border-input accent-foreground"
+            />
+            <label htmlFor="textUpdatesOptIn" className="text-sm text-muted-foreground cursor-pointer">
+              I agree to receive text updates
+            </label>
+          </div>
 
           <hr className="border-border" />
 
+          {/* Email */}
           <div className="space-y-2">
             <Input
               id="email"
@@ -117,6 +130,7 @@ export function GrandmaSignupForm({ grandmaName, intent }: GrandmaSignupFormProp
             <FieldError errors={state.fieldErrors?.email} />
           </div>
 
+          {/* Password */}
           <div className="space-y-2">
             <Input
               id="password"

@@ -82,32 +82,14 @@ export async function POST(request: NextRequest) {
         })
         .eq('id', userId)
 
-      // Seed grandma_profiles from free_profiles when going active for the first time
-      if (isActive) {
-        const { data: existing } = await supabase
-          .from('grandma_profiles')
-          .select('id')
+      // If grandmaName was captured during subscriber signup, save it to the profile
+      const savedGrandmaName = sub.metadata?.grandma_name
+      if (isActive && savedGrandmaName) {
+        await supabase
+          .from('profiles')
+          .update({ grandma_name: savedGrandmaName })
           .eq('user_id', userId)
-          .single()
-
-        if (!existing) {
-          const { data: freeProfile } = await supabase
-            .from('free_profiles')
-            .select('first_name, last_name, email, bio')
-            .eq('user_id', userId)
-            .single()
-
-          const savedGrandmaName = sub.metadata?.grandma_name ?? ''
-
-          await supabase.from('grandma_profiles').insert({
-            user_id: userId,
-            first_name: freeProfile?.first_name ?? '',
-            last_name: freeProfile?.last_name ?? '',
-            email: freeProfile?.email ?? '',
-            bio: freeProfile?.bio ?? '',
-            grandma_name: savedGrandmaName,
-          })
-        }
+          .eq('grandma_name', '') // only overwrite if not already set
       }
       break
     }

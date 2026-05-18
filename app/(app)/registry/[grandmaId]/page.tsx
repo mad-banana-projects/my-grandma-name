@@ -16,7 +16,7 @@ export default async function RegistryPage({
   const service = createServiceClient()
 
   const { data: profile } = await service
-    .from('grandma_profiles')
+    .from('profiles')
     .select('grandma_name, first_name, user_id')
     .eq('id', grandmaId)
     .single()

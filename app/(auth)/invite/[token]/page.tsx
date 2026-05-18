@@ -15,7 +15,7 @@ export default async function InvitePage({
     .from('family_members')
     .select(`
       id, email, first_name, invite_status, grandma_id,
-      grandma:grandma_profiles ( grandma_name, first_name )
+      grandma:profiles ( grandma_name, first_name )
     `)
     .eq('invite_token', token)
     .single()

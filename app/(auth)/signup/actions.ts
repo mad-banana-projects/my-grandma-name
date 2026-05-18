@@ -13,7 +13,7 @@ export type GrandmaSignupState = {
     password?: string[]
     firstName?: string[]
     lastName?: string[]
-    bio?: string[]
+    phone?: string[]
   }
 }
 
@@ -22,7 +22,7 @@ const signupSchema = z.object({
   password: z.string().min(8, 'Use at least 8 characters.'),
   firstName: z.string().trim().min(1, 'Enter your first name.').max(80),
   lastName: z.string().trim().min(1, 'Enter your last name.').max(80),
-  bio: z.string().trim().max(500, 'Keep your bio under 500 characters.').optional(),
+  phone: z.string().trim().min(1, 'Enter your phone number.').max(30),
 })
 
 function getAppUrl() {
@@ -36,13 +36,14 @@ export async function signUpGrandma(
   const intent = formData.get('intent') as string | null
   const grandmaName = formData.get('grandmaName') as string | null
   const isSubscribeIntent = intent === 'subscribe'
+  const textUpdatesOptIn = formData.get('textUpdatesOptIn') === 'on'
 
   const parsed = signupSchema.safeParse({
     email: formData.get('email'),
     password: formData.get('password'),
     firstName: formData.get('firstName'),
     lastName: formData.get('lastName'),
-    bio: formData.get('bio') || undefined,
+    phone: formData.get('phone'),
   })
 
   if (!parsed.success) {
@@ -53,9 +54,8 @@ export async function signUpGrandma(
     }
   }
 
-  const { email, password, firstName, lastName, bio } = parsed.data
+  const { email, password, firstName, lastName, phone } = parsed.data
 
-  // Build the post-confirmation redirect destination
   const nextUrl =
     isSubscribeIntent && grandmaName
       ? `/subscribe?grandmaName=${encodeURIComponent(grandmaName)}`
@@ -80,16 +80,18 @@ export async function signUpGrandma(
     return { status: 'error', message: 'Supabase did not return a user for this signup.' }
   }
 
+  // The auth trigger creates a bare profiles row on signup; upsert the full details here
   const serviceClient = createServiceClient()
   const { error: profileError } = await serviceClient
-    .from('free_profiles')
+    .from('profiles')
     .upsert(
       {
         user_id: data.user.id,
         email,
         first_name: firstName,
         last_name: lastName,
-        bio: bio ?? '',
+        phone_number: phone,
+        text_updates_opt_in: textUpdatesOptIn,
       },
       { onConflict: 'user_id' }
     )

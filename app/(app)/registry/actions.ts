@@ -13,7 +13,7 @@ export async function removeRegistryItem(itemId: string): Promise<RemoveResult> 
   const service = createServiceClient()
 
   const { data: profile } = await service
-    .from('grandma_profiles')
+    .from('profiles')
     .select('id')
     .eq('user_id', user.id)
     .single()
@@ -48,7 +48,7 @@ export async function toggleRegistryItem(
   const service = createServiceClient()
 
   const { data: profile } = await service
-    .from('grandma_profiles')
+    .from('profiles')
     .select('id')
     .eq('user_id', user.id)
     .single()

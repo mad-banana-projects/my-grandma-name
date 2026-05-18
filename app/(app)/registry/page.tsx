@@ -20,7 +20,7 @@ export default async function RegistryLockedPage() {
   // Paid users should never land here — send them to their registry
   if (userProfile?.role === 'grandma' && userProfile?.subscription_status === 'active') {
     const { data: grandmaProfile } = await service
-      .from('grandma_profiles')
+      .from('profiles')
       .select('id')
       .eq('user_id', user.id)
       .single()

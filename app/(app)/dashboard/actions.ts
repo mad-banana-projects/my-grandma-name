@@ -4,22 +4,16 @@ import { z } from 'zod'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 
-const paidProfileSchema = z.object({
+const profileSchema = z.object({
   first_name: z.string().min(1, 'Required').max(100),
   last_name: z.string().min(1, 'Required').max(100),
-  grandma_name: z.string().min(1, 'Required').max(100),
-  bio: z.string().min(1, 'Required').max(1000),
-  birthday: z.string().min(1, 'Required'),
+  email: z.email('Enter a valid email address'),
   phone_number: z.string().min(1, 'Required').max(30),
-  email: z.email('Enter a valid email address'),
   text_updates_opt_in: z.boolean(),
-})
-
-const freeProfileSchema = z.object({
-  first_name: z.string().min(1, 'Required').max(100),
-  last_name: z.string().min(1, 'Required').max(100),
-  email: z.email('Enter a valid email address'),
-  bio: z.string().min(1, 'Required').max(1000),
+  grandma_name: z.string().max(100).optional().default(''),
+  bio: z.string().max(1000).optional().default(''),
+  birthday: z.string().optional(),
+  address: z.string().max(500).optional().default(''),
 })
 
 const passwordSchema = z
@@ -46,8 +40,7 @@ const remindersSchema = z.object({
   reminder_frequency: z.array(z.number().int().min(1).max(365)),
 })
 
-export type PaidProfileFormValues = z.infer<typeof paidProfileSchema>
-export type FreeProfileFormValues = z.infer<typeof freeProfileSchema>
+export type ProfileFormValues = z.infer<typeof profileSchema>
 export type ReminderFormValues = z.infer<typeof remindersSchema>
 
 export type UpdateProfileResult =
@@ -55,9 +48,9 @@ export type UpdateProfileResult =
   | { success: false; error: string }
 
 export async function updateProfile(
-  data: PaidProfileFormValues
+  data: ProfileFormValues
 ): Promise<UpdateProfileResult> {
-  const parsed = paidProfileSchema.safeParse(data)
+  const parsed = profileSchema.safeParse(data)
   if (!parsed.success) {
     return { success: false, error: parsed.error.issues[0].message }
   }
@@ -67,53 +60,20 @@ export async function updateProfile(
   if (!user) return { success: false, error: 'Not authenticated' }
 
   const service = createServiceClient()
-
-  const { data: userData } = await service
-    .from('users')
-    .select('role, subscription_status')
-    .eq('id', user.id)
-    .single()
-
-  if (userData?.role !== 'grandma' || userData?.subscription_status !== 'active') {
-    return { success: false, error: 'Not authorized' }
-  }
-
   const { error } = await service
-    .from('grandma_profiles')
-    .update(parsed.data)
+    .from('profiles')
+    .update({
+      first_name: parsed.data.first_name,
+      last_name: parsed.data.last_name,
+      email: parsed.data.email,
+      phone_number: parsed.data.phone_number,
+      text_updates_opt_in: parsed.data.text_updates_opt_in,
+      grandma_name: parsed.data.grandma_name ?? '',
+      bio: parsed.data.bio ?? '',
+      birthday: parsed.data.birthday || null,
+      address: parsed.data.address ?? '',
+    })
     .eq('user_id', user.id)
-
-  if (error) return { success: false, error: error.message }
-
-  revalidatePath('/dashboard')
-  return { success: true }
-}
-
-export async function updateFreeProfile(
-  data: FreeProfileFormValues
-): Promise<UpdateProfileResult> {
-  const parsed = freeProfileSchema.safeParse(data)
-  if (!parsed.success) {
-    return { success: false, error: parsed.error.issues[0].message }
-  }
-
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return { success: false, error: 'Not authenticated' }
-
-  const service = createServiceClient()
-  const { error } = await service
-    .from('free_profiles')
-    .upsert(
-      {
-        user_id: user.id,
-        email: parsed.data.email,
-        first_name: parsed.data.first_name,
-        last_name: parsed.data.last_name,
-        bio: parsed.data.bio,
-      },
-      { onConflict: 'user_id' }
-    )
 
   if (error) return { success: false, error: error.message }
 
@@ -139,71 +99,12 @@ export async function updatePassword(
   return { success: true }
 }
 
-export async function activateSubscription(): Promise<UpdateProfileResult> {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return { success: false, error: 'Not authenticated' }
-
-  const service = createServiceClient()
-
-  const { data: freeProfile } = await service
-    .from('free_profiles')
-    .select('first_name, last_name, email, bio')
-    .eq('user_id', user.id)
-    .single()
-
-  await service
-    .from('grandma_profiles')
-    .upsert(
-      {
-        user_id: user.id,
-        first_name: freeProfile?.first_name ?? '',
-        last_name: freeProfile?.last_name ?? '',
-        email: freeProfile?.email ?? user.email ?? '',
-        bio: freeProfile?.bio ?? '',
-      },
-      { onConflict: 'user_id' }
-    )
-
-  const { error } = await service
-    .from('users')
-    .update({ role: 'grandma', subscription_status: 'active' })
-    .eq('id', user.id)
-
-  if (error) return { success: false, error: error.message }
-
-  revalidatePath('/dashboard')
-  return { success: true }
-}
-
 export async function cancelSubscription(): Promise<UpdateProfileResult> {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { success: false, error: 'Not authenticated' }
 
   const service = createServiceClient()
-
-  const { data: grandmaProfile } = await service
-    .from('grandma_profiles')
-    .select('first_name, last_name, email, bio')
-    .eq('user_id', user.id)
-    .single()
-
-  if (grandmaProfile) {
-    await service
-      .from('free_profiles')
-      .upsert(
-        {
-          user_id: user.id,
-          first_name: grandmaProfile.first_name,
-          last_name: grandmaProfile.last_name,
-          email: grandmaProfile.email ?? user.email ?? '',
-          bio: grandmaProfile.bio ?? '',
-        },
-        { onConflict: 'user_id' }
-      )
-  }
-
   const { error } = await service
     .from('users')
     .update({ role: 'free', subscription_status: 'inactive' })
@@ -224,18 +125,8 @@ export async function saveGrandmaName(name: string): Promise<UpdateProfileResult
   if (!user) return { success: false, error: 'Not authenticated' }
 
   const service = createServiceClient()
-  const { data: userData } = await service
-    .from('users')
-    .select('role, subscription_status')
-    .eq('id', user.id)
-    .single()
-
-  if (userData?.role !== 'grandma' || userData?.subscription_status !== 'active') {
-    return { success: false, error: 'Not authorized' }
-  }
-
   const { error } = await service
-    .from('grandma_profiles')
+    .from('profiles')
     .update({ grandma_name: trimmed })
     .eq('user_id', user.id)
 
@@ -259,7 +150,7 @@ export async function updateReminders(
 
   const service = createServiceClient()
   const { error } = await service
-    .from('grandma_profiles')
+    .from('profiles')
     .update({
       reminder_grandparents_day: parsed.data.reminder_grandparents_day,
       reminder_mothers_day: parsed.data.reminder_mothers_day,
