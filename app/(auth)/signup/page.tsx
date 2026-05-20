@@ -3,21 +3,20 @@ import { GrandmaSignupForm } from '@/components/auth/grandma-signup-form'
 export default async function GrandmaSignupPage({
   searchParams,
 }: {
-  searchParams: Promise<{ grandmaName?: string; intent?: string }>
+  searchParams: Promise<{ grandmaName?: string }>
 }) {
   const params = await searchParams
   const grandmaName = params.grandmaName ?? null
-  const isSubscribeIntent = params.intent === 'subscribe'
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-muted/30 px-4 py-10">
       <div className="w-full max-w-md">
         <div className="mb-6 space-y-2 text-center">
-          {isSubscribeIntent && grandmaName ? (
+          {grandmaName ? (
             <>
               <h1 className="text-3xl font-semibold tracking-normal">Save your grandma name</h1>
               <p className="text-sm text-muted-foreground">
-                Create an account and subscribe to save{' '}
+                Create a free account to save{' '}
                 <span className="font-medium text-foreground">{grandmaName}</span> to your profile.
               </p>
             </>
@@ -30,7 +29,7 @@ export default async function GrandmaSignupPage({
             </>
           )}
         </div>
-        <GrandmaSignupForm grandmaName={grandmaName} intent={isSubscribeIntent ? 'subscribe' : undefined} />
+        <GrandmaSignupForm grandmaName={grandmaName} />
       </div>
     </main>
   )

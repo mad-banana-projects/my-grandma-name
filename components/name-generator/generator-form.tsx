@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState, useTransition } from 'react'
 
-import { Lock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -26,17 +25,17 @@ type Result = {
 }
 
 const STYLES = [
-  { value: 'classic', label: 'Classic' },
+  { value: 'traditional', label: 'Traditional' },
+  { value: 'unique', label: 'Unique' },
   { value: 'playful', label: 'Playful' },
-  { value: 'modern', label: 'Modern' },
+  { value: 'sweet', label: 'Sweet' },
+  { value: 'trendy', label: 'Trendy' },
+  { value: 'elegant', label: 'Elegant' },
 ] as const
 
-const VIBES = [
-  { value: 'timeless', label: 'Timeless' },
-  { value: 'sweet', label: 'Sweet' },
-  { value: 'stylish', label: 'Stylish / Modern' },
-  { value: 'playful', label: 'Playful' },
-  { value: 'cozy', label: 'Cozy' },
+const FORMATS = [
+  { value: 'single-word', label: 'Single word' },
+  { value: 'multi-word', label: 'Multi word' },
 ] as const
 
 interface GeneratorFormProps {
@@ -50,7 +49,7 @@ export function GeneratorForm({ isSignedIn, isPaidGrandma, anonUsesRemaining, fr
   const [firstName, setFirstName] = useState('')
   const [nameToAvoid, setNameToAvoid] = useState('')
   const [style, setStyle] = useState<string>('')
-  const [vibe, setVibe] = useState<string>('')
+  const [format, setFormat] = useState<string>('')
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -98,14 +97,14 @@ export function GeneratorForm({ isSignedIn, isPaidGrandma, anonUsesRemaining, fr
     }
 
     if (!style) { setError('Choose a preferred style.'); return }
-    if (!vibe) { setError('Choose a preferred vibe.'); return }
+    if (!format) { setError('Choose a desired name format.'); return }
 
     setLoading(true)
     try {
       const res = await fetch('/api/generate-name', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ firstName, nameToAvoid, style, vibe }),
+        body: JSON.stringify({ firstName, nameToAvoid, style, format }),
       })
 
       const data = await res.json()
@@ -146,14 +145,6 @@ export function GeneratorForm({ isSignedIn, isPaidGrandma, anonUsesRemaining, fr
   async function handleEmailCertificate(e: React.FormEvent) {
     e.preventDefault()
     if (!result) return
-    if (!isSignedIn) {
-      setShowAccountPrompt(true)
-      return
-    }
-    if (!isPaidGrandma) {
-      setShowUpgradePrompt(true)
-      return
-    }
     setEmailSending(true)
     setEmailError(null)
 
@@ -184,7 +175,6 @@ export function GeneratorForm({ isSignedIn, isPaidGrandma, anonUsesRemaining, fr
 
   function handleSaveClick(name: string) {
     if (!isSignedIn) { setShowAccountPrompt(true); return }
-    if (!isPaidGrandma) { setShowUpgradePrompt(true); return }
     setSaveError(null)
     setPendingName(name)
   }
@@ -257,24 +247,24 @@ export function GeneratorForm({ isSignedIn, isPaidGrandma, anonUsesRemaining, fr
         </fieldset>
 
         <fieldset className="space-y-3">
-          <legend className="text-sm font-medium leading-none">Preferred vibe</legend>
+          <legend className="text-sm font-medium leading-none">Desired name format</legend>
           <div className="flex flex-wrap gap-2">
-            {VIBES.map(({ value, label }) => (
+            {FORMATS.map(({ value, label }) => (
               <label
                 key={value}
                 className={`cursor-pointer rounded-full border px-4 py-1.5 text-sm transition-colors ${
-                  vibe === value
+                  format === value
                     ? 'border-foreground bg-foreground text-background'
                     : 'border-border bg-background text-foreground hover:border-foreground/40'
                 }`}
               >
                 <input
                   type="radio"
-                  name="vibe"
+                  name="format"
                   value={value}
                   className="sr-only"
-                  checked={vibe === value}
-                  onChange={() => setVibe(value)}
+                  checked={format === value}
+                  onChange={() => setFormat(value)}
                 />
                 {label}
               </label>
@@ -400,7 +390,7 @@ export function GeneratorForm({ isSignedIn, isPaidGrandma, anonUsesRemaining, fr
                   <DialogHeader>
                     <DialogTitle>Upgrade to unlock</DialogTitle>
                     <DialogDescription>
-                      Saving your grandma name and emailing your results are available on paid plans.
+                      Emailing your grandma name certificate is available on paid plans.
                     </DialogDescription>
                   </DialogHeader>
                   <DialogFooter showCloseButton>
@@ -413,55 +403,33 @@ export function GeneratorForm({ isSignedIn, isPaidGrandma, anonUsesRemaining, fr
             </CardContent>
           </Card>
 
-          {isSignedIn && !isPaidGrandma ? (
-            <Card className="rounded-lg border-dashed opacity-80">
-              <CardContent className="flex items-start gap-4 py-6">
-                <div className="mt-0.5 rounded-full bg-muted p-2 shrink-0">
-                  <Lock className="h-4 w-4 text-muted-foreground" />
-                </div>
-                <div className="flex-1 space-y-1">
-                  <p className="text-sm font-semibold">Email this to yourself</p>
-                  <p className="text-sm text-muted-foreground">
-                    Email your grandma name certificate with a paid subscription.
-                  </p>
-                </div>
-                <a
-                  href="/subscribe"
-                  className={cn(buttonVariants({ size: 'sm', variant: 'outline' }), 'shrink-0')}
-                >
-                  Upgrade
-                </a>
-              </CardContent>
-            </Card>
-          ) : (
-            <Card className="rounded-lg">
-              <CardHeader>
-                <CardTitle className="text-base">Email this to yourself</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {emailSent ? (
-                  <p className="text-sm text-emerald-700">Sent! Check your inbox for your grandma name certificate.</p>
-                ) : (
-                  <form onSubmit={handleEmailCertificate} className="flex gap-2">
-                    <Input
-                      type="email"
-                      placeholder="you@example.com"
-                      required
-                      value={emailInput}
-                      onChange={(e) => setEmailInput(e.target.value)}
-                      className="flex-1"
-                    />
-                    <Button type="submit" size="sm" variant="outline" disabled={emailSending}>
-                      {emailSending ? 'Sending…' : 'Send'}
-                    </Button>
-                  </form>
-                )}
-                {emailError && (
-                  <p className="mt-2 text-sm text-destructive">{emailError}</p>
-                )}
-              </CardContent>
-            </Card>
-          )}
+          <Card className="rounded-lg">
+            <CardHeader>
+              <CardTitle className="text-base">Email this to yourself</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {emailSent ? (
+                <p className="text-sm text-emerald-700">Sent! Check your inbox for your grandma name results.</p>
+              ) : (
+                <form onSubmit={handleEmailCertificate} className="flex gap-2">
+                  <Input
+                    type="email"
+                    placeholder="you@example.com"
+                    required
+                    value={emailInput}
+                    onChange={(e) => setEmailInput(e.target.value)}
+                    className="flex-1"
+                  />
+                  <Button type="submit" size="sm" variant="outline" disabled={emailSending}>
+                    {emailSending ? 'Sending…' : 'Send'}
+                  </Button>
+                </form>
+              )}
+              {emailError && (
+                <p className="mt-2 text-sm text-destructive">{emailError}</p>
+              )}
+            </CardContent>
+          </Card>
         </div>
       )}
 

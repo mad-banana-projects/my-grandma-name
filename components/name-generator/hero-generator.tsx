@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -13,19 +13,20 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog'
 import { cn } from '@/lib/utils'
+import { saveGrandmaName } from '@/app/(app)/dashboard/actions'
 
 const STYLES = [
-  { value: 'classic', label: 'Classic' },
+  { value: 'traditional', label: 'Traditional' },
+  { value: 'unique', label: 'Unique' },
   { value: 'playful', label: 'Playful' },
-  { value: 'modern', label: 'Modern' },
+  { value: 'sweet', label: 'Sweet' },
+  { value: 'trendy', label: 'Trendy' },
+  { value: 'elegant', label: 'Elegant' },
 ] as const
 
-const VIBES = [
-  { value: 'timeless', label: 'Timeless' },
-  { value: 'sweet', label: 'Sweet' },
-  { value: 'stylish', label: 'Stylish / Modern' },
-  { value: 'playful', label: 'Playful' },
-  { value: 'cozy', label: 'Cozy' },
+const FORMATS = [
+  { value: 'single-word', label: 'Single word' },
+  { value: 'multi-word', label: 'Multi word' },
 ] as const
 
 type Result = {
@@ -76,13 +77,72 @@ export function HeroGenerator({
   const [firstName, setFirstName] = useState('')
   const [nameToAvoid, setNameToAvoid] = useState('')
   const [style, setStyle] = useState('')
-  const [vibe, setVibe] = useState('')
+  const [format, setFormat] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [result, setResult] = useState<Result | null>(null)
   const [anonUsesLeft, setAnonUsesLeft] = useState(anonUsesRemaining)
   const [freeUsesLeft, setFreeUsesLeft] = useState(freeUsesRemaining)
   const [showUpgradePrompt, setShowUpgradePrompt] = useState(false)
+
+  const [pendingName, setPendingName] = useState<string | null>(null)
+  const [savedName, setSavedName] = useState<string | null>(null)
+  const [saveError, setSaveError] = useState<string | null>(null)
+  const [isSavePending, startSaveTransition] = useTransition()
+
+  const [emailInput, setEmailInput] = useState('')
+  const [emailSending, setEmailSending] = useState(false)
+  const [emailSent, setEmailSent] = useState(false)
+  const [emailError, setEmailError] = useState<string | null>(null)
+
+  async function handleEmailCertificate(e: React.FormEvent) {
+    e.preventDefault()
+    if (!result) return
+    setEmailSending(true)
+    setEmailError(null)
+    try {
+      const res = await fetch('/api/email/certificate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: emailInput,
+          winnerName: result.winner.name,
+          runnerUpName: result.runnerUp.name,
+          explanation: result.explanation,
+        }),
+      })
+      if (!res.ok) {
+        const data = await res.json()
+        setEmailError(data.error ?? 'Failed to send. Please try again.')
+      } else {
+        setEmailSent(true)
+      }
+    } catch {
+      setEmailError('Failed to send. Please try again.')
+    } finally {
+      setEmailSending(false)
+    }
+  }
+
+  function handleSaveClick(name: string) {
+    setSaveError(null)
+    setPendingName(name)
+  }
+
+  function handleConfirmSave() {
+    if (!pendingName) return
+    const nameToSave = pendingName
+    startSaveTransition(async () => {
+      const res = await saveGrandmaName(nameToSave)
+      if (res.success) {
+        setSavedName(nameToSave)
+        setPendingName(null)
+      } else {
+        setSaveError(res.error)
+        setPendingName(null)
+      }
+    })
+  }
 
   const limitReached =
     (!isSignedIn && anonUsesLeft <= 0) ||
@@ -105,7 +165,7 @@ export function HeroGenerator({
       const res = await fetch('/api/generate-name', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ firstName, nameToAvoid, style, vibe }),
+        body: JSON.stringify({ firstName, nameToAvoid, style, format }),
       })
       const data = await res.json()
 
@@ -172,15 +232,15 @@ export function HeroGenerator({
               </div>
             </div>
             <div className="space-y-2">
-              <Label>Preferred vibe</Label>
+              <Label>Desired name format</Label>
               <div className="flex flex-wrap gap-2">
-                {VIBES.map((v) => (
+                {FORMATS.map((f) => (
                   <PillButton
-                    key={v.value}
-                    selected={vibe === v.value}
-                    onClick={() => setVibe(vibe === v.value ? '' : v.value)}
+                    key={f.value}
+                    selected={format === f.value}
+                    onClick={() => setFormat(format === f.value ? '' : f.value)}
                   >
-                    {v.label}
+                    {f.label}
                   </PillButton>
                 ))}
               </div>
@@ -235,16 +295,21 @@ export function HeroGenerator({
                 <h2 className="font-heading text-5xl font-light tracking-tight">
                   {result.winner.name}
                 </h2>
-                {!isPaidGrandma && (
+                {isSignedIn ? (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="shrink-0"
+                    onClick={() => handleSaveClick(result.winner.name)}
+                  >
+                    Save to profile
+                  </Button>
+                ) : (
                   <a
-                    href={
-                      isSignedIn
-                        ? `/subscribe?grandmaName=${encodeURIComponent(result.winner.name)}`
-                        : `/signup?grandmaName=${encodeURIComponent(result.winner.name)}&intent=subscribe`
-                    }
+                    href={`/signup?grandmaName=${encodeURIComponent(result.winner.name)}`}
                     className={cn(buttonVariants({ size: 'sm', variant: 'outline' }), 'shrink-0')}
                   >
-                    {isSignedIn ? 'Upgrade to save' : 'Subscribe to save'}
+                    Create free account to save
                   </a>
                 )}
               </div>
@@ -261,24 +326,79 @@ export function HeroGenerator({
                 <span className="text-muted-foreground">Runner-up: </span>
                 <span className="font-medium">{result.runnerUp.name}</span>
               </div>
-              {!isPaidGrandma && (
+              {isSignedIn ? (
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="shrink-0 h-7 px-2 text-xs"
+                  onClick={() => handleSaveClick(result.runnerUp.name)}
+                >
+                  Save to profile
+                </Button>
+              ) : (
                 <a
-                  href={
-                    isSignedIn
-                      ? `/subscribe?grandmaName=${encodeURIComponent(result.runnerUp.name)}`
-                      : `/signup?grandmaName=${encodeURIComponent(result.runnerUp.name)}&intent=subscribe`
-                  }
+                  href={`/signup?grandmaName=${encodeURIComponent(result.runnerUp.name)}`}
                   className={cn(buttonVariants({ size: 'sm', variant: 'ghost' }), 'shrink-0 h-7 px-2 text-xs')}
                 >
-                  {isSignedIn ? 'Upgrade to save' : 'Subscribe to save'}
+                  Create free account to save
                 </a>
               )}
             </div>
 
+            {savedName && (
+              <p className="text-sm text-emerald-700">
+                <strong>{savedName}</strong> saved to your profile.
+              </p>
+            )}
+            {saveError && (
+              <p className="text-sm text-destructive">{saveError}</p>
+            )}
+
+            {/* Email results */}
+            <div className="border-t border-border pt-4">
+              {emailSent ? (
+                <p className="text-sm text-emerald-700">Sent! Check your inbox for your grandma name results.</p>
+              ) : (
+                <form onSubmit={handleEmailCertificate} className="flex gap-2">
+                  <Input
+                    type="email"
+                    placeholder="Email results to yourself"
+                    required
+                    value={emailInput}
+                    onChange={(e) => setEmailInput(e.target.value)}
+                    className="flex-1"
+                  />
+                  <Button type="submit" size="sm" variant="outline" disabled={emailSending}>
+                    {emailSending ? 'Sending…' : 'Send'}
+                  </Button>
+                </form>
+              )}
+              {emailError && (
+                <p className="mt-2 text-sm text-destructive">{emailError}</p>
+              )}
+            </div>
+
             {/* Try again */}
-            <Button variant="outline" onClick={() => setResult(null)}>
+            <Button variant="outline" onClick={() => { setResult(null); setSavedName(null); setSaveError(null); setEmailSent(false); setEmailError(null); setEmailInput('') }}>
               Try again
             </Button>
+
+            {/* Save confirmation dialog */}
+            <Dialog open={!!pendingName} onOpenChange={(open) => { if (!open) setPendingName(null) }}>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Save to profile</DialogTitle>
+                  <DialogDescription>
+                    Please confirm saving <strong>{pendingName}</strong> to your profile.
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter showCloseButton>
+                  <Button onClick={handleConfirmSave} disabled={isSavePending}>
+                    {isSavePending ? 'Saving…' : 'Confirm'}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
 
           </div>
         )}

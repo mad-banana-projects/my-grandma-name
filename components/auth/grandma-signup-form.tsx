@@ -17,13 +17,11 @@ import { signUpGrandma, type GrandmaSignupState } from '@/app/(auth)/signup/acti
 
 const initialState: GrandmaSignupState = { status: 'idle' }
 
-function SubmitButton({ isSubscribeIntent }: { isSubscribeIntent: boolean }) {
+function SubmitButton() {
   const { pending } = useFormStatus()
   return (
     <Button type="submit" size="lg" className="w-full" disabled={pending}>
-      {pending
-        ? 'Creating account…'
-        : isSubscribeIntent ? 'Create account & subscribe' : 'Create free account'}
+      {pending ? 'Creating account…' : 'Create free account'}
     </Button>
   )
 }
@@ -35,29 +33,32 @@ function FieldError({ errors }: { errors?: string[] }) {
 
 interface GrandmaSignupFormProps {
   grandmaName?: string | null
-  intent?: 'subscribe'
 }
 
-export function GrandmaSignupForm({ grandmaName, intent }: GrandmaSignupFormProps) {
+export function GrandmaSignupForm({ grandmaName }: GrandmaSignupFormProps) {
   const [state, formAction] = useActionState(signUpGrandma, initialState)
-  const isSubscribeIntent = intent === 'subscribe'
 
   return (
     <Card className="w-full max-w-lg rounded-lg">
       <CardHeader>
-        <CardTitle className="text-xl">
-          {isSubscribeIntent ? 'Your details' : 'Create your account'}
-        </CardTitle>
-        <CardDescription>
-          {isSubscribeIntent
-            ? "Free to join. You'll choose a plan on the next step."
-            : 'Free to join. You can add more details and upgrade anytime.'}
-        </CardDescription>
+        <CardTitle className="text-xl">Create your account</CardTitle>
+        <CardDescription>Free to join. You can add more details and upgrade anytime.</CardDescription>
       </CardHeader>
       <CardContent>
         <form action={formAction} className="space-y-4">
-          {intent && <input type="hidden" name="intent" value={intent} />}
-          {grandmaName && <input type="hidden" name="grandmaName" value={grandmaName} />}
+          {/* Grandma name — only shown when coming from the name generator */}
+          {grandmaName != null && (
+            <div className="space-y-2">
+              <Input
+                id="grandmaName"
+                name="grandmaName"
+                type="text"
+                placeholder="Your grandma name"
+                defaultValue={grandmaName}
+                aria-label="Grandma name"
+              />
+            </div>
+          )}
 
           {/* Name row */}
           <div className="grid grid-cols-2 gap-4">
@@ -158,7 +159,7 @@ export function GrandmaSignupForm({ grandmaName, intent }: GrandmaSignupFormProp
             </div>
           ) : null}
 
-          <SubmitButton isSubscribeIntent={isSubscribeIntent} />
+          <SubmitButton />
         </form>
 
         <p className="mt-4 text-center text-sm text-muted-foreground">

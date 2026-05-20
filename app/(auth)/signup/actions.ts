@@ -33,9 +33,7 @@ export async function signUpGrandma(
   _prevState: GrandmaSignupState,
   formData: FormData
 ): Promise<GrandmaSignupState> {
-  const intent = formData.get('intent') as string | null
-  const grandmaName = formData.get('grandmaName') as string | null
-  const isSubscribeIntent = intent === 'subscribe'
+  const grandmaName = (formData.get('grandmaName') as string | null)?.trim() || null
   const textUpdatesOptIn = formData.get('textUpdatesOptIn') === 'on'
 
   const parsed = signupSchema.safeParse({
@@ -56,11 +54,6 @@ export async function signUpGrandma(
 
   const { email, password, firstName, lastName, phone } = parsed.data
 
-  const nextUrl =
-    isSubscribeIntent && grandmaName
-      ? `/subscribe?grandmaName=${encodeURIComponent(grandmaName)}`
-      : '/dashboard'
-
   const supabase = await createClient()
 
   const { data, error } = await supabase.auth.signUp({
@@ -68,7 +61,7 @@ export async function signUpGrandma(
     password,
     options: {
       data: { role: 'free' },
-      emailRedirectTo: `${getAppUrl()}/api/auth/callback?next=${encodeURIComponent(nextUrl)}`,
+      emailRedirectTo: `${getAppUrl()}/api/auth/callback?next=${encodeURIComponent('/dashboard')}`,
     },
   })
 
@@ -82,19 +75,19 @@ export async function signUpGrandma(
 
   // The auth trigger creates a bare profiles row on signup; upsert the full details here
   const serviceClient = createServiceClient()
+  const profilePayload: Record<string, unknown> = {
+    user_id: data.user.id,
+    email,
+    first_name: firstName,
+    last_name: lastName,
+    phone_number: phone,
+    text_updates_opt_in: textUpdatesOptIn,
+  }
+  if (grandmaName) profilePayload.grandma_name = grandmaName
+
   const { error: profileError } = await serviceClient
     .from('profiles')
-    .upsert(
-      {
-        user_id: data.user.id,
-        email,
-        first_name: firstName,
-        last_name: lastName,
-        phone_number: phone,
-        text_updates_opt_in: textUpdatesOptIn,
-      },
-      { onConflict: 'user_id' }
-    )
+    .upsert(profilePayload, { onConflict: 'user_id' })
 
   if (profileError) {
     return { status: 'error', message: profileError.message }
@@ -102,7 +95,7 @@ export async function signUpGrandma(
 
   // Email confirmation disabled — user is immediately logged in
   if (data.session) {
-    redirect(nextUrl)
+    redirect('/dashboard')
   }
 
   return {

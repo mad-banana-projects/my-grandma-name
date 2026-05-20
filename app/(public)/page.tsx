@@ -18,18 +18,23 @@ const GRANDMA_NAMES = [
 const HOW_IT_WORKS = [
   {
     step: '1',
-    title: 'Pick your grandma name',
-    description: 'Use our AI name generator to find the perfect grandma name — Classic, Playful, or Modern.',
+    title: 'Find Your Grandma Name',
+    description: 'Start by discovering a grandma name that feels personal, meaningful, and true to you. Whether you already have ideas in mind or need a little inspiration, our grandma name generator helps you explore thoughtful options based on your personality, style, and preferences.',
   },
   {
     step: '2',
-    title: 'Build your registry',
-    description: 'Browse our curated gift collection and save the things you actually want to your wishlist.',
+    title: 'Tell Us About You & Your Loved Ones',
+    description: 'Create your profile and share a little about yourself, your family, and the moments that matter most. From birthdays to favorite traditions, this helps personalize your experience and shape recommendations around the people you love most.',
   },
   {
     step: '3',
-    title: 'Share with family',
-    description: 'Invite family members to view your registry so every occasion is stress-free for everyone.',
+    title: 'Create Your Registry',
+    description: 'Save meaningful gifts, keepsakes, and thoughtful finds all in one place. Build a personalized registry centered around your grandma name, with curated items designed to feel intentional, useful, and easy for family members to shop from.',
+  },
+  {
+    step: '4',
+    title: 'Let Us Handle the Reminders',
+    description: "From birthdays and holidays to special family moments, we'll help keep everything organized with gentle reminders sent to your loved ones. Less stress, less last-minute scrambling, and more time focused on making memories together.",
   },
 ]
 
@@ -148,20 +153,28 @@ export default async function LandingPage() {
 
       {/* How it works */}
       <section className="bg-white py-20">
-        <div className="mx-auto max-w-5xl px-4">
+        <div className="mx-auto max-w-screen-2xl px-12">
           <h2 className="font-heading mb-12 text-center text-3xl font-light tracking-tight">
             How it works
           </h2>
-          <div className="grid gap-6 sm:grid-cols-3">
-            {HOW_IT_WORKS.map(({ step, title, description }) => (
-              <div key={step} className="space-y-3 rounded-xl bg-muted p-6">
-                <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
-                  Step {step}
-                </p>
-                <h3 className="font-heading text-xl font-light">{title}</h3>
-                <p className="text-sm leading-relaxed text-muted-foreground">{description}</p>
-              </div>
-            ))}
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+            {HOW_IT_WORKS.map(({ step, title, description }) => {
+              const split = description.indexOf('. ')
+              const first = split !== -1 ? description.slice(0, split + 1) : description
+              const rest = split !== -1 ? description.slice(split + 2) : null
+              return (
+                <div key={step} className="space-y-3 rounded-xl bg-muted p-6">
+                  <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
+                    Step {step}
+                  </p>
+                  <h3 className="font-heading text-xl font-light">{title}</h3>
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    {first}
+                    {rest && <><br /><br />{rest}</>}
+                  </p>
+                </div>
+              )
+            })}
           </div>
         </div>
       </section>

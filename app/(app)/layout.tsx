@@ -4,7 +4,6 @@ import { FooterBar } from '@/components/footer/footer-bar'
 
 const APP_NAV = [
   { label: 'Dashboard', href: '/dashboard' },
-  { label: 'Name Generator', href: '/name-generator' },
   { label: 'Browse Products', href: '/browse-products' },
 ]
 
