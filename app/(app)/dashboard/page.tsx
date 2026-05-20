@@ -7,8 +7,15 @@ import { EmailRemindersCard } from '@/components/dashboard/email-reminders-card'
 import { LockedFeatureCard } from '@/components/dashboard/locked-feature-card'
 import { RegistryPreviewCard } from '@/components/dashboard/registry-preview-card'
 import type { RegistryPreviewItem } from '@/components/dashboard/registry-preview-card'
+import { BirthdayPrompt } from '@/components/dashboard/birthday-prompt'
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ checkout?: string }>
+}) {
+  const params = await searchParams
+  const isPostCheckout = params.checkout === 'success'
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -29,6 +36,9 @@ export default async function DashboardPage() {
   const role = (userData?.role ?? 'free') as 'free' | 'grandma' | 'family'
   const subscriptionStatus = userData?.subscription_status
   const isPaid = role === 'grandma' && subscriptionStatus === 'active'
+
+  const needsBirthday = isPaid && !profileData?.birthday
+  const showBirthdayModal = isPostCheckout && needsBirthday
 
   if (!profileData) redirect('/login')
 
@@ -86,6 +96,8 @@ export default async function DashboardPage() {
   return (
     <main className="bg-background px-4 py-12">
       <div className="mx-auto max-w-5xl space-y-10">
+
+        <BirthdayPrompt initialOpen={showBirthdayModal} needsBirthday={needsBirthday} />
 
         {/* Header */}
         <div className="flex items-start justify-between gap-4">

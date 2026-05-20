@@ -116,6 +116,28 @@ export async function cancelSubscription(): Promise<UpdateProfileResult> {
   return { success: true }
 }
 
+export async function saveBirthday(birthday: string): Promise<UpdateProfileResult> {
+  const trimmed = birthday.trim()
+  if (!trimmed || !/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
+    return { success: false, error: 'Enter a valid date.' }
+  }
+
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { success: false, error: 'Not authenticated' }
+
+  const service = createServiceClient()
+  const { error } = await service
+    .from('profiles')
+    .update({ birthday: trimmed })
+    .eq('user_id', user.id)
+
+  if (error) return { success: false, error: error.message }
+
+  revalidatePath('/dashboard')
+  return { success: true }
+}
+
 export async function saveGrandmaName(name: string): Promise<UpdateProfileResult> {
   const trimmed = name.trim().slice(0, 100)
   if (!trimmed) return { success: false, error: 'Name is required' }
