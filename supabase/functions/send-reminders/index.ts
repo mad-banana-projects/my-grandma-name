@@ -128,7 +128,7 @@ Deno.serve(async (req: Request) => {
       reminder_grandparents_day, reminder_mothers_day,
       reminder_birthday, reminder_christmas,
       reminder_custom_dates, reminder_frequency,
-      family_members ( id, first_name, email )
+      family_members ( id, first_name, email, invite_status )
     `)
     .in("user_id", paidUserIds)
 
@@ -142,7 +142,9 @@ Deno.serve(async (req: Request) => {
   for (const profile of profiles ?? []) {
     const displayName: string = profile.grandma_name || profile.first_name || "Grandma"
     const frequency: number[] = (profile.reminder_frequency as number[] | null) ?? [30, 14, 7]
-    const family: FamilyMember[] = (profile.family_members as FamilyMember[] | null) ?? []
+    const family: FamilyMember[] = (
+      (profile.family_members as (FamilyMember & { invite_status: string })[] | null) ?? []
+    ).filter((m) => m.invite_status === "accepted")
 
     if (!family.length) continue
 

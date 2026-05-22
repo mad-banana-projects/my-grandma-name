@@ -6,7 +6,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
-import { updateReminders, type ReminderFormValues } from '@/app/(app)/dashboard/actions'
+import { updateReminders, sendTestReminder, type ReminderFormValues } from '@/app/(app)/dashboard/actions'
 
 type CustomDate = { label: string; date: string }
 
@@ -60,6 +60,24 @@ export function EmailRemindersCard({ initial }: EmailRemindersCardProps) {
 
   const [error, setError] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
+
+  const [testStatus, setTestStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
+  const [testError, setTestError] = useState<string | null>(null)
+
+  function handleTestSend() {
+    setTestStatus('sending')
+    setTestError(null)
+    startTransition(async () => {
+      const result = await sendTestReminder()
+      if (result.success) {
+        setTestStatus('sent')
+        setTimeout(() => setTestStatus('idle'), 4000)
+      } else {
+        setTestStatus('error')
+        setTestError('error' in result ? result.error : 'Something went wrong.')
+      }
+    })
+  }
 
   function startEdit() {
     setDraftOccasions({ ...occasions })
@@ -377,6 +395,24 @@ export function EmailRemindersCard({ initial }: EmailRemindersCardProps) {
               {error && <p className="text-sm text-destructive">{error}</p>}
             </div>
           )}
+
+          {/* Test reminder row — always visible */}
+          <div className="flex items-center gap-3 border-t pt-4">
+            <button
+              type="button"
+              onClick={handleTestSend}
+              disabled={testStatus === 'sending' || isPending}
+              className="rounded-md border px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground disabled:opacity-50 transition-colors"
+            >
+              {testStatus === 'sending' ? 'Sending…' : 'Send test reminder'}
+            </button>
+            {testStatus === 'sent' && (
+              <p className="text-sm text-green-600">Test email sent to all accepted family members.</p>
+            )}
+            {testStatus === 'error' && (
+              <p className="text-sm text-destructive">{testError}</p>
+            )}
+          </div>
 
         </CardContent>
       </Card>

@@ -3,6 +3,7 @@
 import { z } from 'zod'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { resend } from '@/lib/resend'
 
 const profileSchema = z.object({
   first_name: z.string().min(1, 'Required').max(100),
@@ -155,6 +156,69 @@ export async function saveGrandmaName(name: string): Promise<UpdateProfileResult
   if (error) return { success: false, error: error.message }
 
   revalidatePath('/dashboard')
+  return { success: true }
+}
+
+export async function sendTestReminder(): Promise<UpdateProfileResult> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { success: false, error: 'Not authenticated' }
+
+  const service = createServiceClient()
+  const { data: profile } = await service
+    .from('profiles')
+    .select(`
+      id, first_name, grandma_name,
+      family_members ( id, first_name, email, invite_status )
+    `)
+    .eq('user_id', user.id)
+    .single()
+
+  if (!profile) return { success: false, error: 'Profile not found' }
+
+  const acceptedMembers = (
+    profile.family_members as { id: string; first_name: string | null; email: string; invite_status: string }[] | null
+  )?.filter((m) => m.invite_status === 'accepted' && m.email) ?? []
+
+  if (!acceptedMembers.length) {
+    return { success: false, error: 'No accepted family members to send to' }
+  }
+
+  const displayName = (profile.grandma_name as string | null) || (profile.first_name as string | null) || 'Grandma'
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://mygrandmaname.com'
+  const registryUrl = `${appUrl}/registry/${profile.id}`
+
+  let sent = 0
+  for (const member of acceptedMembers) {
+    const greeting = member.first_name ? `Hi ${member.first_name},` : 'Hi there,'
+    const { error } = await resend.emails.send({
+      from: 'My Grandma Name <reminders@mygrandmaname.com>',
+      to: member.email,
+      subject: `[Test] ${displayName}'s Birthday is in 7 days — check out her wishlist`,
+      html: `
+<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:32px 24px;color:#111;">
+  <p style="margin:0 0 8px;font-size:11px;color:#bbb;text-transform:uppercase;letter-spacing:0.05em;">Test reminder</p>
+  <p style="margin:0 0 16px;font-size:15px;">${greeting}</p>
+  <p style="margin:0 0 24px;font-size:15px;line-height:1.6;">
+    Just a heads-up: <strong>${displayName}'s Birthday</strong> is coming up in 7 days.
+    Don't miss the chance to get her something she'll love.
+  </p>
+  <a href="${registryUrl}"
+     style="display:inline-block;background:#111;color:#fff;text-decoration:none;
+            padding:12px 24px;border-radius:6px;font-size:14px;font-weight:500;">
+    View ${displayName}'s Wishlist →
+  </a>
+  <hr style="margin:32px 0;border:none;border-top:1px solid #eee;" />
+  <p style="margin:0;color:#999;font-size:12px;line-height:1.6;">
+    You're receiving this reminder because you were added to ${displayName}'s
+    family list on <a href="${appUrl}" style="color:#999;">My Grandma Name</a>.
+  </p>
+</div>`,
+    })
+    if (!error) sent++
+  }
+
+  if (sent === 0) return { success: false, error: 'Failed to send — check Resend configuration' }
   return { success: true }
 }
 
