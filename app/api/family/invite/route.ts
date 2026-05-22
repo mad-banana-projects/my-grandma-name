@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
+import { resend } from '@/lib/resend'
 import { randomUUID } from 'crypto'
 
 export async function POST(request: NextRequest) {
@@ -22,7 +23,7 @@ export async function POST(request: NextRequest) {
   // Verify the inviting user is a paid grandma
   const { data: profile } = await serviceClient
     .from('profiles')
-    .select('id, grandma_name')
+    .select('id, grandma_name, first_name')
     .eq('user_id', user.id)
     .single()
 
@@ -59,8 +60,33 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: insertError.message }, { status: 500 })
   }
 
-  // TODO: send invite email once domain is verified in Resend
-  // For now, return the invite URL so the dashboard can display a copyable link
+  const displayName = (profile.grandma_name as string | null) || (profile.first_name as string | null) || 'your family member'
+  const greeting = firstName ? `Hi ${firstName},` : 'Hi there,'
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://mygrandmaname.com'
+
+  await resend.emails.send({
+    from: 'My Grandma Name <noreply@mygrandmaname.com>',
+    to: email,
+    subject: `You've been invited to ${displayName}'s registry`,
+    html: `
+<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:32px 24px;color:#111;">
+  <p style="margin:0 0 16px;font-size:15px;">${greeting}</p>
+  <p style="margin:0 0 24px;font-size:15px;line-height:1.6;">
+    <strong>${displayName}</strong> has invited you to view their gift registry on
+    <a href="${appUrl}" style="color:#8f6593;">My Grandma Name</a>.
+    Click the button below to accept and see their wishlist.
+  </p>
+  <a href="${inviteUrl}"
+     style="display:inline-block;background:#111;color:#fff;text-decoration:none;
+            padding:12px 24px;border-radius:6px;font-size:14px;font-weight:500;">
+    Accept invitation →
+  </a>
+  <hr style="margin:32px 0;border:none;border-top:1px solid #eee;" />
+  <p style="margin:0;color:#999;font-size:12px;line-height:1.6;">
+    If you weren't expecting this invitation, you can ignore this email.
+  </p>
+</div>`,
+  })
 
   return NextResponse.json({ invited: true, inviteUrl }, { status: 201 })
 }
