@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse, after } from 'next/server'
 import { resend } from '@/lib/resend'
 import { createServiceClient } from '@/lib/supabase/server'
 
@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 
-  void captureLead(email, winnerName, runnerUpName)
+  after(() => captureLead(email, winnerName, runnerUpName))
 
   return NextResponse.json({ sent: true })
 }
