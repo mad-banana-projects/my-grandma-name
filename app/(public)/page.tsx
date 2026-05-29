@@ -10,6 +10,17 @@ import { createClient, createServiceClient } from '@/lib/supabase/server'
 const ANON_COOKIE = 'anon_gen_count'
 const ANON_LIMIT = 2
 
+function parseAnonCookieCount(raw: string | undefined): number {
+  try {
+    const parsed = JSON.parse(raw ?? '')
+    if (parsed && typeof parsed.date === 'string' && typeof parsed.count === 'number') {
+      const today = new Date().toISOString().slice(0, 10)
+      return parsed.date === today ? parsed.count : 0
+    }
+  } catch { /* fall through */ }
+  return 0
+}
+
 const GRANDMA_NAMES = [
   'Berry', 'Crya', 'Lola', 'Yaya', 'Memaw', 'Lolli', 'KiKi', 'Gemma',
   'Mimi', 'Gigi', 'Lolla', 'Candy Gram', 'ChaCha', 'Granny', 'Nana', 'Glamma',
@@ -64,7 +75,7 @@ export default async function LandingPage() {
     supabase.auth.getUser(),
   ])
 
-  const anonCount = parseInt(cookieStore.get(ANON_COOKIE)?.value ?? '0', 10)
+  const anonCount = parseAnonCookieCount(cookieStore.get(ANON_COOKIE)?.value)
   const anonUsesRemaining = Math.max(0, ANON_LIMIT - anonCount)
 
   let isSignedIn = false

@@ -5,6 +5,17 @@ import { createClient } from '@/lib/supabase/server'
 const ANON_COOKIE = 'anon_gen_count'
 const ANON_LIMIT = 2
 
+function parseAnonCookieCount(raw: string | undefined): number {
+  try {
+    const parsed = JSON.parse(raw ?? '')
+    if (parsed && typeof parsed.date === 'string' && typeof parsed.count === 'number') {
+      const today = new Date().toISOString().slice(0, 10)
+      return parsed.date === today ? parsed.count : 0
+    }
+  } catch { /* fall through */ }
+  return 0
+}
+
 export default async function NameGeneratorPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -29,7 +40,7 @@ export default async function NameGeneratorPage() {
   let anonUsesRemaining: number | null = null
   if (!user) {
     const cookieStore = await cookies()
-    const anonCount = parseInt(cookieStore.get(ANON_COOKIE)?.value ?? '0', 10)
+    const anonCount = parseAnonCookieCount(cookieStore.get(ANON_COOKIE)?.value)
     anonUsesRemaining = Math.max(0, ANON_LIMIT - anonCount)
   }
 
