@@ -9,6 +9,7 @@ import { removeRegistryItem } from '@/app/(app)/registry/actions'
 
 export type RegistryItem = {
   id: string
+  listId: string | null
   product: {
     id: string
     name: string
