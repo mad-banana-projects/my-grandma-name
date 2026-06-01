@@ -7,6 +7,20 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
+const CHAR_LIMIT = 30
+const COUNTER_THRESHOLD = Math.floor(CHAR_LIMIT * 0.8)
+
+function lettersOnly(value: string): string {
+  return value.replace(/[^\p{L}]/gu, '')
+}
+
+function CharCounter({ value }: { value: string }) {
+  if (value.length < COUNTER_THRESHOLD) return null
+  return (
+    <p className="text-right text-xs text-muted-foreground">{value.length} / {CHAR_LIMIT}</p>
+  )
+}
+
 export function InviteForm({ memberCount, className }: { memberCount: number; className?: string }) {
   const router = useRouter()
   const [email, setEmail] = useState('')
@@ -64,6 +78,8 @@ export function InviteForm({ memberCount, className }: { memberCount: number; cl
     setRelationship('')
   }
 
+  const canSubmit = !!firstName && !!lastName && !!email && !!relationship
+
   return (
     <Card className={className}>
       <CardHeader>
@@ -103,35 +119,50 @@ export function InviteForm({ memberCount, className }: { memberCount: number; cl
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid gap-4 sm:grid-cols-2">
-              <Input
-                placeholder="First Name"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-              />
-              <Input
-                placeholder="Last Name"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-              />
+              <div className="space-y-1">
+                <Input
+                  placeholder="First Name"
+                  value={firstName}
+                  onChange={(e) => setFirstName(lettersOnly(e.target.value))}
+                  maxLength={CHAR_LIMIT}
+                  required
+                />
+                <CharCounter value={firstName} />
+              </div>
+              <div className="space-y-1">
+                <Input
+                  placeholder="Last Name"
+                  value={lastName}
+                  onChange={(e) => setLastName(lettersOnly(e.target.value))}
+                  maxLength={CHAR_LIMIT}
+                  required
+                />
+                <CharCounter value={lastName} />
+              </div>
             </div>
 
             <Input
               type="email"
-              placeholder="Email *"
+              placeholder="Email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
 
-            <Input
-              placeholder="Relationship (optional)"
-              value={relationship}
-              onChange={(e) => setRelationship(e.target.value)}
-            />
+            <div className="space-y-1">
+              <Input
+                placeholder="Relationship"
+                value={relationship}
+                onChange={(e) => setRelationship(lettersOnly(e.target.value))}
+                maxLength={CHAR_LIMIT}
+                required
+              />
+              <CharCounter value={relationship} />
+            </div>
 
             {error && <p className="text-sm text-destructive">{error}</p>}
 
-            <Button type="submit" disabled={loading} className="w-1/2 mx-auto block">
+            <Button type="submit" disabled={loading || !canSubmit} className="w-1/2 mx-auto block">
               {loading ? 'Creating…' : 'Create invite'}
             </Button>
           </form>
