@@ -11,19 +11,38 @@ export type GrandmaSignupState = {
   fieldErrors?: {
     email?: string[]
     password?: string[]
+    confirmPassword?: string[]
     firstName?: string[]
     lastName?: string[]
     phone?: string[]
   }
 }
 
-const signupSchema = z.object({
-  email: z.email('Enter a valid email address.').trim().toLowerCase(),
-  password: z.string().min(8, 'Use at least 8 characters.'),
-  firstName: z.string().trim().min(1, 'Enter your first name.').max(80),
-  lastName: z.string().trim().min(1, 'Enter your last name.').max(80),
-  phone: z.string().trim().min(1, 'Enter your phone number.').max(30),
-})
+const signupSchema = z
+  .object({
+    email: z.email('Enter a valid email address.').trim().toLowerCase(),
+    password: z
+      .string()
+      .min(8, 'Use at least 8 characters.')
+      .max(50, 'Password must be 50 characters or fewer.')
+      .transform((s) => s.trim()),
+    confirmPassword: z.string().transform((s) => s.trim()),
+    firstName: z
+      .string()
+      .min(1, 'Enter your first name.')
+      .max(30)
+      .regex(/^[\p{L}]+$/u, 'Letters only.'),
+    lastName: z
+      .string()
+      .min(1, 'Enter your last name.')
+      .max(30)
+      .regex(/^[\p{L}]+$/u, 'Letters only.'),
+    phone: z.string().regex(/^\d{10}$/, 'Enter a 10-digit phone number.'),
+  })
+  .refine((d) => d.password === d.confirmPassword, {
+    message: 'Passwords do not match.',
+    path: ['confirmPassword'],
+  })
 
 function getAppUrl() {
   return process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
@@ -39,6 +58,7 @@ export async function signUpGrandma(
   const parsed = signupSchema.safeParse({
     email: formData.get('email'),
     password: formData.get('password'),
+    confirmPassword: formData.get('confirmPassword'),
     firstName: formData.get('firstName'),
     lastName: formData.get('lastName'),
     phone: formData.get('phone'),

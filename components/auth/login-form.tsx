@@ -63,6 +63,7 @@ export function LoginForm() {
               placeholder="Password"
               autoComplete="current-password"
               required
+              maxLength={50}
               aria-invalid={Boolean(state.fieldErrors?.password)}
             />
             <FieldError errors={state.fieldErrors?.password} />

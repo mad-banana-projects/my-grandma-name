@@ -256,6 +256,7 @@ export function EmailRemindersCard({ initial }: EmailRemindersCardProps) {
                             value={newLabel}
                             onChange={(e) => setNewLabel(e.target.value)}
                             placeholder="e.g. Anniversary"
+                            maxLength={50}
                             className="h-8 text-sm"
                           />
                         </div>

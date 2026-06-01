@@ -219,7 +219,7 @@ function ListSectionHeader({
             onChange={(e) => setDraft(e.target.value)}
             onKeyDown={(e) => { if (e.key === 'Enter') handleRename(); if (e.key === 'Escape') { setEditing(false); setDraft(list.name) } }}
             className="flex-1 rounded border px-2 py-0.5 text-sm font-semibold focus:outline-none focus:ring-1 focus:ring-ring"
-            maxLength={100}
+            maxLength={50}
           />
           <button
             type="button"
@@ -314,7 +314,7 @@ function CreateListForm({ onCreate }: { onCreate: (list: RegistryList) => void }
         onChange={(e) => setName(e.target.value)}
         onKeyDown={(e) => { if (e.key === 'Enter') handleCreate(); if (e.key === 'Escape') { setOpen(false); setName('') } }}
         placeholder="List name"
-        maxLength={100}
+        maxLength={50}
         className="rounded border px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
       />
       <button

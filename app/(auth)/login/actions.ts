@@ -16,7 +16,7 @@ export type LoginState = {
 
 const loginSchema = z.object({
   email: z.email('Enter a valid email address.').trim().toLowerCase(),
-  password: z.string().min(1, 'Enter your password.'),
+  password: z.string().min(1, 'Enter your password.').max(50, 'Password must be 50 characters or fewer.').transform((s) => s.trim()),
 })
 
 export async function login(

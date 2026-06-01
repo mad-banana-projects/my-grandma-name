@@ -26,7 +26,7 @@ async function getAuthenticatedProfile() {
 export async function createList(
   name: string
 ): Promise<{ success: true; list: RegistryList } | { success: false; error: string }> {
-  const trimmed = name.trim().slice(0, 100)
+  const trimmed = name.trim().slice(0, 50)
   if (!trimmed) return { success: false, error: 'Name is required' }
 
   const auth = await getAuthenticatedProfile()
@@ -45,7 +45,7 @@ export async function createList(
 }
 
 export async function renameList(listId: string, name: string): Promise<ActionResult> {
-  const trimmed = name.trim().slice(0, 100)
+  const trimmed = name.trim().slice(0, 50)
   if (!trimmed) return { success: false, error: 'Name is required' }
 
   const auth = await getAuthenticatedProfile()

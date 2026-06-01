@@ -28,7 +28,7 @@ const passwordSchema = z
   })
 
 const customDateSchema = z.object({
-  label: z.string().min(1).max(100),
+  label: z.string().min(1).max(50),
   date: z.string().min(1),
 })
 
