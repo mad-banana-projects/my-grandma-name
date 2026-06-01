@@ -27,21 +27,21 @@ import {
 import { cn } from '@/lib/utils'
 
 const profileSchema = z.object({
-  first_name: z.string().min(1, 'Required').max(100),
-  last_name: z.string().min(1, 'Required').max(100),
+  first_name: z.string().min(1, 'Required').max(30, 'Max 30 characters').regex(/^[\p{L}]+$/u, 'Letters only'),
+  last_name: z.string().min(1, 'Required').max(30, 'Max 30 characters').regex(/^[\p{L}]+$/u, 'Letters only'),
   email: z.email('Enter a valid email'),
-  phone_number: z.string().min(1, 'Required').max(30),
+  phone_number: z.string().regex(/^\d{10}$/, 'Enter a 10-digit phone number'),
   text_updates_opt_in: z.boolean(),
-  grandma_name: z.string().max(100).optional(),
-  bio: z.string().max(1000).optional(),
+  grandma_name: z.string().max(30, 'Max 30 characters').optional(),
+  bio: z.string().max(160, 'Max 160 characters').optional(),
   birthday: z.string().optional(),
   address: z.string().max(500).optional(),
 })
 
 const passwordSchema = z
   .object({
-    password: z.string().min(8, 'Password must be at least 8 characters'),
-    confirmPassword: z.string(),
+    password: z.string().min(8, 'Password must be at least 8 characters').max(50, 'Password must be 50 characters or fewer').transform((s) => s.trim()),
+    confirmPassword: z.string().transform((s) => s.trim()),
   })
   .refine((d) => d.password === d.confirmPassword, {
     message: 'Passwords do not match',
@@ -72,6 +72,60 @@ interface ProfileCardProps {
 const textareaClass =
   'min-h-[88px] w-full rounded-lg border border-input bg-transparent px-2.5 py-2 text-sm transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 resize-none'
 
+function lettersOnly(value: string): string {
+  return value.replace(/[^\p{L}]/gu, '')
+}
+
+function digitsOnly(value: string): string {
+  return value.replace(/\D/g, '')
+}
+
+function CharCounter({ value, max }: { value: string | undefined; max: number }) {
+  const len = value?.length ?? 0
+  if (len < Math.floor(max * 0.8)) return null
+  return <p className="text-right text-xs text-muted-foreground">{len} / {max}</p>
+}
+
+type PasswordStrength = 'weak' | 'fair' | 'strong'
+
+function getPasswordStrength(password: string): PasswordStrength {
+  if (!password) return 'weak'
+  let score = 0
+  if (password.length >= 8) score++
+  if (password.length >= 12) score++
+  if (password.length >= 16) score++
+  if (/[A-Z]/.test(password)) score++
+  if (/[0-9]/.test(password)) score++
+  if (/[^A-Za-z0-9]/.test(password)) score++
+  if (score <= 2) return 'weak'
+  if (score <= 4) return 'fair'
+  return 'strong'
+}
+
+function PasswordStrengthBar({ password }: { password: string }) {
+  if (!password) return null
+  const strength = getPasswordStrength(password)
+  const segments: PasswordStrength[] = ['weak', 'fair', 'strong']
+  const strengthIndex = segments.indexOf(strength)
+  const colors = ['bg-red-400', 'bg-amber-400', 'bg-emerald-500']
+  const labels = { weak: 'Weak', fair: 'Fair', strong: 'Strong' }
+  const labelColors = { weak: 'text-red-500', fair: 'text-amber-500', strong: 'text-emerald-600' }
+
+  return (
+    <div className="space-y-1">
+      <div className="flex gap-1">
+        {segments.map((_, i) => (
+          <div
+            key={i}
+            className={cn('h-1 flex-1 rounded-full transition-colors', i <= strengthIndex ? colors[strengthIndex] : 'bg-muted')}
+          />
+        ))}
+      </div>
+      <p className={cn('text-xs', labelColors[strength])}>{labels[strength]}</p>
+    </div>
+  )
+}
+
 function formatBirthday(dateStr: string): string {
   const date = new Date(dateStr + 'T00:00:00')
   return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
@@ -94,7 +148,7 @@ export function ProfileCard({ profile, subscriptionStatus }: ProfileCardProps) {
   const [manageError, setManageError] = useState<string | null>(null)
   const [isManagePending, startManageTransition] = useTransition()
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<ProfileSchemaValues>({
+  const { register, handleSubmit, reset, watch, formState: { errors } } = useForm<ProfileSchemaValues>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
       first_name: profile.first_name,
@@ -109,8 +163,22 @@ export function ProfileCard({ profile, subscriptionStatus }: ProfileCardProps) {
     },
   })
 
-  const { register: registerPassword, handleSubmit: handlePasswordSubmit, reset: resetPassword, formState: { errors: passwordErrors } } =
+  // Watch values needed for char counters
+  const firstNameVal = watch('first_name')
+  const lastNameVal = watch('last_name')
+  const grandmaNameVal = watch('grandma_name')
+  const phoneVal = watch('phone_number')
+  const bioVal = watch('bio')
+
+  // Destructure RHF onChange for fields that need input filtering
+  const { onChange: onFirstNameChange, ...firstNameReg } = register('first_name')
+  const { onChange: onLastNameChange, ...lastNameReg } = register('last_name')
+  const { onChange: onPhoneChange, ...phoneReg } = register('phone_number')
+
+  const { register: registerPassword, handleSubmit: handlePasswordSubmit, reset: resetPassword, watch: watchPassword, formState: { errors: passwordErrors } } =
     useForm<PasswordFormValues>({ resolver: zodResolver(passwordSchema) })
+
+  const passwordVal = watchPassword('password') ?? ''
 
   function handleEdit() {
     reset({
@@ -198,12 +266,30 @@ export function ProfileCard({ profile, subscriptionStatus }: ProfileCardProps) {
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
                 <Label htmlFor="first_name">First name</Label>
-                <Input id="first_name" {...register('first_name')} />
+                <Input
+                  id="first_name"
+                  {...firstNameReg}
+                  maxLength={30}
+                  onChange={(e) => {
+                    e.target.value = lettersOnly(e.target.value)
+                    onFirstNameChange(e)
+                  }}
+                />
+                <CharCounter value={firstNameVal} max={30} />
                 {errors.first_name && <p className="text-xs text-destructive">{errors.first_name.message}</p>}
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="last_name">Last name</Label>
-                <Input id="last_name" {...register('last_name')} />
+                <Input
+                  id="last_name"
+                  {...lastNameReg}
+                  maxLength={30}
+                  onChange={(e) => {
+                    e.target.value = lettersOnly(e.target.value)
+                    onLastNameChange(e)
+                  }}
+                />
+                <CharCounter value={lastNameVal} max={30} />
                 {errors.last_name && <p className="text-xs text-destructive">{errors.last_name.message}</p>}
               </div>
             </div>
@@ -212,7 +298,8 @@ export function ProfileCard({ profile, subscriptionStatus }: ProfileCardProps) {
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
                 <Label htmlFor="grandma_name">Grandma name</Label>
-                <Input id="grandma_name" {...register('grandma_name')} />
+                <Input id="grandma_name" maxLength={30} {...register('grandma_name')} />
+                <CharCounter value={grandmaNameVal} max={30} />
                 {errors.grandma_name && <p className="text-xs text-destructive">{errors.grandma_name.message}</p>}
               </div>
               <div className="space-y-1.5">
@@ -230,7 +317,18 @@ export function ProfileCard({ profile, subscriptionStatus }: ProfileCardProps) {
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="phone_number">Phone number</Label>
-                <Input id="phone_number" type="tel" {...register('phone_number')} />
+                <Input
+                  id="phone_number"
+                  type="tel"
+                  placeholder="10-digit number"
+                  maxLength={10}
+                  {...phoneReg}
+                  onChange={(e) => {
+                    e.target.value = digitsOnly(e.target.value)
+                    onPhoneChange(e)
+                  }}
+                />
+                <CharCounter value={phoneVal} max={10} />
                 {errors.phone_number && <p className="text-xs text-destructive">{errors.phone_number.message}</p>}
               </div>
             </div>
@@ -241,9 +339,11 @@ export function ProfileCard({ profile, subscriptionStatus }: ProfileCardProps) {
                 <Label htmlFor="bio">Bio</Label>
                 <textarea
                   id="bio"
+                  maxLength={160}
                   className={cn(textareaClass, errors.bio && 'border-destructive')}
                   {...register('bio')}
                 />
+                <CharCounter value={bioVal} max={160} />
                 {errors.bio && <p className="text-xs text-destructive">{errors.bio.message}</p>}
               </div>
               <div className="space-y-1.5 pt-0.5">
@@ -345,12 +445,13 @@ export function ProfileCard({ profile, subscriptionStatus }: ProfileCardProps) {
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-1.5">
                   <Label htmlFor="password">New password</Label>
-                  <Input id="password" type="password" autoComplete="new-password" {...registerPassword('password')} />
+                  <Input id="password" type="password" autoComplete="new-password" maxLength={50} {...registerPassword('password')} />
+                  <PasswordStrengthBar password={passwordVal} />
                   {passwordErrors.password && <p className="text-xs text-destructive">{passwordErrors.password.message}</p>}
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="confirmPassword">Confirm password</Label>
-                  <Input id="confirmPassword" type="password" autoComplete="new-password" {...registerPassword('confirmPassword')} />
+                  <Input id="confirmPassword" type="password" autoComplete="new-password" maxLength={50} {...registerPassword('confirmPassword')} />
                   {passwordErrors.confirmPassword && <p className="text-xs text-destructive">{passwordErrors.confirmPassword.message}</p>}
                 </div>
               </div>

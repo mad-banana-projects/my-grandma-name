@@ -6,21 +6,21 @@ import { revalidatePath } from 'next/cache'
 import { resend } from '@/lib/resend'
 
 const profileSchema = z.object({
-  first_name: z.string().min(1, 'Required').max(100),
-  last_name: z.string().min(1, 'Required').max(100),
+  first_name: z.string().min(1, 'Required').max(30).regex(/^[\p{L}]+$/u, 'Letters only'),
+  last_name: z.string().min(1, 'Required').max(30).regex(/^[\p{L}]+$/u, 'Letters only'),
   email: z.email('Enter a valid email address'),
-  phone_number: z.string().min(1, 'Required').max(30),
+  phone_number: z.string().regex(/^\d{10}$/, 'Enter a 10-digit phone number'),
   text_updates_opt_in: z.boolean(),
-  grandma_name: z.string().max(100).optional().default(''),
-  bio: z.string().max(1000).optional().default(''),
+  grandma_name: z.string().max(30).optional().default(''),
+  bio: z.string().max(160).optional().default(''),
   birthday: z.string().optional(),
   address: z.string().max(500).optional().default(''),
 })
 
 const passwordSchema = z
   .object({
-    password: z.string().min(8, 'Password must be at least 8 characters'),
-    confirmPassword: z.string(),
+    password: z.string().min(8, 'Password must be at least 8 characters').max(50, 'Password must be 50 characters or fewer').transform((s) => s.trim()),
+    confirmPassword: z.string().transform((s) => s.trim()),
   })
   .refine((d) => d.password === d.confirmPassword, {
     message: 'Passwords do not match',
