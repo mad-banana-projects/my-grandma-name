@@ -2,6 +2,20 @@
 
 import { useEffect, useRef, useState, useTransition } from 'react'
 
+const CHAR_LIMIT = 30
+const COUNTER_THRESHOLD = Math.floor(CHAR_LIMIT * 0.8)
+
+function lettersOnly(value: string): string {
+  return value.replace(/[^\p{L}]/gu, '')
+}
+
+function CharCounter({ value }: { value: string }) {
+  if (value.length < COUNTER_THRESHOLD) return null
+  return (
+    <p className="text-right text-xs text-muted-foreground">{value.length} / {CHAR_LIMIT}</p>
+  )
+}
+
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -199,26 +213,33 @@ export function GeneratorForm({ isSignedIn, isPaidGrandma, anonUsesRemaining, fr
   return (
     <div className="mx-auto w-full max-w-2xl space-y-8">
       <form onSubmit={handleSubmit} className="space-y-6">
-        <Input
-          id="firstName"
-          name="firstName"
-          type="text"
-          placeholder="First Name"
-          maxLength={50}
-          required
-          value={firstName}
-          onChange={(e) => setFirstName(e.target.value)}
-        />
+        <div className="space-y-1">
+          <Input
+            id="firstName"
+            name="firstName"
+            type="text"
+            placeholder="First Name"
+            maxLength={CHAR_LIMIT}
+            required
+            value={firstName}
+            onChange={(e) => setFirstName(lettersOnly(e.target.value))}
+          />
+          <CharCounter value={firstName} />
+        </div>
 
-        <Input
-          id="nameToAvoid"
-          name="nameToAvoid"
-          type="text"
-          placeholder="Name to avoid (optional)"
-          maxLength={50}
-          value={nameToAvoid}
-          onChange={(e) => setNameToAvoid(e.target.value)}
-        />
+        <div className="space-y-1">
+          <Input
+            id="nameToAvoid"
+            name="nameToAvoid"
+            type="text"
+            placeholder="Name to avoid"
+            maxLength={CHAR_LIMIT}
+            required
+            value={nameToAvoid}
+            onChange={(e) => setNameToAvoid(lettersOnly(e.target.value))}
+          />
+          <CharCounter value={nameToAvoid} />
+        </div>
 
         <fieldset className="space-y-3">
           <legend className="text-sm font-medium leading-none">Preferred style</legend>
@@ -279,7 +300,7 @@ export function GeneratorForm({ isSignedIn, isPaidGrandma, anonUsesRemaining, fr
         )}
 
         <div className="space-y-2">
-          <Button type="submit" size="lg" className="w-1/2 mx-auto block" disabled={loading}>
+          <Button type="submit" size="lg" className="w-1/2 mx-auto block" disabled={loading || !firstName || !nameToAvoid}>
             {loading ? 'Finding your name…' : 'Find my grandma name'}
           </Button>
           {!isSignedIn && anonUsesLeft !== null && (

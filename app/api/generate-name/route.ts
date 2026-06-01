@@ -45,13 +45,16 @@ export async function POST(request: NextRequest) {
     format?: string
   }
 
-  const firstName = sanitize(body.firstName ?? '', 50)
-  const nameToAvoid = sanitize(body.nameToAvoid ?? '', 50)
+  const firstName = sanitize(body.firstName ?? '', 30)
+  const nameToAvoid = sanitize(body.nameToAvoid ?? '', 30)
   const style = body.style ?? ''
   const format = body.format ?? ''
 
   if (!firstName) {
     return NextResponse.json({ error: 'First name is required' }, { status: 400 })
+  }
+  if (!nameToAvoid) {
+    return NextResponse.json({ error: 'Name to avoid is required' }, { status: 400 })
   }
   if (!VALID_STYLES.includes(style as typeof VALID_STYLES[number])) {
     return NextResponse.json({ error: 'Invalid style' }, { status: 400 })

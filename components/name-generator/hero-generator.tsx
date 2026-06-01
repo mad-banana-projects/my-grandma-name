@@ -15,6 +15,20 @@ import {
 import { cn } from '@/lib/utils'
 import { saveGrandmaName } from '@/app/(app)/dashboard/actions'
 
+const CHAR_LIMIT = 30
+const COUNTER_THRESHOLD = Math.floor(CHAR_LIMIT * 0.8) // show counter at 24+
+
+function lettersOnly(value: string): string {
+  return value.replace(/[^\p{L}]/gu, '')
+}
+
+function CharCounter({ value }: { value: string }) {
+  if (value.length < COUNTER_THRESHOLD) return null
+  return (
+    <p className="text-right text-xs text-muted-foreground">{value.length} / {CHAR_LIMIT}</p>
+  )
+}
+
 const STYLES = [
   { value: 'traditional', label: 'Traditional' },
   { value: 'unique', label: 'Unique' },
@@ -200,19 +214,28 @@ export function HeroGenerator({
 
           {/* Row 1: first name + name to avoid */}
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
-            <Input
-              id="hero-first-name"
-              placeholder="First Name"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              required
-            />
-            <Input
-              id="hero-name-avoid"
-              placeholder="Name to avoid (optional)"
-              value={nameToAvoid}
-              onChange={(e) => setNameToAvoid(e.target.value)}
-            />
+            <div className="space-y-1">
+              <Input
+                id="hero-first-name"
+                placeholder="First Name"
+                value={firstName}
+                onChange={(e) => setFirstName(lettersOnly(e.target.value))}
+                maxLength={CHAR_LIMIT}
+                required
+              />
+              <CharCounter value={firstName} />
+            </div>
+            <div className="space-y-1">
+              <Input
+                id="hero-name-avoid"
+                placeholder="Name to avoid"
+                value={nameToAvoid}
+                onChange={(e) => setNameToAvoid(lettersOnly(e.target.value))}
+                maxLength={CHAR_LIMIT}
+                required
+              />
+              <CharCounter value={nameToAvoid} />
+            </div>
           </div>
 
           {/* Row 2: preferred style + preferred vibe */}
@@ -252,7 +275,7 @@ export function HeroGenerator({
             <Button
               type="submit"
               size="lg"
-              disabled={loading || !firstName || (!isSignedIn && anonUsesLeft <= 0)}
+              disabled={loading || !firstName || !nameToAvoid || (!isSignedIn && anonUsesLeft <= 0)}
               className="w-full sm:w-auto"
             >
               {loading ? 'Finding your name…' : 'Find my grandma name'}
