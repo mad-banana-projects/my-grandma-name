@@ -152,7 +152,7 @@ export function EmailRemindersCard({ id, initial }: EmailRemindersCardProps) {
   const presetDays = PRESET_FREQUENCY.map((p) => p.days)
 
   return (
-    <div id={id} className="flex flex-col gap-4 h-full">
+    <div id={id} className="flex flex-col gap-4 h-full scroll-mt-24">
       <h2 className="text-lg font-semibold">Email Reminders</h2>
 
       <Card className="flex-1 flex flex-col relative">

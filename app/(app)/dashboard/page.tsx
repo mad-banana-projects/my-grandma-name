@@ -123,7 +123,7 @@ export default async function DashboardPage({
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
 
           {/* Col 1, Row 1: About Me */}
-          <div id="about-me" className="flex flex-col gap-4">
+          <div id="about-me" className="flex flex-col gap-4 scroll-mt-24">
             <h2 className="text-lg font-semibold">About Me</h2>
             <ProfileCard
               profile={profile}
@@ -151,7 +151,7 @@ export default async function DashboardPage({
           {isPaid && reminderSettings ? (
             <EmailRemindersCard id="email-reminders" initial={reminderSettings} />
           ) : (
-            <div id="email-reminders" className="flex flex-col gap-4 h-full">
+            <div id="email-reminders" className="flex flex-col gap-4 h-full scroll-mt-24">
               <h2 className="text-lg font-semibold">Email Reminders</h2>
               <LockedFeatureCard
                 className="flex-1"
@@ -162,7 +162,7 @@ export default async function DashboardPage({
 
           {/* Col 2, Row 2: My Family */}
           {isPaid ? (
-            <div id="my-family" className="flex flex-col gap-4 h-full">
+            <div id="my-family" className="flex flex-col gap-4 h-full scroll-mt-24">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold">My Family</h2>
                 <span className="text-sm text-muted-foreground">{members.length} / 10 members</span>
@@ -204,7 +204,7 @@ export default async function DashboardPage({
               <InviteForm memberCount={members.length} className="flex-1" />
             </div>
           ) : (
-            <div id="my-family" className="flex flex-col gap-4 h-full">
+            <div id="my-family" className="flex flex-col gap-4 h-full scroll-mt-24">
               <h2 className="text-lg font-semibold">My Family</h2>
               <LockedFeatureCard
                 className="flex-1"
