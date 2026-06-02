@@ -200,7 +200,7 @@ export function EmailRemindersCard({ initial }: EmailRemindersCardProps) {
                         className={cn(
                           'flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-colors',
                           checked
-                            ? 'border-foreground bg-foreground text-background'
+                            ? 'border-[#8f6593] bg-[#8f6593] text-white'
                             : 'border-input bg-background'
                         )}
                       >
@@ -320,9 +320,9 @@ export function EmailRemindersCard({ initial }: EmailRemindersCardProps) {
                         className={cn(
                           'rounded-full border px-3 py-1 text-xs transition-colors',
                           active
-                            ? 'border-foreground bg-foreground text-background'
-                            : 'border-border bg-background text-foreground',
-                          isEditing && !active && 'hover:border-foreground/40',
+                            ? 'border-[#8f6593] bg-[#8f6593] text-white'
+                            : 'border-[#8f6593] bg-white text-[#8f6593]',
+                          isEditing && !active && 'hover:bg-[#8f6593]/10',
                           !isEditing && 'cursor-default'
                         )}
                       >
@@ -338,7 +338,7 @@ export function EmailRemindersCard({ initial }: EmailRemindersCardProps) {
                         type="button"
                         onClick={isEditing ? () => toggleDraftFrequency(days) : undefined}
                         disabled={!isEditing}
-                        className="flex items-center gap-1 rounded-full border border-foreground bg-foreground px-3 py-1 text-xs text-background disabled:cursor-default"
+                        className="flex items-center gap-1 rounded-full border border-[#8f6593] bg-[#8f6593] px-3 py-1 text-xs text-white disabled:cursor-default"
                       >
                         {days}d before
                         {isEditing && <X className="h-3 w-3" />}

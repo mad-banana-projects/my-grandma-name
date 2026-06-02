@@ -40,7 +40,7 @@ export function RegistryPreviewCard({
               <p className="text-sm text-muted-foreground">No gifts saved yet.</p>
               <a
                 href="/browse-products"
-                className="mt-1 text-sm font-medium underline underline-offset-4"
+                className="mt-1 text-sm font-medium italic underline underline-offset-4 text-[#618985] hover:text-[#618985]/80"
               >
                 Browse gift ideas →
               </a>

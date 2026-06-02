@@ -162,7 +162,7 @@ export function InviteForm({ memberCount, className }: { memberCount: number; cl
 
             {error && <p className="text-sm text-destructive">{error}</p>}
 
-            <Button type="submit" disabled={loading || !canSubmit} className="w-1/2 mx-auto block">
+            <Button type="submit" disabled={loading || !canSubmit} className="w-1/2 mx-auto block bg-[#8f6593] text-white hover:bg-[#7a5680]">
               {loading ? 'Creating…' : 'Create invite'}
             </Button>
           </form>

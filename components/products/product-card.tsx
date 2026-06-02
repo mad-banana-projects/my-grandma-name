@@ -237,7 +237,7 @@ export function ProductCard({
                 disabled={isPending}
                 aria-label={saved ? 'Remove from registry' : 'Save to registry'}
                 className={cn(
-                  'rounded-md p-1 text-secondary transition-colors hover:text-secondary',
+                  'rounded-md p-1 text-[#dcb6c9] transition-colors hover:text-[#dcb6c9]',
                   isPending && 'opacity-50'
                 )}
               >
@@ -251,7 +251,7 @@ export function ProductCard({
                 <button
                   onClick={() => setShowPrompt(true)}
                   aria-label="Save to registry"
-                  className="rounded-md p-1 text-secondary/40 transition-colors hover:text-secondary/70"
+                  className="rounded-md p-1 text-[#dcb6c9]/60 transition-colors hover:text-[#dcb6c9]"
                 >
                   <Heart className="h-4 w-4" />
                 </button>

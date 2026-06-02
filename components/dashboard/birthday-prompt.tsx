@@ -78,7 +78,7 @@ export function BirthdayPrompt({ initialOpen, needsBirthday }: BirthdayPromptPro
       <Dialog open={modalOpen} onOpenChange={handleModalClose}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>One last thing — add your birthday</DialogTitle>
+            <DialogTitle className="font-bold">One last thing — add your birthday</DialogTitle>
             <DialogDescription>
               Your birthday helps family members know when to celebrate you. You can always update it later from your profile.
             </DialogDescription>

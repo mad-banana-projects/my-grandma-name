@@ -519,7 +519,7 @@ export function ProfileCard({ profile, subscriptionStatus }: ProfileCardProps) {
               </div>
               <button
                 onClick={() => { setIsPasswordOpen(true); setPasswordSuccess(false) }}
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                className="rounded-full bg-[#8f6593] px-3 py-1.5 text-sm text-white transition-colors hover:bg-[#7a5680]"
               >
                 Change
               </button>
@@ -542,7 +542,7 @@ export function ProfileCard({ profile, subscriptionStatus }: ProfileCardProps) {
             </div>
             <button
               onClick={() => { setManageError(null); setShowManageDialog(true) }}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              className="rounded-full bg-[#8f6593] px-3 py-1.5 text-sm text-white transition-colors hover:bg-[#7a5680]"
             >
               Manage
             </button>
