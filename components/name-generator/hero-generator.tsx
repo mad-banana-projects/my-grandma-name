@@ -391,7 +391,7 @@ export function HeroGenerator({
                     onChange={(e) => setEmailInput(e.target.value)}
                     className="flex-1"
                   />
-                  <Button type="submit" size="sm" variant="outline" disabled={emailSending}>
+                  <Button type="submit" size="sm" variant="outline" disabled={emailSending} className="self-center">
                     {emailSending ? 'Sending…' : 'Send'}
                   </Button>
                 </form>
