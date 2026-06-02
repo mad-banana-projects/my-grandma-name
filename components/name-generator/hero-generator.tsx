@@ -276,7 +276,7 @@ export function HeroGenerator({
               type="submit"
               size="lg"
               disabled={loading || !firstName || !nameToAvoid || (!isSignedIn && anonUsesLeft <= 0)}
-              className="w-full sm:w-auto"
+              className="w-full sm:w-auto bg-[#8f6593] text-white hover:bg-[#7a5680]"
             >
               {loading ? 'Finding your name…' : 'Find my grandma name'}
             </Button>

@@ -196,7 +196,7 @@ export async function sendTestReminder(): Promise<UpdateProfileResult> {
       to: member.email,
       subject: `[Test] ${displayName}'s Birthday is in 7 days — check out her wishlist`,
       html: `
-<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:32px 24px;color:#111;">
+<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:32px 24px;color:#353330;">
   <p style="margin:0 0 8px;font-size:11px;color:#bbb;text-transform:uppercase;letter-spacing:0.05em;">Test reminder</p>
   <p style="margin:0 0 16px;font-size:15px;">${greeting}</p>
   <p style="margin:0 0 24px;font-size:15px;line-height:1.6;">
@@ -204,7 +204,7 @@ export async function sendTestReminder(): Promise<UpdateProfileResult> {
     Don't miss the chance to get her something she'll love.
   </p>
   <a href="${registryUrl}"
-     style="display:inline-block;background:#111;color:#fff;text-decoration:none;
+     style="display:inline-block;background:#353330;color:#fff;text-decoration:none;
             padding:12px 24px;border-radius:6px;font-size:14px;font-weight:500;">
     View ${displayName}'s Wishlist →
   </a>

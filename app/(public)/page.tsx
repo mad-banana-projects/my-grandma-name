@@ -256,7 +256,7 @@ export default async function LandingPage() {
               <p>
                 <Link
                   href="/about"
-                  className="text-muted-foreground underline underline-offset-4 hover:text-foreground transition-colors"
+                  className="italic text-[#618985] underline underline-offset-4 hover:text-[#618985]/80 transition-colors"
                 >
                   Learn more about My Grandma Name &gt;&gt;
                 </Link>
@@ -321,7 +321,7 @@ export default async function LandingPage() {
           <div className="mt-8">
             <Link
               href="/about"
-              className={cn(buttonVariants({ size: 'lg', variant: 'outline' }), 'border-foreground/30 text-foreground/80 hover:bg-foreground/10 hover:text-foreground')}
+              className={cn(buttonVariants({ size: 'lg', variant: 'outline' }), 'border-[#8f6593] text-[#8f6593] hover:bg-[#8f6593]/10 hover:text-[#8f6593]')}
             >
               About My Grandma Name
             </Link>

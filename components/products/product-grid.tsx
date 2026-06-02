@@ -53,8 +53,8 @@ export function ProductGrid({
             className={cn(
               'rounded-full border px-4 py-1.5 text-sm transition-colors',
               activeCategory === value
-                ? 'border-foreground bg-foreground text-background'
-                : 'border-border bg-background text-foreground hover:border-foreground/40'
+                ? 'border-[#618985] bg-[#618985] text-white'
+                : 'border-[#618985] bg-white text-[#618985] hover:bg-[#618985]/10'
             )}
           >
             {label}

@@ -214,8 +214,8 @@ export function ProductCard({
                 className={cn(
                   'rounded-full border px-3 py-1 text-xs transition-colors',
                   selectedVariant?.id === v.id
-                    ? 'border-foreground bg-foreground text-background'
-                    : 'border-border bg-background text-foreground hover:border-foreground/40'
+                    ? 'border-[#8f6593] bg-[#8f6593] text-white'
+                    : 'border-[#8f6593] bg-white text-[#8f6593] hover:bg-[#8f6593]/10'
                 )}
               >
                 {v.label}
@@ -225,7 +225,7 @@ export function ProductCard({
         )}
 
         <div className="mt-auto flex items-center justify-between gap-2 pt-1">
-          <Badge variant="secondary" className="text-xs">
+          <Badge className="bg-[#618985] text-white text-xs hover:bg-[#618985]/90">
             {CATEGORY_LABELS[product.category]}
           </Badge>
           <div className="flex items-center gap-2">

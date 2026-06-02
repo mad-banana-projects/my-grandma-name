@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
     to: email,
     subject: `You've been invited to ${displayName}'s registry`,
     html: `
-<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:32px 24px;color:#111;">
+<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:32px 24px;color:#353330;">
   <p style="margin:0 0 16px;font-size:15px;">${greeting}</p>
   <p style="margin:0 0 24px;font-size:15px;line-height:1.6;">
     <strong>${displayName}</strong> has invited you to view their gift registry on
@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
     Click the button below to accept and see their wishlist.
   </p>
   <a href="${inviteUrl}"
-     style="display:inline-block;background:#111;color:#fff;text-decoration:none;
+     style="display:inline-block;background:#353330;color:#fff;text-decoration:none;
             padding:12px 24px;border-radius:6px;font-size:14px;font-weight:500;">
     Accept invitation →
   </a>
