@@ -1,5 +1,6 @@
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { TopNav } from '@/components/nav/top-nav'
+import { BottomNav } from '@/components/nav/bottom-nav'
 import { FooterBar } from '@/components/footer/footer-bar'
 
 const APP_NAV = [
@@ -58,8 +59,9 @@ export default async function AppLayout({
   return (
     <div className="flex min-h-screen flex-col">
       <TopNav user={{ email: user.email ?? '' }} appNavItems={APP_NAV} />
-      <div className="flex-1 pt-[68px]">{children}</div>
-      <FooterBar />
+      <div className="flex-1 pt-[68px] pb-16 md:pb-0">{children}</div>
+      <div className="mb-16 md:mb-0"><FooterBar /></div>
+      <BottomNav />
     </div>
   )
 }

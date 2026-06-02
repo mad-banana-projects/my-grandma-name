@@ -242,22 +242,8 @@ export function TopNav({ user, appNavItems = [] }: TopNavProps) {
       {/* Mobile drawer */}
       {mobileOpen && (
         <div className="fixed inset-x-0 top-[68px] z-40 flex flex-col gap-1 bg-[#dcb6c9] px-4 py-4 md:hidden">
-          {appNavItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                'rounded-lg px-3 py-3 text-base font-medium text-white transition-colors hover:bg-white/20',
-                pathname.startsWith(item.href) && 'bg-white/30'
-              )}
-            >
-              {item.label}
-            </Link>
-          ))}
-
           {user ? (
             <>
-              {appNavItems.length > 0 && <div className="my-1 border-t border-white/30" />}
               <p className="px-3 py-1 text-xs text-white/70 truncate">{user.email}</p>
               <Link href="/about" className="rounded-lg px-3 py-3 text-base font-medium text-white hover:bg-white/20">About</Link>
               <Link href="/grandma-tips" className="rounded-lg px-3 py-3 text-base font-medium text-white hover:bg-white/20">Grandma Tips</Link>
@@ -274,7 +260,6 @@ export function TopNav({ user, appNavItems = [] }: TopNavProps) {
             </>
           ) : (
             <>
-              {appNavItems.length > 0 && <div className="my-1 border-t border-white/30" />}
               <Link href="/login" className="rounded-lg px-3 py-3 text-base font-medium text-white hover:bg-white/20">Log in</Link>
               <Link href="/about" className="rounded-lg px-3 py-3 text-base font-medium text-white hover:bg-white/20">About</Link>
               <Link href="/grandma-tips" className="rounded-lg px-3 py-3 text-base font-medium text-white hover:bg-white/20">Grandma Tips</Link>

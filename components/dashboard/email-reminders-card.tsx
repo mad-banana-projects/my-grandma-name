@@ -11,6 +11,7 @@ import { updateReminders, sendTestReminder, type ReminderFormValues } from '@/ap
 type CustomDate = { label: string; date: string }
 
 interface EmailRemindersCardProps {
+  id?: string
   initial: {
     reminder_grandparents_day: boolean
     reminder_mothers_day: boolean
@@ -36,7 +37,7 @@ const PRESET_FREQUENCY = [
 
 type OccasionKey = (typeof OCCASIONS)[number]['key']
 
-export function EmailRemindersCard({ initial }: EmailRemindersCardProps) {
+export function EmailRemindersCard({ id, initial }: EmailRemindersCardProps) {
   const [isEditing, setIsEditing] = useState(false)
 
   const [occasions, setOccasions] = useState<Record<OccasionKey, boolean>>({
@@ -151,7 +152,7 @@ export function EmailRemindersCard({ initial }: EmailRemindersCardProps) {
   const presetDays = PRESET_FREQUENCY.map((p) => p.days)
 
   return (
-    <div className="flex flex-col gap-4 h-full">
+    <div id={id} className="flex flex-col gap-4 h-full">
       <h2 className="text-lg font-semibold">Email Reminders</h2>
 
       <Card className="flex-1 flex flex-col relative">
