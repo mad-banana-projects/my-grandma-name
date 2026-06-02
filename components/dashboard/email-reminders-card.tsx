@@ -276,7 +276,7 @@ export function EmailRemindersCard({ id, initial }: EmailRemindersCardProps) {
                           type="button"
                           onClick={addCustomDate}
                           disabled={!newLabel.trim() || !newDate}
-                          className="rounded-md bg-foreground px-3 py-1.5 text-xs font-medium text-background disabled:opacity-40"
+                          className="rounded-md bg-[#618985] px-3 py-1.5 text-xs font-medium text-white disabled:opacity-40"
                         >
                           Add
                         </button>
@@ -382,7 +382,7 @@ export function EmailRemindersCard({ id, initial }: EmailRemindersCardProps) {
                 type="button"
                 onClick={handleSave}
                 disabled={isPending}
-                className="rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background disabled:opacity-50 transition-opacity"
+                className="rounded-md bg-[#618985] px-4 py-2 text-sm font-medium text-white disabled:opacity-50 transition-opacity"
               >
                 {isPending ? 'Saving…' : 'Save reminders'}
               </button>
