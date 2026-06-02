@@ -43,7 +43,8 @@ export async function POST(request: NextRequest) {
   }
 
   const inviteToken = randomUUID()
-  const inviteUrl = `${process.env.NEXT_PUBLIC_APP_URL}/invite/${inviteToken}`
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://mygrandmaname.com'
+  const inviteUrl = `${appUrl}/invite/${inviteToken}`
 
   const { error: insertError } = await serviceClient
     .from('family_members')
@@ -60,9 +61,19 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: insertError.message }, { status: 500 })
   }
 
+  // Generate a magic link so the family member is authenticated in one click.
+  // Falls back to the plain invite URL if generation fails.
+  const { data: linkData } = await serviceClient.auth.admin.generateLink({
+    type: 'magiclink',
+    email,
+    options: {
+      redirectTo: `${appUrl}/api/auth/callback?next=/invite/${inviteToken}`,
+    },
+  })
+  const acceptUrl = linkData?.properties?.action_link ?? inviteUrl
+
   const displayName = (profile.grandma_name as string | null) || (profile.first_name as string | null) || 'your family member'
   const greeting = firstName ? `Hi ${firstName},` : 'Hi there,'
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://mygrandmaname.com'
 
   await resend.emails.send({
     from: 'My Grandma Name <noreply@mygrandmaname.com>',
@@ -76,7 +87,7 @@ export async function POST(request: NextRequest) {
     <a href="${appUrl}" style="color:#8f6593;">My Grandma Name</a>.
     Click the button below to accept and see their wishlist.
   </p>
-  <a href="${inviteUrl}"
+  <a href="${acceptUrl}"
      style="display:inline-block;background:#353330;color:#fff;text-decoration:none;
             padding:12px 24px;border-radius:6px;font-size:14px;font-weight:500;">
     Accept invitation →
@@ -84,6 +95,7 @@ export async function POST(request: NextRequest) {
   <hr style="margin:32px 0;border:none;border-top:1px solid #eee;" />
   <p style="margin:0;color:#999;font-size:12px;line-height:1.6;">
     If you weren't expecting this invitation, you can ignore this email.
+    This link expires in 24 hours.
   </p>
 </div>`,
   })

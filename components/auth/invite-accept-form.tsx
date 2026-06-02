@@ -56,13 +56,14 @@ export function InviteAcceptForm({ token, email, firstName, grandmaName }: Invit
   return (
     <div className="w-full max-w-md space-y-6 text-center">
       <div className="space-y-2">
-        <p className="text-sm font-medium text-muted-foreground">You&apos;re invited</p>
+        <p className="text-sm font-medium text-muted-foreground">Invitation link expired</p>
         <h1 className="text-2xl font-semibold tracking-tight">
           {firstName ? `Hi ${firstName}!` : 'Hi there!'}
         </h1>
         <p className="text-sm text-muted-foreground">
-          <span className="font-medium text-foreground">{grandmaName}</span> has invited you to
-          view her gift registry. We&apos;ll send a sign-in link to{' '}
+          Your invitation link from{' '}
+          <span className="font-medium text-foreground">{grandmaName}</span>{' '}has expired.
+          We&apos;ll send a new sign-in link to{' '}
           <span className="font-medium text-foreground">{email}</span>.
         </p>
       </div>
@@ -72,7 +73,7 @@ export function InviteAcceptForm({ token, email, firstName, grandmaName }: Invit
         disabled={isPending}
         className={cn(buttonVariants({ size: 'lg' }), 'w-full disabled:opacity-50')}
       >
-        {isPending ? 'Sending…' : 'Accept invitation'}
+        {isPending ? 'Sending…' : 'Send new sign-in link'}
       </button>
     </div>
   )
