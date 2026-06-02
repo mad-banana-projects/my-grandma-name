@@ -209,14 +209,34 @@ export function TopNav({ user, appNavItems = [] }: TopNavProps) {
           )}
         </div>
 
-        {/* Hamburger — mobile only */}
-        <button
-          className="flex size-9 items-center justify-center rounded-full bg-white/20 text-white transition-colors hover:bg-white/30 md:hidden"
-          onClick={() => setMobileOpen((o) => !o)}
-          aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
-        >
-          {mobileOpen ? <X className="size-5" /> : <Menu className="size-5" />}
-        </button>
+        {/* Hamburger + social icons — mobile only */}
+        <div className="flex items-center gap-2 md:hidden">
+          <button
+            className="flex size-9 items-center justify-center rounded-full bg-[#8f6593] text-white transition-colors hover:bg-[#7a5680]"
+            onClick={() => setMobileOpen((o) => !o)}
+            aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+          >
+            {mobileOpen ? <X className="size-5" /> : <Menu className="size-5" />}
+          </button>
+          <a
+            href={SOCIAL_LINKS.youtube}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="YouTube"
+            className="flex size-9 items-center justify-center rounded-full bg-white/20 text-white transition-colors hover:bg-white/30"
+          >
+            <YouTubeIcon />
+          </a>
+          <a
+            href={SOCIAL_LINKS.tiktok}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="TikTok"
+            className="flex size-9 items-center justify-center rounded-full bg-white/20 text-white transition-colors hover:bg-white/30"
+          >
+            <TikTokIcon />
+          </a>
+        </div>
       </nav>
 
       {/* Mobile drawer */}
