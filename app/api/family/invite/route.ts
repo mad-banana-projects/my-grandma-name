@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
     type: 'magiclink',
     email,
     options: {
-      redirectTo: `${appUrl}/api/auth/callback?next=/invite/${inviteToken}`,
+      redirectTo: `${appUrl}/auth-confirm?next=/invite/${inviteToken}`,
     },
   })
   const acceptUrl = linkData?.properties?.action_link ?? inviteUrl
