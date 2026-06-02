@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
+import { usePlacesWidget } from 'react-google-autocomplete'
 import { useRouter } from 'next/navigation'
 import { Pencil } from 'lucide-react'
 import { useForm } from 'react-hook-form'
@@ -126,6 +127,41 @@ function PasswordStrengthBar({ password }: { password: string }) {
   )
 }
 
+// Rendered only while the form is in edit mode, so usePlacesWidget's one-time
+// useEffect([]) runs with the input already in the DOM.
+function AddressAutocompleteInput({
+  id,
+  defaultValue,
+  onChange,
+}: {
+  id?: string
+  defaultValue?: string
+  onChange: (value: string) => void
+}) {
+  const { ref } = usePlacesWidget<HTMLInputElement>({
+    apiKey: process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY,
+    onPlaceSelected: (place) => {
+      onChange(place.formatted_address ?? '')
+    },
+    options: {
+      types: ['address'],
+      componentRestrictions: { country: 'us' },
+      fields: ['formatted_address'],
+    },
+  })
+
+  return (
+    <Input
+      id={id}
+      ref={ref}
+      defaultValue={defaultValue}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder="Start typing your address…"
+      autoComplete="off"
+    />
+  )
+}
+
 function formatBirthday(dateStr: string): string {
   const date = new Date(dateStr + 'T00:00:00')
   return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
@@ -148,7 +184,7 @@ export function ProfileCard({ profile, subscriptionStatus }: ProfileCardProps) {
   const [manageError, setManageError] = useState<string | null>(null)
   const [isManagePending, startManageTransition] = useTransition()
 
-  const { register, handleSubmit, reset, watch, formState: { errors } } = useForm<ProfileSchemaValues>({
+  const { register, handleSubmit, reset, watch, setValue, formState: { errors } } = useForm<ProfileSchemaValues>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
       first_name: profile.first_name,
@@ -365,7 +401,11 @@ export function ProfileCard({ profile, subscriptionStatus }: ProfileCardProps) {
             {/* Row 5: Address */}
             <div className="space-y-1.5">
               <Label htmlFor="address">Address</Label>
-              <Input id="address" {...register('address')} placeholder="Street, city, state, zip" />
+              <AddressAutocompleteInput
+                id="address"
+                defaultValue={watch('address')}
+                onChange={(val) => setValue('address', val, { shouldDirty: true })}
+              />
               {errors.address && <p className="text-xs text-destructive">{errors.address.message}</p>}
             </div>
 

@@ -21,6 +21,7 @@
     "next": "^16.2.6",
     "react": "19.2.4",
     "react-dom": "19.2.4",
+    "react-google-autocomplete": "^2.7.5",
     "react-hook-form": "^7.74.0",
     "resend": "^6.12.2",
     "shadcn": "^4.6.0",
@@ -31,6 +32,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/google.maps": "^3.65.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
