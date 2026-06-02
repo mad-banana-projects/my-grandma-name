@@ -204,7 +204,7 @@ export default async function DashboardPage({
               <InviteForm memberCount={members.length} className="flex-1" />
             </div>
           ) : (
-            <div className="flex flex-col gap-4 h-full">
+            <div id="my-family" className="flex flex-col gap-4 h-full">
               <h2 className="text-lg font-semibold">My Family</h2>
               <LockedFeatureCard
                 className="flex-1"
