@@ -129,27 +129,21 @@ export default function AboutPage() {
           <div className="mt-16 grid divide-y divide-border sm:grid-cols-3 sm:divide-x sm:divide-y-0">
             {/* Col 1 */}
             <div className="flex flex-col items-center gap-4 px-8 py-8 sm:py-4">
-              <svg viewBox="0 0 24 24" fill="currentColor" className="h-14 w-14 text-secondary" aria-hidden>
-                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-              </svg>
+              <Image src="/images/icons/heart_icon2.png" alt="Curated gift ideas" width={56} height={56} />
               <p className="text-sm font-bold italic text-foreground">Curated gift ideas</p>
               <p className="text-sm text-foreground/70">that actually feel thoughtful</p>
             </div>
 
             {/* Col 2 */}
             <div className="flex flex-col items-center gap-4 px-8 py-8 sm:py-4">
-              <svg viewBox="0 0 24 24" fill="currentColor" className="h-14 w-14 text-secondary" aria-hidden>
-                <path d="M19 3h-1V1h-2v2H8V1H6v2H5C3.9 3 3 3.9 3 5v16c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H5V8h14v13zM7 10h5v5H7z" />
-              </svg>
+              <Image src="/images/icons/calendar_icon.png" alt="Reminders" width={56} height={56} />
               <p className="text-sm font-bold italic text-foreground">Reminders</p>
               <p className="text-sm text-foreground/70">for the moments that matter</p>
             </div>
 
             {/* Col 3 */}
             <div className="flex flex-col items-center gap-4 px-8 py-8 sm:py-4">
-              <svg viewBox="0 0 24 24" fill="currentColor" className="h-14 w-14 text-secondary" aria-hidden>
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
-              </svg>
+              <Image src="/images/icons/heart_icon.png" alt="Personalized touches" width={56} height={56} />
               <p className="text-sm font-bold italic text-foreground">Personalized touches</p>
               <p className="text-sm text-foreground/70">built around your <em>grandma</em> name</p>
             </div>
