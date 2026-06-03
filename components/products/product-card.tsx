@@ -78,6 +78,7 @@ export function ProductCard({
   const [localSavedVariantId, setLocalSavedVariantId] = useState<string | null>(savedVariantId)
   const [isPending, startTransition] = useTransition()
   const [showPrompt, setShowPrompt] = useState(false)
+  const [showSaveConfirm, setShowSaveConfirm] = useState(false)
 
   const activeImages: string[] = (
     selectedVariant?.image_urls?.length ? selectedVariant.image_urls :
@@ -122,6 +123,8 @@ export function ProductCard({
       if (!result.success) {
         setSaved(prevSaved)
         setLocalSavedVariantId(prevVariantId)
+      } else if (wantsToSave) {
+        setShowSaveConfirm(true)
       }
     })
   }
@@ -232,17 +235,30 @@ export function ProductCard({
 
             {/* Active bookmark — paid users */}
             {bookmarkMode === 'active' && (
-              <button
-                onClick={handleToggleSave}
-                disabled={isPending}
-                aria-label={saved ? 'Remove from registry' : 'Save to registry'}
-                className={cn(
-                  'rounded-md p-1 text-[#dcb6c9] transition-colors hover:text-[#dcb6c9]',
-                  isPending && 'opacity-50'
-                )}
-              >
-                <Heart className={cn('h-4 w-4', saved && 'fill-current')} />
-              </button>
+              <>
+                <button
+                  onClick={handleToggleSave}
+                  disabled={isPending}
+                  aria-label={saved ? 'Remove from registry' : 'Save to registry'}
+                  className={cn(
+                    'rounded-md p-1 text-[#dcb6c9] transition-colors hover:text-[#dcb6c9]',
+                    isPending && 'opacity-50'
+                  )}
+                >
+                  <Heart className={cn('h-4 w-4', saved && 'fill-current')} />
+                </button>
+
+                <Dialog open={showSaveConfirm} onOpenChange={setShowSaveConfirm}>
+                  <DialogContent className="max-w-sm text-center">
+                    <DialogHeader>
+                      <DialogTitle>Congratulations!</DialogTitle>
+                      <DialogDescription>
+                        <span className="font-medium text-foreground">{product.name}</span> was saved to your registry.
+                      </DialogDescription>
+                    </DialogHeader>
+                  </DialogContent>
+                </Dialog>
+              </>
             )}
 
             {/* Locked bookmark — anonymous or free users */}
