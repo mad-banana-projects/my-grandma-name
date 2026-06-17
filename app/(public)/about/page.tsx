@@ -22,16 +22,16 @@ export default function AboutPage() {
         {/* Right: content */}
         <div className="flex w-full items-center bg-background px-10 py-10 sm:w-1/2 sm:px-16">
           <div className="max-w-[45rem] space-y-5">
-            <h1 className="font-heading text-4xl font-light tracking-tight sm:text-5xl">
+            <h1 className="font-heading text-[52px] font-light tracking-tight">
               About <em>My</em> Grandma Name
             </h1>
-            <p className="font-heading text-lg font-semibold italic">
+            <p className="font-heading text-[17px] font-semibold italic">
               Where a name becomes part of something bigger
             </p>
-            <p className="text-sm leading-relaxed text-foreground/80">
+            <p className="text-[17px] leading-relaxed text-foreground/80">
               My Grandma Name is being built to make gifting feel thoughtful again — with curated ideas, gentle reminders, and personalized touches that reflect who you are and how your family knows you.
             </p>
-            <p className="text-sm leading-relaxed text-foreground/80">
+            <p className="text-[17px] leading-relaxed text-foreground/80">
               Everything is centered around your grandma name, so every gift, every moment, and every memory feels a little more intentional.
             </p>
           </div>
