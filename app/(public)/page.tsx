@@ -1,6 +1,8 @@
 import { cookies } from 'next/headers'
 import Link from 'next/link'
 import Image from 'next/image'
+import { Search, Heart, Gift, Mail } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { HeroGenerator } from '@/components/name-generator/hero-generator'
@@ -27,26 +29,30 @@ const GRANDMA_NAMES = [
   'Chica', 'Lovey', 'Coo-Coo', 'Candy Gram',
 ]
 
-const HOW_IT_WORKS = [
+const HOW_IT_WORKS: { step: string; titleLines: string[]; description: string; Icon: LucideIcon }[] = [
   {
     step: '1',
-    title: 'Find Your Grandma Name',
-    description: 'Start by discovering a grandma name that feels personal, meaningful, and true to you. Whether you already have ideas in mind or need a little inspiration, our grandma name generator helps you explore thoughtful options based on your personality, style, and preferences.',
+    titleLines: ['Find Your', 'Grandma Name'],
+    description: 'Discover a grandma name that feels personal, meaningful, and uniquely you.',
+    Icon: Search,
   },
   {
     step: '2',
-    title: 'Tell Us About You & Your Loved Ones',
-    description: 'Create your profile and share a little about yourself, your family, and the moments that matter most. From birthdays to favorite traditions, this helps personalize your experience and shape recommendations around the people you love most.',
+    titleLines: ['Tell Us About You', '& Your Loved Ones'],
+    description: 'Share a little about yourself, your family, and the moments that matter most.',
+    Icon: Heart,
   },
   {
     step: '3',
-    title: 'Create Your Registry',
-    description: 'Save meaningful gifts, keepsakes, and thoughtful finds all in one place. Build a personalized registry centered around your grandma name, with curated items designed to feel intentional, useful, and easy for family members to shop from.',
+    titleLines: ['Create Your', 'Registry'],
+    description: 'Build a personalized registry with meaningful items and keepsakes your loved ones can shop.',
+    Icon: Gift,
   },
   {
     step: '4',
-    title: 'Let Us Handle the Reminders',
-    description: "From birthdays and holidays to special family moments, we'll help keep everything organized with gentle reminders sent to your loved ones. Less stress, less last-minute scrambling, and more time focused on making memories together.",
+    titleLines: ['Let Us Handle', 'the Reminders'],
+    description: "We'll send gentle reminders for all of life's special moments so you can focus on family.",
+    Icon: Mail,
   },
 ]
 
@@ -166,27 +172,55 @@ export default async function LandingPage() {
       {/* How it works */}
       <section className="bg-white py-20">
         <div className="w-full px-10">
-          <h2 className="font-heading mb-12 text-center text-[43px] font-light tracking-tight">
+          <h2 className="font-heading mb-16 text-center text-[43px] font-light tracking-tight">
             How it Works
           </h2>
-          <div className="grid gap-[46px] sm:grid-cols-2 lg:grid-cols-4">
-            {HOW_IT_WORKS.map(({ step, title, description }) => {
-              const split = description.indexOf('. ')
-              const first = split !== -1 ? description.slice(0, split + 1) : description
-              const rest = split !== -1 ? description.slice(split + 2) : null
-              return (
-                <div key={step} className="space-y-3 rounded-xl bg-muted p-[35px]">
-                  <p className="text-[17px] font-medium uppercase tracking-widest text-muted-foreground">
-                    Step {step}
-                  </p>
-                  <h3 className="font-heading text-[27px] font-light">{title}</h3>
-                  <p className="text-[18px] leading-relaxed text-muted-foreground mt-4">
-                    {first}
-                    {rest && <><br /><br />{rest}</>}
-                  </p>
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {HOW_IT_WORKS.map(({ step, titleLines, description, Icon }, index) => (
+              <div key={step} className="relative flex flex-col items-center text-center">
+                {/* Curved dotted connector — desktop only */}
+                {index < 3 && (
+                  <svg
+                    className="absolute left-1/2 w-full hidden lg:block overflow-visible"
+                    style={{ top: '89px' }}
+                    height="30"
+                    viewBox="0 0 100 30"
+                    preserveAspectRatio="none"
+                    fill="none"
+                    aria-hidden
+                  >
+                    <path
+                      d="M 0 15 Q 50 -10 100 15"
+                      stroke="#618985"
+                      strokeWidth="2"
+                      strokeDasharray="5 4"
+                      strokeLinecap="round"
+                      strokeOpacity="0.6"
+                      vectorEffect="non-scaling-stroke"
+                    />
+                  </svg>
+                )}
+                {/* Step number badge */}
+                <div className="relative z-10 mb-3 flex h-9 w-9 items-center justify-center rounded-full bg-[#618985] text-sm font-semibold text-white">
+                  {step}
                 </div>
-              )
-            })}
+                {/* Icon circle */}
+                <div className="relative z-10 flex h-28 w-28 items-center justify-center rounded-full">
+                  <div className="absolute inset-0 rounded-full bg-white" />
+                  <div className="absolute inset-0 rounded-full bg-[#618985]/15" />
+                  <Icon className="relative h-12 w-12 text-[#618985]" />
+                </div>
+                {/* Text */}
+                <div className="mt-6">
+                  <h3 className="font-heading text-[25px] font-bold">
+                    {titleLines.map((line, i) => (
+                      <span key={i}>{line}{i < titleLines.length - 1 && <br />}</span>
+                    ))}
+                  </h3>
+                  <p className="mx-auto mt-4 max-w-[220px] text-[18px] leading-relaxed text-muted-foreground">{description}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
