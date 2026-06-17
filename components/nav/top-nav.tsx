@@ -78,7 +78,7 @@ export function TopNav({ user, appNavItems = [] }: TopNavProps) {
     <>
       <nav
         className={cn(
-          'fixed left-0 right-0 top-0 z-50 flex w-full items-center justify-between px-6 py-1 transition-colors duration-300',
+          'fixed left-0 right-0 top-0 z-50 flex w-full items-center justify-between px-10 py-1 transition-colors duration-300',
           isSolid ? 'bg-black/20 backdrop-blur-md' : 'bg-transparent'
         )}
       >
@@ -88,9 +88,9 @@ export function TopNav({ user, appNavItems = [] }: TopNavProps) {
             <Image
               src="/images/wording/white-logo-with-wording.png"
               alt="My Grandma Name"
-              width={262}
-              height={56}
-              className="h-[56px] w-auto"
+              width={349}
+              height={75}
+              className="h-[75px] w-auto"
               priority
             />
           </Link>
@@ -196,42 +196,46 @@ export function TopNav({ user, appNavItems = [] }: TopNavProps) {
             </div>
           ) : (
             <>
-              <Link href="/login" className="text-[17px] text-white/90 transition-colors hover:text-white">
-                Log In
-              </Link>
-              <Link href="/about" className="text-[17px] text-white/90 transition-colors hover:text-white">
-                About
-              </Link>
-              <Link href="/grandma-tips" className="text-[17px] text-white/90 transition-colors hover:text-white">
-                Grandma Tips
-              </Link>
-              <a
-                href={SOCIAL_LINKS.youtube}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="YouTube"
-                className="flex size-8 items-center justify-center rounded-full bg-white text-[#dcb6c9] transition-colors hover:bg-white/90"
-              >
-                <YouTubeIcon />
-              </a>
-              <a
-                href={SOCIAL_LINKS.tiktok}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="TikTok"
-                className="flex size-8 items-center justify-center rounded-full bg-white text-[#dcb6c9] transition-colors hover:bg-white/90"
-              >
-                <TikTokIcon />
-              </a>
-              <a
-                href={SOCIAL_LINKS.instagram}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Instagram"
-                className="flex size-8 items-center justify-center rounded-full bg-white text-[#dcb6c9] transition-colors hover:bg-white/90"
-              >
-                <InstagramIcon />
-              </a>
+              <div className="flex items-center gap-8">
+                <Link href="/login" className="text-[19px] text-white/90 transition-colors hover:text-white">
+                  Log In
+                </Link>
+                <Link href="/about" className="text-[19px] text-white/90 transition-colors hover:text-white">
+                  About
+                </Link>
+                <Link href="/grandma-tips" className="text-[19px] text-white/90 transition-colors hover:text-white">
+                  Grandma Tips
+                </Link>
+              </div>
+              <div className="flex items-center gap-4 ml-10">
+                <a
+                  href={SOCIAL_LINKS.youtube}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="YouTube"
+                  className="flex size-10 items-center justify-center rounded-full bg-white text-[#dcb6c9] transition-colors hover:bg-white/90"
+                >
+                  <YouTubeIcon />
+                </a>
+                <a
+                  href={SOCIAL_LINKS.tiktok}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="TikTok"
+                  className="flex size-10 items-center justify-center rounded-full bg-white text-[#dcb6c9] transition-colors hover:bg-white/90"
+                >
+                  <TikTokIcon />
+                </a>
+                <a
+                  href={SOCIAL_LINKS.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Instagram"
+                  className="flex size-10 items-center justify-center rounded-full bg-white text-[#dcb6c9] transition-colors hover:bg-white/90"
+                >
+                  <InstagramIcon />
+                </a>
+              </div>
             </>
           )}
         </div>
