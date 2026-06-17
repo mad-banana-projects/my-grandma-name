@@ -8,7 +8,7 @@ export default function AboutPage() {
       <section className="flex flex-col sm:flex-row sm:items-stretch">
 
         {/* Left: photo — full image, no crop */}
-        <div className="w-full sm:w-1/2">
+        <div className="w-full overflow-hidden rounded-br-3xl sm:w-1/2">
           <Image
             src="/images/about-page/grandmother-with-grandkid.jpg"
             alt="Grandmother with grandchild"
@@ -21,7 +21,7 @@ export default function AboutPage() {
 
         {/* Right: content */}
         <div className="flex w-full items-center bg-background px-10 py-10 sm:w-1/2 sm:px-16">
-          <div className="max-w-lg space-y-5">
+          <div className="max-w-[45rem] space-y-5">
             <h1 className="font-heading text-4xl font-light tracking-tight sm:text-5xl">
               About <em>My</em> Grandma Name
             </h1>
@@ -48,45 +48,45 @@ export default function AboutPage() {
             <Image
               src="/images/wording/purple-logo-with-words.png"
               alt="My Grandma Name"
-              width={80}
-              height={80}
-              className="h-20 w-auto"
+              width={115}
+              height={115}
+              className="h-[115px] w-auto"
             />
-            <h2 className="font-heading text-4xl font-light tracking-tight sm:text-5xl">
+            <h2 className="font-heading text-[88px] font-light tracking-tight">
               About Us
             </h2>
-            <p className="text-sm tracking-widest text-muted-foreground">
+            <p className="text-[17px] tracking-widest text-gray-300">
               - For grandparents and families alike -
             </p>
           </div>
 
           {/* Two-column body */}
-          <div className="grid gap-10 text-sm leading-relaxed text-foreground/80 sm:grid-cols-2 sm:gap-16">
+          <div className="grid gap-10 leading-relaxed text-foreground/80 sm:grid-cols-2 sm:gap-16">
 
             {/* Col 1: For grandparents */}
-            <div className="space-y-4">
-              <h3 className="font-heading text-xl font-semibold text-foreground">For grandparents...</h3>
-              <p>This is a space designed with you in mind.</p>
-              <p>
+            <div className="space-y-4 text-justify">
+              <h3 className="font-heading text-[34px] font-semibold text-foreground">For grandparents...</h3>
+              <p className="text-[17px]">This is a space designed with you in mind.</p>
+              <p className="text-[17px]">
                 To help you define what you want to be called.<br />
                 To give you a way to express your style, your personality, and how you show up in your family.
               </p>
-              <p>And eventually, to make sure the things you receive feel just as thoughtful as the role you hold.</p>
-              <p>
+              <p className="text-[17px]">And eventually, to make sure the things you receive feel just as thoughtful as the role you hold.</p>
+              <p className="text-[17px]">
                 My Grandma Name is being built to help take the guesswork out of gifting and replace it with something more personal, more useful, and more reflective of you. From curated gift ideas to personalized touches and gentle reminders for the people who love you, the goal is to make every part of the experience feel a little more intentional.
               </p>
-              <p>Because this role is meaningful, and the way your family celebrates you should feel that way too.</p>
+              <p className="text-[17px]">Because this role is meaningful, and the way your family celebrates you should feel that way too.</p>
             </div>
 
             {/* Col 2: For families */}
-            <div className="space-y-4">
-              <h3 className="font-heading text-xl font-semibold text-foreground">For families...</h3>
-              <p>This is just as much for the people giving as it is for the one receiving.</p>
-              <p>
+            <div className="space-y-4 text-justify">
+              <h3 className="font-heading text-[34px] font-semibold text-foreground">For families...</h3>
+              <p className="text-[17px]">This is just as much for the people giving as it is for the one receiving.</p>
+              <p className="text-[17px]">
                 My Grandma Name is being built to take the pressure out of figuring out what to get, when to get it, and whether it will actually feel meaningful. Instead of scrambling for ideas or defaulting to something generic, families will have a more thoughtful way to stay connected to what she likes, how she wants to be celebrated, and what feels personal to her.
               </p>
-              <p>From gift inspiration to reminders and personalized touches, the goal is to make showing up feel easier — and getting it right feel natural.</p>
-              <p>Because the best gifts are not just useful. They feel considered, personal, and chosen with her in mind.</p>
+              <p className="text-[17px]">From gift inspiration to reminders and personalized touches, the goal is to make showing up feel easier — and getting it right feel natural.</p>
+              <p className="text-[17px]">Because the best gifts are not just useful. They feel considered, personal, and chosen with her in mind.</p>
             </div>
 
           </div>
@@ -94,7 +94,7 @@ export default function AboutPage() {
       </section>
 
       {/* Personal, Thoughtful, and Entirely Yours */}
-      <section className="relative overflow-hidden px-8 py-20 sm:py-28">
+      <section className="relative overflow-hidden px-8 py-28 sm:py-48">
         <Image
           src="/images/about-page/grandmother-running.jpg"
           alt=""
@@ -103,13 +103,13 @@ export default function AboutPage() {
           aria-hidden
         />
         <div className="absolute inset-0 bg-black/50" />
-        <div className="relative z-10 mx-auto grid max-w-5xl gap-12 sm:grid-cols-2 sm:items-center">
+        <div className="relative z-10 mx-auto flex max-w-5xl flex-col gap-10">
           <h2 className="font-heading text-4xl font-light leading-tight text-white sm:text-5xl">
             Personal,<br />
             Thoughtful, and<br />
             Entirely Yours
           </h2>
-          <p className="text-base leading-relaxed text-white/80 sm:text-right">
+          <p className="max-w-xl text-base leading-relaxed text-white/80 sm:ml-auto sm:text-right">
             From the name they call you to the way you&apos;re celebrated,<br />
             every detail should feel like it fits.
           </p>
@@ -118,33 +118,33 @@ export default function AboutPage() {
 
       {/* What this is becoming */}
       <section className="bg-white py-20">
-        <div className="mx-auto max-w-4xl px-4 text-center">
-          <h2 className="font-heading text-4xl font-light tracking-tight sm:text-5xl">
+        <div className="mx-auto max-w-[90rem] px-4 text-center">
+          <h2 className="font-heading text-[52px] font-light tracking-tight">
             What this is becoming
           </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-foreground/70">
+          <p className="mt-4 text-[17px] leading-relaxed text-foreground/70">
             <em>My</em> Grandma Name is evolving into a platform designed to make gifting, remembering, and celebrating feel more intentional — without adding more to think about.
           </p>
 
           <div className="mt-16 grid divide-y divide-border sm:grid-cols-3 sm:divide-x sm:divide-y-0">
             {/* Col 1 */}
             <div className="flex flex-col items-center gap-4 px-8 py-8 sm:py-4">
-              <Image src="/images/icons/heart_icon2.png" alt="Curated gift ideas" width={56} height={56} />
-              <p className="text-sm font-bold italic text-foreground">Curated gift ideas</p>
+              <Image src="/images/icons/heart_icon2.png" alt="Curated gift ideas" width={111} height={111} />
+              <p className="text-[20px] font-bold italic text-foreground">Curated gift ideas</p>
               <p className="text-sm text-foreground/70">that actually feel thoughtful</p>
             </div>
 
             {/* Col 2 */}
             <div className="flex flex-col items-center gap-4 px-8 py-8 sm:py-4">
-              <Image src="/images/icons/calendar_icon.png" alt="Reminders" width={56} height={56} />
-              <p className="text-sm font-bold italic text-foreground">Reminders</p>
+              <Image src="/images/icons/calendar_icon.png" alt="Reminders" width={111} height={111} />
+              <p className="text-[20px] font-bold italic text-foreground">Reminders</p>
               <p className="text-sm text-foreground/70">for the moments that matter</p>
             </div>
 
             {/* Col 3 */}
             <div className="flex flex-col items-center gap-4 px-8 py-8 sm:py-4">
-              <Image src="/images/icons/heart_icon.png" alt="Personalized touches" width={56} height={56} />
-              <p className="text-sm font-bold italic text-foreground">Personalized touches</p>
+              <Image src="/images/icons/heart_icon.png" alt="Personalized touches" width={111} height={111} />
+              <p className="text-[20px] font-bold italic text-foreground">Personalized touches</p>
               <p className="text-sm text-foreground/70">built around your <em>grandma</em> name</p>
             </div>
           </div>
@@ -153,8 +153,8 @@ export default function AboutPage() {
 
       {/* Founder quote banner */}
       <section className="bg-[#618985] py-16">
-        <div className="mx-auto max-w-3xl px-8 text-center">
-          <blockquote className="font-heading text-3xl font-light leading-snug text-white sm:text-4xl">
+        <div className="mx-auto max-w-5xl px-8 text-center">
+          <blockquote className="font-heading text-4xl font-light leading-snug text-white sm:text-5xl">
             &ldquo;Your <em>grandma</em>{' '}name is more than a title. It&apos;s a connection to your loved ones.&rdquo;
           </blockquote>
           <div className="mt-6 flex items-center justify-end gap-3">
@@ -166,15 +166,15 @@ export default function AboutPage() {
 
       {/* Closing about section */}
       <section className="bg-[linear-gradient(135deg,#f5eef2_0%,#faf7f8_50%,#f0edf5_100%)] py-24">
-        <div className="mx-auto max-w-2xl px-8">
+        <div className="mx-auto max-w-3xl px-8">
           <Image
             src="/images/wording/white-black-logo-with-wording.png"
             alt="My Grandma Name"
-            width={320}
-            height={80}
-            className="h-16 w-auto"
+            width={384}
+            height={96}
+            className="h-[77px] w-auto"
           />
-          <div className="mt-8 space-y-4 text-sm leading-relaxed text-foreground/80">
+          <div className="mt-8 space-y-4 text-[17px] leading-relaxed text-foreground/80">
             <p>
               My Grandma Name is being built to make gifting feel thoughtful again — with curated ideas, gentle reminders, and personalized touches that reflect who you are and how your family knows you.
             </p>
@@ -231,9 +231,12 @@ export default function AboutPage() {
 
       {/* Fixed parallax background section */}
       <section
-        className="relative bg-fixed bg-cover bg-center py-24"
+        className="relative mx-14 overflow-hidden bg-cover bg-center py-24"
         style={{ backgroundImage: "url('/images/about-page/grandmother-with-family.jpg')" }}
       >
+        {/* Green vertical line above card */}
+        <div className="absolute left-1/2 top-5 h-14 w-[2px] -translate-x-1/2 bg-[#618985]" />
+
         <div className="mx-auto max-w-4xl rounded-2xl bg-white px-12 py-14 shadow-[0_4px_40px_rgba(53,51,48,0.15)]">
 
           {/* Heading */}
@@ -245,8 +248,8 @@ export default function AboutPage() {
           </p>
 
           {/* 2-col body */}
-          <div className="mt-10 grid gap-10 text-sm leading-relaxed text-foreground/80 sm:grid-cols-2 sm:gap-16">
-            <div className="space-y-4">
+          <div className="mt-10 grid gap-10 text-[17px] leading-relaxed text-foreground/80 sm:grid-cols-2 sm:gap-16">
+            <div className="space-y-4 text-justify">
               <p>A grandma name is the name your family comes to know you by, the one that shows up in memories, traditions, and the everyday moments that matter most.</p>
               <p>
                 For some, it&apos;s something they&apos;ve always known.<br />
@@ -255,14 +258,16 @@ export default function AboutPage() {
               <p>But when it feels right, it sticks.</p>
               <p>It becomes part of how you&apos;re remembered &ndash; in the little voices calling for you, in handwritten cards, and in the way your role takes shape within your family.</p>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-4 text-justify">
               <p>Whether you choose something timeless, playful, or entirely your own, your <em>grandma</em> name becomes a small but meaningful part of your identity, and a thread that carries through every gift, every visit, and every celebration.</p>
               <p>This platform is built to support that. To help you find it, define it, and carry it forward in thoughtful ways.</p>
             </div>
           </div>
 
         </div>
-        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-white to-transparent" />
+
+        {/* Green vertical line below card */}
+        <div className="absolute bottom-5 left-1/2 h-14 w-[2px] -translate-x-1/2 bg-[#618985]" />
       </section>
 
       <DinnerPartySection />

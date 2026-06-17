@@ -140,8 +140,8 @@ export default function GrandmaTipsPage() {
 
       {/* Founder quote banner */}
       <section className="bg-[#618985] py-16">
-        <div className="mx-auto max-w-3xl px-8 text-center">
-          <blockquote className="font-heading text-3xl font-light leading-snug text-white sm:text-4xl">
+        <div className="mx-auto max-w-5xl px-8 text-center">
+          <blockquote className="font-heading text-4xl font-light leading-snug text-white sm:text-5xl">
             &ldquo;Your <em>grandma</em>{' '}name is more than a title. It&apos;s a connection to your loved ones.&rdquo;
           </blockquote>
           <div className="mt-6 flex items-center justify-end gap-3">
