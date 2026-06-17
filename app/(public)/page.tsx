@@ -128,7 +128,7 @@ export default async function LandingPage() {
             <div className="mt-10 flex flex-col items-center justify-center gap-3 px-4 sm:flex-row">
               <Link
                 href="/signup"
-                className={cn(buttonVariants({ size: 'lg' }), 'w-full sm:w-auto bg-[#8f6593] hover:bg-[#7a5680]')}
+                className={cn(buttonVariants({ size: 'lg' }), 'w-full sm:w-auto bg-[#8f6593] hover:bg-[#7a5680] text-[18px]')}
               >
                 Create Free Account
               </Link>
@@ -136,7 +136,7 @@ export default async function LandingPage() {
                 href="/browse-products"
                 className={cn(
                   buttonVariants({ size: 'lg', variant: 'outline' }),
-                  'w-full sm:w-auto border-foreground/30 text-foreground/80 hover:bg-foreground/10 hover:text-foreground'
+                  'w-full sm:w-auto border-foreground/30 text-foreground/80 hover:bg-foreground/10 hover:text-foreground text-[18px]'
                 )}
               >
                 Browse Gifts
@@ -165,22 +165,22 @@ export default async function LandingPage() {
 
       {/* How it works */}
       <section className="bg-white py-20">
-        <div className="mx-auto max-w-screen-2xl px-12">
-          <h2 className="font-heading mb-12 text-center text-3xl font-light tracking-tight">
-            How it works
+        <div className="w-full px-10">
+          <h2 className="font-heading mb-12 text-center text-[43px] font-light tracking-tight">
+            How it Works
           </h2>
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-[46px] sm:grid-cols-2 lg:grid-cols-4">
             {HOW_IT_WORKS.map(({ step, title, description }) => {
               const split = description.indexOf('. ')
               const first = split !== -1 ? description.slice(0, split + 1) : description
               const rest = split !== -1 ? description.slice(split + 2) : null
               return (
-                <div key={step} className="space-y-3 rounded-xl bg-muted p-6">
-                  <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
+                <div key={step} className="space-y-3 rounded-xl bg-muted p-[35px]">
+                  <p className="text-[17px] font-medium uppercase tracking-widest text-muted-foreground">
                     Step {step}
                   </p>
-                  <h3 className="font-heading text-xl font-light">{title}</h3>
-                  <p className="text-sm leading-relaxed text-muted-foreground">
+                  <h3 className="font-heading text-[27px] font-light">{title}</h3>
+                  <p className="text-[18px] leading-relaxed text-muted-foreground mt-4">
                     {first}
                     {rest && <><br /><br />{rest}</>}
                   </p>
@@ -194,8 +194,8 @@ export default async function LandingPage() {
       {/* Features */}
       <section className="bg-background py-20">
         <div className="mx-auto max-w-5xl px-4">
-          <h2 className="font-heading mb-12 text-center text-3xl font-light tracking-tight">
-            Everything you need
+          <h2 className="font-heading mb-12 text-center text-[43px] font-light tracking-tight">
+            Everything you Need
           </h2>
           <div className="grid gap-5 sm:grid-cols-2">
             {FEATURES.map(({ title, description }) => (
@@ -203,8 +203,8 @@ export default async function LandingPage() {
                 key={title}
                 className="rounded-xl border border-border bg-white p-6 space-y-2 shadow-[0_2px_12px_rgba(53,51,48,0.06)]"
               >
-                <h3 className="font-heading text-xl font-light">{title}</h3>
-                <p className="text-sm leading-relaxed text-muted-foreground">{description}</p>
+                <h3 className="font-heading text-[27px] font-light">{title}</h3>
+                <p className="text-[18px] leading-relaxed text-muted-foreground mt-4">{description}</p>
               </div>
             ))}
           </div>
@@ -220,20 +220,20 @@ export default async function LandingPage() {
             <Image
               src="/images/wording/purple-logo-with-words.png"
               alt="My Grandma Name"
-              width={80}
-              height={80}
-              className="h-20 w-auto"
+              width={96}
+              height={96}
+              className="h-24 w-auto"
             />
-            <h2 className="font-heading text-4xl font-light tracking-tight">
+            <h2 className="font-heading text-[43px] font-light tracking-tight">
               What <em>is</em> a Grandma Name?
             </h2>
-            <p className="text-sm tracking-widest text-muted-foreground">
+            <p className="text-[17px] tracking-widest text-muted-foreground">
               - It&apos;s more than what they call you -
             </p>
           </div>
 
           {/* Two-column body */}
-          <div className="grid gap-10 text-sm leading-relaxed text-foreground/80 sm:grid-cols-2 sm:gap-16">
+          <div className="grid gap-10 text-[18px] leading-relaxed text-foreground/80 sm:grid-cols-2 sm:gap-16">
             <div className="space-y-4">
               <p>
                 A grandma name is the name your family comes to know you by, the one that shows up in memories, traditions, and the everyday moments that matter most.
@@ -270,8 +270,8 @@ export default async function LandingPage() {
 
       {/* Founder quote */}
       <section className="bg-[#618985] py-16">
-        <div className="mx-auto max-w-3xl px-8 text-center">
-          <blockquote className="font-heading text-3xl font-light leading-snug text-white sm:text-4xl">
+        <div className="mx-auto max-w-5xl px-8 text-center">
+          <blockquote className="font-heading text-4xl font-light leading-snug text-white sm:text-5xl">
             &ldquo;Your <em>grandma</em>{' '}name is more than a title. It&apos;s a connection to your loved ones.&rdquo;
           </blockquote>
           <div className="mt-6 flex items-center justify-end gap-3">
@@ -307,11 +307,11 @@ export default async function LandingPage() {
           <Image
             src="/images/wording/white-black-logo-with-wording.png"
             alt="My Grandma Name"
-            width={320}
-            height={80}
-            className="h-16 w-auto"
+            width={416}
+            height={104}
+            className="h-[83px] w-auto"
           />
-          <div className="mt-8 space-y-4 text-sm leading-relaxed text-foreground/80">
+          <div className="mt-8 space-y-4 text-[18px] leading-relaxed text-foreground/80">
             <p>
               My Grandma Name is being built to make gifting feel thoughtful again — with curated ideas, gentle reminders, and personalized touches that reflect who you are and how your family knows you.
             </p>

@@ -64,7 +64,7 @@ function PillButton({
       type="button"
       onClick={onClick}
       className={cn(
-        'rounded-full border px-4 py-1.5 text-sm transition-colors',
+        'rounded-full border px-4 py-1.5 text-[16px] transition-colors',
         selected
           ? 'border-primary bg-primary text-white'
           : 'border-border bg-white text-foreground/70 hover:border-primary/50 hover:text-foreground'
@@ -206,10 +206,10 @@ export function HeroGenerator({
   }
 
   return (
-    <div className="mx-auto w-full max-w-4xl px-4">
+    <div className="mx-auto w-full max-w-[1030px] px-4">
 
       {/* Generator form card */}
-      <div className="rounded-3xl bg-white px-14 py-8 shadow-[0_4px_32px_rgba(53,51,48,0.12)]">
+      <div className="rounded-3xl bg-white px-[64px] py-[37px] shadow-[0_4px_32px_rgba(53,51,48,0.12)]">
         <form onSubmit={handleSubmit} className="space-y-6">
 
           {/* Row 1: first name + name to avoid */}
@@ -241,7 +241,7 @@ export function HeroGenerator({
           {/* Row 2: preferred style + preferred vibe */}
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label>Preferred Style</Label>
+              <Label className="text-[14px]">Preferred Style</Label>
               <div className="flex flex-wrap gap-2">
                 {STYLES.map((s) => (
                   <PillButton
@@ -255,7 +255,7 @@ export function HeroGenerator({
               </div>
             </div>
             <div className="space-y-2">
-              <Label>Desired Name Format</Label>
+              <Label className="text-[14px]">Desired Name Format</Label>
               <div className="flex flex-wrap gap-2">
                 {FORMATS.map((f) => (
                   <PillButton
@@ -276,14 +276,14 @@ export function HeroGenerator({
               type="submit"
               size="lg"
               disabled={loading || !firstName || !nameToAvoid || (!isSignedIn && anonUsesLeft <= 0)}
-              className="w-full sm:w-auto bg-[#618985] text-white hover:bg-[#527673] disabled:opacity-100 disabled:bg-[#618985]"
+              className="w-full sm:w-auto bg-[#618985] text-[18px] text-white hover:bg-[#527673] disabled:opacity-100 disabled:bg-[#618985]"
             >
               {loading ? 'Finding your name…' : <>Find <em>My</em> Grandma Name</>}
             </Button>
 
             {/* Anon limit */}
             {!isSignedIn && (
-              <p className="text-xs text-muted-foreground">
+              <p className="text-[14px] text-muted-foreground">
                 {anonUsesLeft > 0
                   ? `${anonUsesLeft} Free ${anonUsesLeft === 1 ? 'Generation' : 'Generations'} Remaining`
                   : 'Limit reached — create an account for more'}
@@ -292,7 +292,7 @@ export function HeroGenerator({
 
             {/* Free-tier limit */}
             {isSignedIn && !isPaidGrandma && freeUsesLeft !== null && (
-              <p className="text-xs text-muted-foreground">
+              <p className="text-[14px] text-muted-foreground">
                 {freeUsesLeft > 0
                   ? `${freeUsesLeft} ${freeUsesLeft === 1 ? 'generation' : 'generations'} remaining`
                   : <>Limit reached. <a href="/subscribe" className="underline underline-offset-2 hover:text-foreground">Upgrade</a> for more.</>}

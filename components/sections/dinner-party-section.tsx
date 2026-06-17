@@ -7,11 +7,11 @@ export function DinnerPartySection() {
       {/* Left: text — inherits section gradient */}
       <div className="flex w-full items-center px-10 py-10 sm:w-3/5 sm:px-16">
         <div className="max-w-2xl space-y-4">
-          <h2 className="font-heading text-3xl font-light tracking-tight sm:text-4xl">
-            Being a grandma looks different for everyone
+          <h2 className="font-heading text-[43px] font-light tracking-tight">
+            Being a Grandma Looks Different for Everyone
           </h2>
           <span className="block h-px w-12 bg-foreground/20" />
-          <div className="space-y-4 text-sm leading-relaxed text-foreground/70">
+          <div className="space-y-4 text-[18px] leading-relaxed text-foreground/70">
             <p>
               Every family has different traditions, personalities, and histories — but one thing is shared across all grandparents: the love we have for our grandkids.
             </p>
