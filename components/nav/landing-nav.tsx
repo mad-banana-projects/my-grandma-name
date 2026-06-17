@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 
 function YouTubeIcon() {
@@ -23,6 +24,7 @@ function TikTokIcon() {
 
 export function LandingNav({ alwaysSolid = false }: { alwaysSolid?: boolean }) {
   const [scrolled, setScrolled] = useState(false)
+  const pathname = usePathname()
 
   useEffect(() => {
     if (alwaysSolid) return
@@ -52,10 +54,10 @@ export function LandingNav({ alwaysSolid = false }: { alwaysSolid?: boolean }) {
         <Link href="/login" className="text-sm text-white/90 transition-colors hover:text-white">
           Log in
         </Link>
-        <Link href="/about" className="text-sm text-white/90 transition-colors hover:text-white">
+        <Link href="/about" className={cn('text-sm transition-colors hover:text-white', pathname === '/about' ? 'text-[#8f6593]' : 'text-white/90')}>
           About
         </Link>
-        <Link href="/grandma-tips" className="text-sm text-white/90 transition-colors hover:text-white">
+        <Link href="/grandma-tips" className={cn('text-sm transition-colors hover:text-white', pathname === '/grandma-tips' ? 'text-[#8f6593]' : 'text-white/90')}>
           Grandma Tips
         </Link>
         <a
