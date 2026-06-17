@@ -1,19 +1,25 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, EB_Garamond } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
-const cormorantGaramond = Cormorant_Garamond({
-  variable: "--font-cormorant",
-  weight: ["300", "400", "600"],
-  style: ["normal", "italic"],
-  subsets: ["latin"],
+const ivyJournalLight = localFont({
+  src: [
+    { path: "../public/fonts/ivy-journal-light.ttf", style: "normal" },
+    { path: "../public/fonts/ivy-journal-light-italic.ttf", style: "italic" },
+  ],
+  variable: "--font-ivy-light",
   display: "swap",
 });
 
-const ebGaramond = EB_Garamond({
-  variable: "--font-eb-garamond",
-  weight: ["400", "500"],
-  subsets: ["latin"],
+const ivyJournalRegular = localFont({
+  src: "../public/fonts/ivy-journal-regular.ttf",
+  variable: "--font-ivy-regular",
+  display: "swap",
+});
+
+const arnoPro = localFont({
+  src: "../public/fonts/arno-pro-semibold.ttf",
+  variable: "--font-arno",
   display: "swap",
 });
 
@@ -30,7 +36,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${cormorantGaramond.variable} ${ebGaramond.variable} h-full antialiased`}
+      className={`${ivyJournalLight.variable} ${ivyJournalRegular.variable} ${arnoPro.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
