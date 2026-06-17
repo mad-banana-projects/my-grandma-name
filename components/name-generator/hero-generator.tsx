@@ -39,8 +39,8 @@ const STYLES = [
 ] as const
 
 const FORMATS = [
-  { value: 'single-word', label: 'Single word' },
-  { value: 'multi-word', label: 'Multi word' },
+  { value: 'single-word', label: 'Single-Word' },
+  { value: 'multi-word', label: 'Multi-Word' },
 ] as const
 
 type Result = {
@@ -228,7 +228,7 @@ export function HeroGenerator({
             <div className="space-y-1">
               <Input
                 id="hero-name-avoid"
-                placeholder="Name to avoid"
+                placeholder="Name to Avoid"
                 value={nameToAvoid}
                 onChange={(e) => setNameToAvoid(lettersOnly(e.target.value))}
                 maxLength={CHAR_LIMIT}
@@ -241,7 +241,7 @@ export function HeroGenerator({
           {/* Row 2: preferred style + preferred vibe */}
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label>Preferred style</Label>
+              <Label>Preferred Style</Label>
               <div className="flex flex-wrap gap-2">
                 {STYLES.map((s) => (
                   <PillButton
@@ -255,7 +255,7 @@ export function HeroGenerator({
               </div>
             </div>
             <div className="space-y-2">
-              <Label>Desired name format</Label>
+              <Label>Desired Name Format</Label>
               <div className="flex flex-wrap gap-2">
                 {FORMATS.map((f) => (
                   <PillButton
@@ -276,16 +276,16 @@ export function HeroGenerator({
               type="submit"
               size="lg"
               disabled={loading || !firstName || !nameToAvoid || (!isSignedIn && anonUsesLeft <= 0)}
-              className="w-full sm:w-auto bg-[#8f6593] text-white hover:bg-[#7a5680]"
+              className="w-full sm:w-auto bg-[#618985] text-white hover:bg-[#527673] disabled:opacity-100 disabled:bg-[#618985]"
             >
-              {loading ? 'Finding your name…' : 'Find my grandma name'}
+              {loading ? 'Finding your name…' : <>Find <em>My</em> Grandma Name</>}
             </Button>
 
             {/* Anon limit */}
             {!isSignedIn && (
               <p className="text-xs text-muted-foreground">
                 {anonUsesLeft > 0
-                  ? `${anonUsesLeft} free ${anonUsesLeft === 1 ? 'generation' : 'generations'} remaining`
+                  ? `${anonUsesLeft} Free ${anonUsesLeft === 1 ? 'Generation' : 'Generations'} Remaining`
                   : 'Limit reached — create an account for more'}
               </p>
             )}

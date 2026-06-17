@@ -22,8 +22,9 @@ function parseAnonCookieCount(raw: string | undefined): number {
 }
 
 const GRANDMA_NAMES = [
-  'Berry', 'Crya', 'Lola', 'Yaya', 'Memaw', 'Lolli', 'KiKi', 'Gemma',
-  'Mimi', 'Gigi', 'Lolla', 'Candy Gram', 'ChaCha', 'Granny', 'Nana', 'Glamma',
+  'Mimi', 'Gigi', 'Lolla', 'ChaCha', 'Granny', 'Grammy', 'Nana', 'Glamma',
+  'Gramma', 'Crya', 'Lola', 'Yaya', 'Memaw', 'Lolli', 'KiKi', 'Gemma',
+  'Chica', 'Lovey', 'Coo-Coo', 'Candy Gram',
 ]
 
 const HOW_IT_WORKS = [
@@ -127,9 +128,9 @@ export default async function LandingPage() {
             <div className="mt-10 flex flex-col items-center justify-center gap-3 px-4 sm:flex-row">
               <Link
                 href="/signup"
-                className={cn(buttonVariants({ size: 'lg' }), 'w-full sm:w-auto')}
+                className={cn(buttonVariants({ size: 'lg' }), 'w-full sm:w-auto bg-[#8f6593] hover:bg-[#7a5680]')}
               >
-                Create free account
+                Create Free Account
               </Link>
               <Link
                 href="/browse-products"
@@ -138,7 +139,7 @@ export default async function LandingPage() {
                   'w-full sm:w-auto border-foreground/30 text-foreground/80 hover:bg-foreground/10 hover:text-foreground'
                 )}
               >
-                Browse gifts
+                Browse Gifts
               </Link>
             </div>
           )}
