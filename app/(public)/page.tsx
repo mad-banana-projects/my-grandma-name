@@ -108,14 +108,14 @@ export default async function LandingPage() {
     <main className="min-h-screen bg-background">
 
       {/* Hero — gradient wrapper, offset by nav height (68px) */}
-      <div className="bg-[linear-gradient(to_bottom,#dcb6c9_0%,#ffffff_85%)] pt-[83px]">
+      <div className="bg-[linear-gradient(to_bottom,#dcb6c9_0%,#ffffff_85%)] pt-[clamp(58px,6.48vw,83px)]">
 
         {/* Hero content */}
         <section className="pb-20 pt-14 text-center">
-          <h1 className="font-heading mx-auto px-4 text-[52px] font-light tracking-tight">
+          <h1 className="font-heading mx-auto px-4 text-[clamp(38px,4.06vw,52px)] font-light tracking-tight">
             Find Your Unique Grandma Name
           </h1>
-          <p className="mx-auto mt-4 px-4 text-[25px] text-foreground/80 [font-family:var(--font-arno-italic)]">
+          <p className="mx-auto mt-4 px-4 text-[clamp(20px,1.95vw,25px)] text-foreground/80 [font-family:var(--font-arno-italic)]">
             A name that feels like you: thoughtful, personal, and just right for the role you&apos;re stepping into
           </p>
 
@@ -161,7 +161,7 @@ export default async function LandingPage() {
           {[...GRANDMA_NAMES, ...GRANDMA_NAMES].map((name, i) => (
             <span
               key={i}
-              className="px-10 text-[34px] text-foreground [font-family:var(--font-arno-italic)]"
+              className="px-10 text-[clamp(24px,2.66vw,34px)] text-foreground [font-family:var(--font-arno-italic)]"
             >
               {name}
             </span>
@@ -172,7 +172,7 @@ export default async function LandingPage() {
       {/* How it works */}
       <section className="bg-white py-20">
         <div className="w-full px-10">
-          <h2 className="font-heading mb-16 text-center text-[52px] font-light tracking-tight">
+          <h2 className="font-heading mb-16 text-center text-[clamp(38px,4.06vw,52px)] font-light tracking-tight">
             How it Works
           </h2>
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -212,12 +212,12 @@ export default async function LandingPage() {
                 </div>
                 {/* Text */}
                 <div className="mt-6">
-                  <h3 className="text-[25px] [font-family:var(--font-arno-italic)]">
+                  <h3 className="text-[clamp(20px,1.95vw,25px)] [font-family:var(--font-arno-italic)]">
                     {titleLines.map((line, i) => (
                       <span key={i}>{line}{i < titleLines.length - 1 && <br />}</span>
                     ))}
                   </h3>
-                  <p className="mx-auto mt-4 max-w-[220px] text-[17px] leading-relaxed text-muted-foreground">{description}</p>
+                  <p className="mx-auto mt-4 max-w-[220px] text-[clamp(13px,1.33vw,17px)] leading-relaxed text-muted-foreground">{description}</p>
                 </div>
               </div>
             ))}
@@ -228,7 +228,7 @@ export default async function LandingPage() {
       {/* Features */}
       <section className="bg-background py-20">
         <div className="mx-auto max-w-5xl px-4">
-          <h2 className="font-heading mb-12 text-center text-[52px] font-light tracking-tight">
+          <h2 className="font-heading mb-12 text-center text-[clamp(38px,4.06vw,52px)] font-light tracking-tight">
             Everything you Need
           </h2>
           <div className="grid gap-5 sm:grid-cols-2">
@@ -237,8 +237,8 @@ export default async function LandingPage() {
                 key={title}
                 className="rounded-xl border border-border bg-white p-6 space-y-2 shadow-[0_2px_12px_rgba(53,51,48,0.06)]"
               >
-                <h3 className="text-[25px] [font-family:var(--font-arno-italic)]">{title}</h3>
-                <p className="text-[17px] leading-relaxed text-muted-foreground mt-4">{description}</p>
+                <h3 className="text-[clamp(20px,1.95vw,25px)] [font-family:var(--font-arno-italic)]">{title}</h3>
+                <p className="text-[clamp(13px,1.33vw,17px)] leading-relaxed text-muted-foreground mt-4">{description}</p>
               </div>
             ))}
           </div>
@@ -258,16 +258,16 @@ export default async function LandingPage() {
               height={110}
               className="h-[110px] w-auto"
             />
-            <h2 className="font-heading text-[52px] font-light tracking-tight">
+            <h2 className="font-heading text-[clamp(38px,4.06vw,52px)] font-light tracking-tight">
               What <em>is</em> a Grandma Name?
             </h2>
-            <p className="text-[17px] tracking-widest text-gray-300">
+            <p className="text-[clamp(13px,1.33vw,17px)] tracking-widest text-gray-300">
               - It&apos;s more than what they call you -
             </p>
           </div>
 
           {/* Two-column body */}
-          <div className="grid gap-10 text-[17px] leading-relaxed text-foreground/80 sm:grid-cols-2 sm:gap-16">
+          <div className="grid gap-10 text-[clamp(13px,1.33vw,17px)] leading-relaxed text-foreground/80 sm:grid-cols-2 sm:gap-16">
             <div className="space-y-4">
               <p>
                 A grandma name is the name your family comes to know you by, the one that shows up in memories, traditions, and the everyday moments that matter most.
@@ -326,10 +326,10 @@ export default async function LandingPage() {
         />
         <div className="absolute inset-0 bg-white/55" />
         <div className="relative z-10 mx-auto max-w-6xl px-6">
-          <h2 className="font-heading text-[52px] font-light tracking-tight">
+          <h2 className="font-heading text-[clamp(38px,4.06vw,52px)] font-light tracking-tight">
             Where a name becomes part of something bigger
           </h2>
-          <p className="mt-4 text-[25px] text-foreground/80 [font-family:var(--font-arno-italic)]">
+          <p className="mt-4 text-[clamp(20px,1.95vw,25px)] text-foreground/80 [font-family:var(--font-arno-italic)]">
             Thoughtful gifting, reminders, and meaningful moments, all built around you.
           </p>
         </div>
@@ -345,7 +345,7 @@ export default async function LandingPage() {
             height={96}
             className="h-[77px] w-auto"
           />
-          <div className="mt-8 space-y-4 text-[17px] leading-relaxed text-foreground/80">
+          <div className="mt-8 space-y-4 text-[clamp(13px,1.33vw,17px)] leading-relaxed text-foreground/80">
             <p>
               My Grandma Name is being built to make gifting feel thoughtful again — with curated ideas, gentle reminders, and personalized touches that reflect who you are and how your family knows you.
             </p>
