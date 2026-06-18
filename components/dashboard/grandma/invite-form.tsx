@@ -83,7 +83,7 @@ export function InviteForm({ memberCount, className }: { memberCount: number; cl
   return (
     <Card className={className}>
       <CardHeader>
-        <CardTitle className="text-[17px]">Invite a Family Member</CardTitle>
+        <CardTitle className="text-[clamp(13px,1.33vw,17px)]">Invite a Family Member</CardTitle>
       </CardHeader>
       <CardContent>
         {inviteUrl ? (

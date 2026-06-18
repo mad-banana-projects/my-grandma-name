@@ -5,7 +5,7 @@ export default function GrandmaTipsPage() {
   return (
     <>
       {/* Hero */}
-      <section className="bg-white px-4 pb-20 pt-[108px] text-center">
+      <section className="bg-white px-4 pb-20 pt-[clamp(83px,8.44vw,108px)] text-center">
         <div className="mx-auto max-w-6xl space-y-6">
 
           <div className="flex justify-center">
@@ -19,19 +19,19 @@ export default function GrandmaTipsPage() {
             />
           </div>
 
-          <h1 className="font-heading text-[88px] font-light tracking-tight">
+          <h1 className="font-heading text-[clamp(52px,6.875vw,88px)] font-light tracking-tight">
             Tips for Grandmas
           </h1>
 
-          <p className="text-[17px] tracking-widest text-gray-300">
+          <p className="text-[clamp(13px,1.33vw,17px)] tracking-widest text-gray-300">
             - Grandma Inspiration &amp; Ideas -
           </p>
 
-          <p className="text-[17px] leading-relaxed text-foreground/80">
+          <p className="text-[clamp(13px,1.33vw,17px)] leading-relaxed text-foreground/80">
             Short, thoughtful videos with tips, encouragement, and little moments of inspiration as you step into your grandma name.
           </p>
 
-          <p className="text-[17px] leading-relaxed text-foreground/80">
+          <p className="text-[clamp(13px,1.33vw,17px)] leading-relaxed text-foreground/80">
             I support grandmas as they strengthen their family connections, embrace their role as a supportive guide, and create a legacy they&apos;re proud of. Too often, grandmas feel overlooked or unsure of where they fit when their adult children begin raising families of their own. Many carry the weight of past self&#8209;criticism or the desire for a &ldquo;second chance&rdquo; at motherhood&mdash;yet the role of a grandma isn&apos;t a re-do, but a beautifully distinct season defined by intention, presence &amp; love. <strong>Every grandma deserves to feel seen, celebrated and appreciated.</strong>
           </p>
 
@@ -40,7 +40,7 @@ export default function GrandmaTipsPage() {
               href="https://www.youtube.com/@MyGrandmaName"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex h-11 items-center justify-center rounded-full border border-white/50 bg-[#618985] px-6 text-base text-white transition-colors hover:bg-[#527673]"
+              className="inline-flex h-[clamp(36px,3.44vw,44px)] items-center justify-center rounded-full border border-white/50 bg-[#618985] px-[clamp(16px,1.875vw,24px)] text-[clamp(13px,1.33vw,17px)] text-white transition-colors hover:bg-[#527673]"
             >
               View on YouTube
             </a>
@@ -69,7 +69,7 @@ export default function GrandmaTipsPage() {
             {/* Right: content panel */}
             <div className="flex w-1/2 flex-col items-start justify-center rounded-tr-2xl bg-[#f2eaec] px-8 py-10">
               <Image src="/images/icons/heart_icon2.png" alt="" width={48} height={48} className="mb-5 h-12 w-auto" aria-hidden />
-              <p className="font-heading text-[32px] font-light leading-snug text-foreground">
+              <p className="font-heading text-[clamp(24px,2.5vw,32px)] font-light leading-snug text-foreground">
                 Always speak positively about your grandkids&apos; parents.
               </p>
             </div>
@@ -83,7 +83,7 @@ export default function GrandmaTipsPage() {
 
             {/* Left: content panel */}
             <div className="flex w-1/2 flex-col items-start justify-center rounded-bl-2xl bg-[#f2eaec] px-8 py-10">
-              <p className="font-heading text-[32px] font-light leading-snug text-foreground">
+              <p className="font-heading text-[clamp(24px,2.5vw,32px)] font-light leading-snug text-foreground">
                 Include yourself in pictures!
               </p>
             </div>
@@ -130,7 +130,7 @@ export default function GrandmaTipsPage() {
                 height={64}
                 className="h-16 w-auto"
               />
-              <p className="font-heading text-[32px] font-light leading-snug text-foreground">
+              <p className="font-heading text-[clamp(24px,2.5vw,32px)] font-light leading-snug text-foreground">
                 Encourage grandkids to find &amp; pursue their passion.
               </p>
             </div>
@@ -157,15 +157,15 @@ export default function GrandmaTipsPage() {
         <div className="mx-auto max-w-5xl px-4">
 
           <div className="mb-12 text-center space-y-4">
-            <h2 className="font-heading text-[52px] font-light tracking-tight">
+            <h2 className="font-heading text-[clamp(38px,4.06vw,52px)] font-light tracking-tight">
               <em>Why</em> we started this platform
             </h2>
-            <p className="text-[17px] tracking-widest text-muted-foreground">
+            <p className="text-[clamp(13px,1.33vw,17px)] tracking-widest text-muted-foreground">
               - About Us -
             </p>
           </div>
 
-          <div className="grid gap-10 text-[17px] leading-relaxed text-foreground/80 sm:grid-cols-2 sm:gap-16">
+          <div className="grid gap-10 text-[clamp(13px,1.33vw,17px)] leading-relaxed text-foreground/80 sm:grid-cols-2 sm:gap-16">
             <div className="space-y-4">
               <p>A grandma name is the name your family comes to know you by, the one that shows up in memories, traditions, and the everyday moments that matter most.</p>
               <p>

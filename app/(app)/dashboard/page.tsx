@@ -102,8 +102,8 @@ export default async function DashboardPage({
         {/* Header */}
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-[17px] text-muted-foreground">Welcome back</p>
-            <h1 className="text-[36px] font-semibold tracking-tight">
+            <p className="text-[clamp(13px,1.33vw,17px)] text-muted-foreground">Welcome back</p>
+            <h1 className="text-[clamp(28px,2.81vw,36px)] font-semibold tracking-tight">
               {profile.grandma_name || profile.first_name || user.email}
             </h1>
           </div>
@@ -124,7 +124,7 @@ export default async function DashboardPage({
 
           {/* Col 1, Row 1: About Me */}
           <div id="about-me" className="flex flex-col gap-4 scroll-mt-24">
-            <h2 className="text-[34px] font-semibold">About Me</h2>
+            <h2 className="text-[clamp(24px,2.66vw,34px)] font-semibold">About Me</h2>
             <ProfileCard
               profile={profile}
               subscriptionStatus={subscriptionStatus ?? null}
@@ -133,7 +133,7 @@ export default async function DashboardPage({
 
           {/* Col 2, Row 1: My Registry */}
           <div className="flex flex-col gap-4 h-full">
-            <h2 className="text-[34px] font-semibold">My Registry</h2>
+            <h2 className="text-[clamp(24px,2.66vw,34px)] font-semibold">My Registry</h2>
             {isPaid ? (
               <RegistryPreviewCard
                 grandmaProfileId={profileData.id}
@@ -152,7 +152,7 @@ export default async function DashboardPage({
             <EmailRemindersCard id="email-reminders" initial={reminderSettings} />
           ) : (
             <div id="email-reminders" className="flex flex-col gap-4 h-full scroll-mt-24">
-              <h2 className="text-[34px] font-semibold">Email Reminders</h2>
+              <h2 className="text-[clamp(24px,2.66vw,34px)] font-semibold">Email Reminders</h2>
               <LockedFeatureCard
                 className="flex-1"
                 description="Get reminders before birthdays, holidays, and custom dates — so family never misses a gift opportunity."
@@ -164,7 +164,7 @@ export default async function DashboardPage({
           {isPaid ? (
             <div id="my-family" className="flex flex-col gap-4 h-full scroll-mt-24">
               <div className="flex items-center justify-between">
-                <h2 className="text-[34px] font-semibold">My Family</h2>
+                <h2 className="text-[clamp(24px,2.66vw,34px)] font-semibold">My Family</h2>
                 <span className="text-sm text-muted-foreground">{members.length} / 10 members</span>
               </div>
 
@@ -174,7 +174,7 @@ export default async function DashboardPage({
             </div>
           ) : (
             <div id="my-family" className="flex flex-col gap-4 h-full scroll-mt-24">
-              <h2 className="text-[34px] font-semibold">My Family</h2>
+              <h2 className="text-[clamp(24px,2.66vw,34px)] font-semibold">My Family</h2>
               <LockedFeatureCard
                 className="flex-1"
                 description="Invite family members to view your registry. They'll get a link directly to your wishlist."

@@ -153,7 +153,7 @@ export function EmailRemindersCard({ id, initial }: EmailRemindersCardProps) {
 
   return (
     <div id={id} className="flex flex-col gap-4 h-full scroll-mt-24">
-      <h2 className="text-[34px] font-semibold">Email Reminders</h2>
+      <h2 className="text-[clamp(24px,2.66vw,34px)] font-semibold">Email Reminders</h2>
 
       <Card className="flex-1 flex flex-col relative">
         {/* Edit / Cancel pencil button */}
@@ -184,7 +184,7 @@ export function EmailRemindersCard({ id, initial }: EmailRemindersCardProps) {
 
             {/* Column 1: Send reminders for */}
             <div className="space-y-3">
-              <p className="text-[17px] font-medium">Send Reminders For:</p>
+              <p className="text-[clamp(13px,1.33vw,17px)] font-medium">Send Reminders For:</p>
               <div className="space-y-2">
                 {OCCASIONS.map(({ key, label }) => {
                   const checked = isEditing ? draftOccasions[key] : occasions[key]
@@ -219,7 +219,7 @@ export function EmailRemindersCard({ id, initial }: EmailRemindersCardProps) {
 
               {/* Custom dates */}
               <div className="space-y-3">
-                <p className="text-[17px] font-medium">Custom Dates</p>
+                <p className="text-[clamp(13px,1.33vw,17px)] font-medium">Custom Dates</p>
 
                 {(isEditing ? draftCustomDates : customDates).length > 0 && (
                   <div className="space-y-2">
@@ -308,7 +308,7 @@ export function EmailRemindersCard({ id, initial }: EmailRemindersCardProps) {
 
               {/* Remind me */}
               <div className="space-y-3">
-                <p className="text-[17px] font-medium">Remind Me</p>
+                <p className="text-[clamp(13px,1.33vw,17px)] font-medium">Remind Me</p>
                 <div className="flex flex-wrap gap-2">
                   {PRESET_FREQUENCY.map(({ days, label }) => {
                     const active = (isEditing ? draftFrequency : frequency).includes(days)

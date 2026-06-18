@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 
@@ -13,15 +13,41 @@ type Member = {
   invite_status: string | null
 }
 
-const PAGE_SIZE = 5
+const GRID_COLS: Record<number, string> = {
+  2: 'grid-cols-2',
+  3: 'grid-cols-3',
+  4: 'grid-cols-4',
+  5: 'grid-cols-5',
+}
+
+function useColumns() {
+  const [cols, setCols] = useState(5)
+  useEffect(() => {
+    function update() {
+      const w = window.innerWidth
+      if (w >= 1280) setCols(5)
+      else if (w >= 1052) setCols(4)
+      else if (w >= 850) setCols(3)
+      else setCols(2)
+    }
+    update()
+    window.addEventListener('resize', update)
+    return () => window.removeEventListener('resize', update)
+  }, [])
+  return cols
+}
 
 export function FamilyMembersCarousel({ members }: { members: Member[] }) {
+  const cols = useColumns()
   const [page, setPage] = useState(0)
+
+  // Reset to page 0 when column count changes so we never show an out-of-bounds slice
+  useEffect(() => { setPage(0) }, [cols])
 
   if (members.length === 0) return null
 
-  const totalPages = Math.ceil(members.length / PAGE_SIZE)
-  const visible = members.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE)
+  const totalPages = Math.ceil(members.length / cols)
+  const visible = members.slice(page * cols, page * cols + cols)
 
   return (
     <div className="flex items-center gap-2">
@@ -35,7 +61,7 @@ export function FamilyMembersCarousel({ members }: { members: Member[] }) {
         <ChevronLeft className="size-4" />
       </button>
 
-      <div className="grid flex-1 grid-cols-5 gap-3">
+      <div className={`grid flex-1 ${GRID_COLS[cols]} gap-3`}>
         {visible.map((member) => (
           <div
             key={member.id}
@@ -68,7 +94,7 @@ export function FamilyMembersCarousel({ members }: { members: Member[] }) {
         ))}
 
         {/* Fill empty slots so the row stays full width */}
-        {Array.from({ length: PAGE_SIZE - visible.length }).map((_, i) => (
+        {Array.from({ length: cols - visible.length }).map((_, i) => (
           <div key={`empty-${i}`} className="rounded-lg border border-dashed border-border/40 bg-transparent" />
         ))}
       </div>
