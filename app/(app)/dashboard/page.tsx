@@ -110,7 +110,7 @@ export default async function DashboardPage({
           </div>
           <Badge
             variant={subscriptionStatus === 'active' ? 'default' : 'secondary'}
-            className="mt-1 shrink-0"
+            className={subscriptionStatus === 'active' ? 'mt-1 shrink-0 bg-[#8f6593] text-white' : 'mt-1 shrink-0'}
           >
             {subscriptionStatus === 'active'
               ? 'Active'

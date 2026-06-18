@@ -29,7 +29,7 @@ export function FamilyMembersCarousel({ members }: { members: Member[] }) {
         type="button"
         onClick={() => setPage((p) => p - 1)}
         disabled={page === 0}
-        className="flex size-7 shrink-0 items-center justify-center rounded-full border transition-colors hover:bg-muted disabled:opacity-30 disabled:pointer-events-none"
+        className="flex size-7 shrink-0 items-center justify-center rounded-full border border-[#618985] text-[#618985] transition-colors hover:bg-[#618985]/10 disabled:opacity-30 disabled:pointer-events-none"
         aria-label="Previous members"
       >
         <ChevronLeft className="size-4" />
@@ -77,7 +77,7 @@ export function FamilyMembersCarousel({ members }: { members: Member[] }) {
         type="button"
         onClick={() => setPage((p) => p + 1)}
         disabled={page >= totalPages - 1}
-        className="flex size-7 shrink-0 items-center justify-center rounded-full border transition-colors hover:bg-muted disabled:opacity-30 disabled:pointer-events-none"
+        className="flex size-7 shrink-0 items-center justify-center rounded-full border border-[#618985] text-[#618985] transition-colors hover:bg-[#618985]/10 disabled:opacity-30 disabled:pointer-events-none"
         aria-label="Next members"
       >
         <ChevronRight className="size-4" />
