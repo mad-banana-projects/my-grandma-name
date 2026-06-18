@@ -83,7 +83,7 @@ export function InviteForm({ memberCount, className }: { memberCount: number; cl
   return (
     <Card className={className}>
       <CardHeader>
-        <CardTitle className="text-base">Invite a family member</CardTitle>
+        <CardTitle className="text-[17px]">Invite a Family Member</CardTitle>
       </CardHeader>
       <CardContent>
         {inviteUrl ? (
@@ -162,8 +162,8 @@ export function InviteForm({ memberCount, className }: { memberCount: number; cl
 
             {error && <p className="text-sm text-destructive">{error}</p>}
 
-            <Button type="submit" disabled={loading || !canSubmit} className="w-1/2 mx-auto block bg-[#8f6593] text-white hover:bg-[#7a5680]">
-              {loading ? 'Creating…' : 'Create invite'}
+            <Button type="submit" size="lg" disabled={loading || !canSubmit} className="mx-auto block bg-[#618985] text-white shadow-[inset_0_0_0_1.5px_rgba(255,255,255,0.8)] hover:bg-[#527673]">
+              {loading ? 'Creating…' : 'Create Invite'}
             </Button>
           </form>
         )}

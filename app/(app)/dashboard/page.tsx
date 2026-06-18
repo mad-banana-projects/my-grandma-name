@@ -6,6 +6,7 @@ import { InviteForm } from '@/components/dashboard/grandma/invite-form'
 import { EmailRemindersCard } from '@/components/dashboard/email-reminders-card'
 import { LockedFeatureCard } from '@/components/dashboard/locked-feature-card'
 import { RegistryPreviewCard } from '@/components/dashboard/registry-preview-card'
+import { FamilyMembersCarousel } from '@/components/dashboard/family-members-carousel'
 import type { RegistryPreviewItem } from '@/components/dashboard/registry-preview-card'
 import { BirthdayPrompt } from '@/components/dashboard/birthday-prompt'
 
@@ -168,40 +169,9 @@ export default async function DashboardPage({
                 <span className="text-sm text-muted-foreground">{members.length} / 10 members</span>
               </div>
 
-              {members.length > 0 && (
-                <div className="space-y-2">
-                  {members.map((member) => (
-                    <div
-                      key={member.id}
-                      className="flex items-center justify-between rounded-lg border px-4 py-3"
-                    >
-                      <div className="min-w-0">
-                        <p className="truncate text-sm font-medium">
-                          {member.first_name && member.last_name
-                            ? `${member.first_name} ${member.last_name}`
-                            : member.email}
-                        </p>
-                        {member.first_name && (
-                          <p className="truncate text-xs text-muted-foreground">{member.email}</p>
-                        )}
-                        {member.relationship && (
-                          <p className="text-xs capitalize text-muted-foreground">
-                            {member.relationship}
-                          </p>
-                        )}
-                      </div>
-                      <Badge
-                        variant={member.invite_status === 'accepted' ? 'default' : 'secondary'}
-                        className="ml-4 shrink-0"
-                      >
-                        {member.invite_status === 'accepted' ? 'Joined' : 'Invited'}
-                      </Badge>
-                    </div>
-                  ))}
-                </div>
-              )}
+              <InviteForm memberCount={members.length} />
 
-              <InviteForm memberCount={members.length} className="flex-1" />
+              <FamilyMembersCarousel members={members} />
             </div>
           ) : (
             <div id="my-family" className="flex flex-col gap-4 h-full scroll-mt-24">
