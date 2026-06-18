@@ -184,7 +184,7 @@ export function EmailRemindersCard({ id, initial }: EmailRemindersCardProps) {
 
             {/* Column 1: Send reminders for */}
             <div className="space-y-3">
-              <p className="text-sm font-medium">Send reminders for</p>
+              <p className="text-[17px] font-medium">Send Reminders For:</p>
               <div className="space-y-2">
                 {OCCASIONS.map(({ key, label }) => {
                   const checked = isEditing ? draftOccasions[key] : occasions[key]
@@ -219,7 +219,7 @@ export function EmailRemindersCard({ id, initial }: EmailRemindersCardProps) {
 
               {/* Custom dates */}
               <div className="space-y-3">
-                <p className="text-sm font-medium">Custom dates</p>
+                <p className="text-[17px] font-medium">Custom Dates</p>
 
                 {(isEditing ? draftCustomDates : customDates).length > 0 && (
                   <div className="space-y-2">
@@ -308,7 +308,7 @@ export function EmailRemindersCard({ id, initial }: EmailRemindersCardProps) {
 
               {/* Remind me */}
               <div className="space-y-3">
-                <p className="text-sm font-medium">Remind me</p>
+                <p className="text-[17px] font-medium">Remind Me</p>
                 <div className="flex flex-wrap gap-2">
                   {PRESET_FREQUENCY.map(({ days, label }) => {
                     const active = (isEditing ? draftFrequency : frequency).includes(days)

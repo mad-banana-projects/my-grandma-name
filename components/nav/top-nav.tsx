@@ -82,8 +82,8 @@ export function TopNav({ user, appNavItems = [] }: TopNavProps) {
           isHome && !scrolled ? 'bg-transparent' : 'bg-[#dcb6c9]'
         )}
       >
-        {/* Left: logo + app nav items */}
-        <div className="flex items-center gap-6">
+        {/* Left: logo */}
+        <div className="flex items-center">
           <Link href="/">
             <Image
               src="/images/wording/white-logo-with-wording.png"
@@ -94,29 +94,28 @@ export function TopNav({ user, appNavItems = [] }: TopNavProps) {
               priority
             />
           </Link>
+        </div>
 
-          {appNavItems.length > 0 && (
-            <div className="hidden items-center gap-1 md:flex">
+        {/* Right: auth-dependent links — desktop only */}
+        <div className="hidden items-center gap-4 md:flex">
+          {user ? (
+            <div className="flex items-center gap-8 mr-4">
               {appNavItems.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    'rounded-full px-3 py-1.5 text-sm transition-colors',
+                    'text-[19px] transition-colors hover:text-white',
                     pathname.startsWith(item.href)
-                      ? 'bg-white/30 font-medium text-white'
-                      : 'text-white/90 hover:bg-white/20 hover:text-white'
+                      ? 'text-[#8f6593]'
+                      : 'text-white/90'
                   )}
                 >
                   {item.label}
                 </Link>
               ))}
             </div>
-          )}
-        </div>
-
-        {/* Right: auth-dependent links — desktop only */}
-        <div className="hidden items-center gap-4 md:flex">
+          ) : null}
           {user ? (
             <div className="relative" ref={profileRef}>
               <button

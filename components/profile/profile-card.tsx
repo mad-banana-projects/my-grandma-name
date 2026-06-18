@@ -426,11 +426,11 @@ export function ProfileCard({ profile, subscriptionStatus }: ProfileCardProps) {
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
                 <dt className="text-[17px] font-bold uppercase tracking-wide text-muted-foreground">First name</dt>
-                <dd className="mt-1 rounded-lg border border-border bg-muted/50 px-3 py-2 text-sm">{profile.first_name || '—'}</dd>
+                <dd className="mt-1 rounded-lg border border-border bg-[#f2eaec] px-3 py-2 text-sm">{profile.first_name || '—'}</dd>
               </div>
               <div>
                 <dt className="text-[17px] font-bold uppercase tracking-wide text-muted-foreground">Last name</dt>
-                <dd className="mt-1 rounded-lg border border-border bg-muted/50 px-3 py-2 text-sm">{profile.last_name || '—'}</dd>
+                <dd className="mt-1 rounded-lg border border-border bg-[#f2eaec] px-3 py-2 text-sm">{profile.last_name || '—'}</dd>
               </div>
             </div>
 
@@ -438,11 +438,11 @@ export function ProfileCard({ profile, subscriptionStatus }: ProfileCardProps) {
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
                 <dt className="text-[17px] font-bold uppercase tracking-wide text-muted-foreground">Grandma name</dt>
-                <dd className="mt-1 rounded-lg border border-border bg-muted/50 px-3 py-2 text-sm">{profile.grandma_name || '—'}</dd>
+                <dd className="mt-1 rounded-lg border border-border bg-[#f2eaec] px-3 py-2 text-sm">{profile.grandma_name || '—'}</dd>
               </div>
               <div>
                 <dt className="text-[17px] font-bold uppercase tracking-wide text-muted-foreground">Birthday</dt>
-                <dd className="mt-1 rounded-lg border border-border bg-muted/50 px-3 py-2 text-sm">{profile.birthday ? formatBirthday(profile.birthday) : '—'}</dd>
+                <dd className="mt-1 rounded-lg border border-border bg-[#f2eaec] px-3 py-2 text-sm">{profile.birthday ? formatBirthday(profile.birthday) : '—'}</dd>
               </div>
             </div>
 
@@ -450,11 +450,11 @@ export function ProfileCard({ profile, subscriptionStatus }: ProfileCardProps) {
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
                 <dt className="text-[17px] font-bold uppercase tracking-wide text-muted-foreground">Email</dt>
-                <dd className="mt-1 rounded-lg border border-border bg-muted/50 px-3 py-2 text-sm">{profile.email}</dd>
+                <dd className="mt-1 rounded-lg border border-border bg-[#f2eaec] px-3 py-2 text-sm">{profile.email}</dd>
               </div>
               <div>
                 <dt className="text-[17px] font-bold uppercase tracking-wide text-muted-foreground">Phone</dt>
-                <dd className="mt-1 rounded-lg border border-border bg-muted/50 px-3 py-2 text-sm">{profile.phone_number || '—'}</dd>
+                <dd className="mt-1 rounded-lg border border-border bg-[#f2eaec] px-3 py-2 text-sm">{profile.phone_number || '—'}</dd>
               </div>
             </div>
 
@@ -466,14 +466,14 @@ export function ProfileCard({ profile, subscriptionStatus }: ProfileCardProps) {
               </div>
               <div>
                 <dt className="text-[17px] font-bold uppercase tracking-wide text-muted-foreground">Text updates</dt>
-                <dd className="mt-1 rounded-lg border border-border bg-muted/50 px-3 py-2 text-sm">{profile.text_updates_opt_in ? 'Opted in' : 'Not opted in'}</dd>
+                <dd className="mt-1 rounded-lg border border-border bg-[#f2eaec] px-3 py-2 text-sm">{profile.text_updates_opt_in ? 'Opted in' : 'Not opted in'}</dd>
               </div>
             </div>
 
             {/* Row 5: Address */}
             <div>
               <dt className="text-[17px] font-bold uppercase tracking-wide text-muted-foreground">Address</dt>
-              <dd className="mt-1 rounded-lg border border-border bg-muted/50 px-3 py-2 text-sm">{profile.address || '—'}</dd>
+              <dd className="mt-1 rounded-lg border border-border bg-[#f2eaec] px-3 py-2 text-sm">{profile.address || '—'}</dd>
             </div>
           </dl>
         )}
@@ -509,7 +509,7 @@ export function ProfileCard({ profile, subscriptionStatus }: ProfileCardProps) {
             <div className="flex items-center justify-between text-sm">
               <div>
                 <p className="text-[17px] font-bold uppercase tracking-wide text-muted-foreground">Password</p>
-                <p className="mt-1 rounded-lg border border-border bg-muted/50 px-3 py-2 text-sm">
+                <p className="mt-1 rounded-lg border border-border bg-[#f2eaec] px-3 py-2 text-sm">
                   {passwordSuccess ? (
                     <span className="text-emerald-700">Updated successfully</span>
                   ) : (
@@ -532,7 +532,7 @@ export function ProfileCard({ profile, subscriptionStatus }: ProfileCardProps) {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-[17px] font-bold uppercase tracking-wide text-muted-foreground">Subscription</p>
-              <p className="mt-1 rounded-lg border border-border bg-muted/50 px-3 py-2 text-sm">
+              <p className="mt-1 rounded-lg border border-border bg-[#f2eaec] px-3 py-2 text-sm">
                 {subscriptionStatus === 'active'
                   ? 'Active'
                   : subscriptionStatus === 'trialing'

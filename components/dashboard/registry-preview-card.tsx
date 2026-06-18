@@ -34,9 +34,9 @@ export function RegistryPreviewCard({
       <CardContent className="flex flex-col h-full p-4 gap-4">
 
         {/* Items area — grows to fill available space */}
-        <div className="flex-1 flex flex-col justify-start gap-2 min-h-0">
+        <div className="flex-1 min-h-0">
           {items.length === 0 ? (
-            <div className="flex flex-1 flex-col items-center justify-center text-center">
+            <div className="flex h-full flex-col items-center justify-center text-center">
               <p className="text-sm text-muted-foreground">No gifts saved yet.</p>
               <a
                 href="/browse-products"
@@ -46,67 +46,63 @@ export function RegistryPreviewCard({
               </a>
             </div>
           ) : (
-            items.map((item) => {
-              const product = item.product
-              if (!product) return null
-              const imageUrl = product.image_urls?.[0] ?? null
-              const outboundUrl = product.affiliate_url ?? product.product_url
-              const price = formatPrice(product.price)
+            <div className="grid grid-cols-3 gap-3">
+              {items.map((item) => {
+                const product = item.product
+                if (!product) return null
+                const imageUrl = product.image_urls?.[0] ?? null
+                const outboundUrl = product.affiliate_url ?? product.product_url
+                const price = formatPrice(product.price)
 
-              return (
-                <div
-                  key={item.id}
-                  className="flex items-center gap-3 rounded-lg border bg-background p-2.5"
-                >
-                  <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-md bg-muted/30">
-                    {imageUrl ? (
-                      <Image
-                        src={imageUrl}
-                        alt={product.name}
-                        fill
-                        className="object-cover"
-                        sizes="48px"
-                      />
-                    ) : (
-                      <div className="flex h-full items-center justify-center text-xs text-muted-foreground">—</div>
-                    )}
-                  </div>
-
-                  <div className="min-w-0 flex-1 space-y-0.5">
-                    {product.brand && (
-                      <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
-                        {product.brand}
-                      </p>
-                    )}
-                    <p className="truncate text-sm font-medium">{product.name}</p>
-                    {item.variant && (
-                      <p className="text-xs text-muted-foreground">{item.variant.label}</p>
-                    )}
-                    {price && (
-                      <p className="text-xs text-muted-foreground">{price}</p>
-                    )}
-                  </div>
-
+                return (
                   <a
+                    key={item.id}
                     href={outboundUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={cn(buttonVariants({ size: 'sm', variant: 'outline' }), 'shrink-0 text-xs')}
+                    className="group flex flex-col overflow-hidden rounded-lg border bg-background transition-shadow hover:shadow-md"
                   >
-                    View
+                    <div className="relative aspect-square w-full overflow-hidden bg-muted/30">
+                      {imageUrl ? (
+                        <Image
+                          src={imageUrl}
+                          alt={product.name}
+                          fill
+                          className="object-cover transition-transform group-hover:scale-105"
+                          sizes="(max-width: 768px) 33vw, 200px"
+                        />
+                      ) : (
+                        <div className="flex h-full items-center justify-center text-xs text-muted-foreground">—</div>
+                      )}
+                    </div>
+
+                    <div className="flex flex-col gap-0.5 p-2">
+                      {product.brand && (
+                        <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                          {product.brand}
+                        </p>
+                      )}
+                      <p className="line-clamp-2 text-xs font-medium leading-snug">{product.name}</p>
+                      {item.variant && (
+                        <p className="text-[10px] text-muted-foreground">{item.variant.label}</p>
+                      )}
+                      {price && (
+                        <p className="text-xs font-semibold">{price}</p>
+                      )}
+                    </div>
                   </a>
-                </div>
-              )
-            })
+                )
+              })}
+            </div>
           )}
         </div>
 
         {/* Button always pinned to bottom */}
         <Link
           href={`/registry/${grandmaProfileId}`}
-          className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'w-1/2 mx-auto')}
+          className={cn(buttonVariants({ size: 'lg' }), 'mx-auto bg-[#618985] text-white shadow-[inset_0_0_0_1.5px_rgba(255,255,255,0.8)] hover:bg-[#527673]')}
         >
-          View my registry
+          View My Registry
         </Link>
 
       </CardContent>
