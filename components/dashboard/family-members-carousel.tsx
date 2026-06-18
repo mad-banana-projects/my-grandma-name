@@ -28,7 +28,8 @@ function useColumns() {
       if (w >= 1280) setCols(5)
       else if (w >= 1052) setCols(4)
       else if (w >= 850) setCols(3)
-      else setCols(2)
+      else if (w >= 768) setCols(2)
+      else setCols(3)
     }
     update()
     window.addEventListener('resize', update)
