@@ -1,8 +1,27 @@
+'use client'
+
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Card, CardContent } from '@/components/ui/card'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+
+function useGridCols() {
+  const [cols, setCols] = useState(3)
+  useEffect(() => {
+    function update() {
+      const w = window.innerWidth
+      if (w >= 1100) setCols(3)
+      else if (w >= 768) setCols(2)
+      else setCols(3)
+    }
+    update()
+    window.addEventListener('resize', update)
+    return () => window.removeEventListener('resize', update)
+  }, [])
+  return cols
+}
 
 export type RegistryPreviewItem = {
   id: string
@@ -22,6 +41,11 @@ function formatPrice(price: string | null) {
   return `$${parseFloat(price).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`
 }
 
+const GRID_COLS: Record<number, string> = {
+  2: 'grid-cols-2',
+  3: 'grid-cols-3',
+}
+
 export function RegistryPreviewCard({
   grandmaProfileId,
   items,
@@ -29,6 +53,7 @@ export function RegistryPreviewCard({
   grandmaProfileId: string
   items: RegistryPreviewItem[]
 }) {
+  const cols = useGridCols()
   return (
     <Card className="flex flex-col h-full">
       <CardContent className="flex flex-col h-full px-4 pb-4 pt-1.5 gap-4">
@@ -46,7 +71,7 @@ export function RegistryPreviewCard({
               </a>
             </div>
           ) : (
-            <div className="grid grid-cols-3 gap-3">
+            <div className={`grid ${GRID_COLS[cols]} gap-3`}>
               {items.map((item) => {
                 const product = item.product
                 if (!product) return null
