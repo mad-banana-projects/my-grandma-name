@@ -33,10 +33,10 @@ export function RegistryPreviewCard({
     <Card className="flex flex-col h-full">
       <CardContent className="flex flex-col h-full p-4 gap-4">
 
-        {/* Items area — grows to fill available space */}
-        <div className="flex-1 min-h-0">
+        {/* Items area — scrollable with fixed max height */}
+        <div className="overflow-y-auto max-h-[420px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {items.length === 0 ? (
-            <div className="flex h-full flex-col items-center justify-center text-center">
+            <div className="flex h-40 flex-col items-center justify-center text-center">
               <p className="text-sm text-muted-foreground">No gifts saved yet.</p>
               <a
                 href="/browse-products"
@@ -97,10 +97,10 @@ export function RegistryPreviewCard({
           )}
         </div>
 
-        {/* Button always pinned to bottom */}
+        {/* Button pinned to bottom */}
         <Link
           href={`/registry/${grandmaProfileId}`}
-          className={cn(buttonVariants({ size: 'lg' }), 'mx-auto bg-[#618985] text-white shadow-[inset_0_0_0_1.5px_rgba(255,255,255,0.8)] hover:bg-[#527673]')}
+          className={cn(buttonVariants({ size: 'lg' }), 'mt-auto mx-auto bg-[#618985] text-white shadow-[inset_0_0_0_1.5px_rgba(255,255,255,0.8)] hover:bg-[#527673]')}
         >
           View My Registry
         </Link>

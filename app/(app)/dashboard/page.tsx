@@ -86,8 +86,7 @@ export default async function DashboardPage({
         .from('registry_items')
         .select('id, product:products(name, image_urls, price, brand, affiliate_url, product_url), variant:product_variants(id, label)')
         .eq('grandma_id', profileData.id)
-        .order('added_at', { ascending: false })
-        .limit(3),
+        .order('added_at', { ascending: false }),
     ])
 
     members = familyMembers ?? []
