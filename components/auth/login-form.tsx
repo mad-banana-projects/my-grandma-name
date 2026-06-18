@@ -21,7 +21,7 @@ function SubmitButton() {
   const { pending } = useFormStatus()
   return (
     <Button type="submit" size="lg" className="w-full" disabled={pending}>
-      {pending ? 'Signing in…' : 'Sign in'}
+      {pending ? 'Signing in…' : 'Sign In'}
     </Button>
   )
 }

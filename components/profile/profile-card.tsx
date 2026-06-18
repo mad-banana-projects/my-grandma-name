@@ -425,55 +425,55 @@ export function ProfileCard({ profile, subscriptionStatus }: ProfileCardProps) {
             {/* Row 1: First name, Last name */}
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
-                <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">First name</dt>
-                <dd className="mt-0.5">{profile.first_name || '—'}</dd>
+                <dt className="text-[17px] font-bold uppercase tracking-wide text-muted-foreground">First name</dt>
+                <dd className="mt-1 rounded-lg border border-border bg-muted/50 px-3 py-2 text-sm">{profile.first_name || '—'}</dd>
               </div>
               <div>
-                <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Last name</dt>
-                <dd className="mt-0.5">{profile.last_name || '—'}</dd>
+                <dt className="text-[17px] font-bold uppercase tracking-wide text-muted-foreground">Last name</dt>
+                <dd className="mt-1 rounded-lg border border-border bg-muted/50 px-3 py-2 text-sm">{profile.last_name || '—'}</dd>
               </div>
             </div>
 
             {/* Row 2: Grandma name, Birthday */}
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
-                <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Grandma name</dt>
-                <dd className="mt-0.5">{profile.grandma_name || '—'}</dd>
+                <dt className="text-[17px] font-bold uppercase tracking-wide text-muted-foreground">Grandma name</dt>
+                <dd className="mt-1 rounded-lg border border-border bg-muted/50 px-3 py-2 text-sm">{profile.grandma_name || '—'}</dd>
               </div>
               <div>
-                <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Birthday</dt>
-                <dd className="mt-0.5">{profile.birthday ? formatBirthday(profile.birthday) : '—'}</dd>
+                <dt className="text-[17px] font-bold uppercase tracking-wide text-muted-foreground">Birthday</dt>
+                <dd className="mt-1 rounded-lg border border-border bg-muted/50 px-3 py-2 text-sm">{profile.birthday ? formatBirthday(profile.birthday) : '—'}</dd>
               </div>
             </div>
 
             {/* Row 3: Email, Phone */}
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
-                <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Email</dt>
-                <dd className="mt-0.5">{profile.email}</dd>
+                <dt className="text-[17px] font-bold uppercase tracking-wide text-muted-foreground">Email</dt>
+                <dd className="mt-1 rounded-lg border border-border bg-muted/50 px-3 py-2 text-sm">{profile.email}</dd>
               </div>
               <div>
-                <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Phone</dt>
-                <dd className="mt-0.5">{profile.phone_number || '—'}</dd>
+                <dt className="text-[17px] font-bold uppercase tracking-wide text-muted-foreground">Phone</dt>
+                <dd className="mt-1 rounded-lg border border-border bg-muted/50 px-3 py-2 text-sm">{profile.phone_number || '—'}</dd>
               </div>
             </div>
 
             {/* Row 4: Bio, Text updates */}
             <div className="grid gap-3 sm:grid-cols-2 items-start">
               <div>
-                <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Bio</dt>
+                <dt className="text-[17px] font-bold uppercase tracking-wide text-muted-foreground">Bio</dt>
                 <dd className="mt-0.5 leading-relaxed text-muted-foreground">{profile.bio || '—'}</dd>
               </div>
               <div>
-                <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Text updates</dt>
-                <dd className="mt-0.5">{profile.text_updates_opt_in ? 'Opted in' : 'Not opted in'}</dd>
+                <dt className="text-[17px] font-bold uppercase tracking-wide text-muted-foreground">Text updates</dt>
+                <dd className="mt-1 rounded-lg border border-border bg-muted/50 px-3 py-2 text-sm">{profile.text_updates_opt_in ? 'Opted in' : 'Not opted in'}</dd>
               </div>
             </div>
 
             {/* Row 5: Address */}
             <div>
-              <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Address</dt>
-              <dd className="mt-0.5">{profile.address || '—'}</dd>
+              <dt className="text-[17px] font-bold uppercase tracking-wide text-muted-foreground">Address</dt>
+              <dd className="mt-1 rounded-lg border border-border bg-muted/50 px-3 py-2 text-sm">{profile.address || '—'}</dd>
             </div>
           </dl>
         )}
@@ -508,8 +508,8 @@ export function ProfileCard({ profile, subscriptionStatus }: ProfileCardProps) {
           ) : (
             <div className="flex items-center justify-between text-sm">
               <div>
-                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Password</p>
-                <p className="mt-0.5">
+                <p className="text-[17px] font-bold uppercase tracking-wide text-muted-foreground">Password</p>
+                <p className="mt-1 rounded-lg border border-border bg-muted/50 px-3 py-2 text-sm">
                   {passwordSuccess ? (
                     <span className="text-emerald-700">Updated successfully</span>
                   ) : (
@@ -519,7 +519,7 @@ export function ProfileCard({ profile, subscriptionStatus }: ProfileCardProps) {
               </div>
               <button
                 onClick={() => { setIsPasswordOpen(true); setPasswordSuccess(false) }}
-                className="rounded-full bg-[#8f6593] px-3 py-1.5 text-sm text-white transition-colors hover:bg-[#7a5680]"
+                className="rounded-full bg-[#618985] px-3 py-1.5 text-sm text-white shadow-[inset_0_0_0_1.5px_rgba(255,255,255,0.8)] transition-colors hover:bg-[#527673]"
               >
                 Change
               </button>
@@ -531,8 +531,8 @@ export function ProfileCard({ profile, subscriptionStatus }: ProfileCardProps) {
         <div className="border-t pt-4 text-sm">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Subscription</p>
-              <p className="mt-0.5">
+              <p className="text-[17px] font-bold uppercase tracking-wide text-muted-foreground">Subscription</p>
+              <p className="mt-1 rounded-lg border border-border bg-muted/50 px-3 py-2 text-sm">
                 {subscriptionStatus === 'active'
                   ? 'Active'
                   : subscriptionStatus === 'trialing'
@@ -542,7 +542,7 @@ export function ProfileCard({ profile, subscriptionStatus }: ProfileCardProps) {
             </div>
             <button
               onClick={() => { setManageError(null); setShowManageDialog(true) }}
-              className="rounded-full bg-[#8f6593] px-3 py-1.5 text-sm text-white transition-colors hover:bg-[#7a5680]"
+              className="rounded-full bg-[#618985] px-3 py-1.5 text-sm text-white shadow-[inset_0_0_0_1.5px_rgba(255,255,255,0.8)] transition-colors hover:bg-[#527673]"
             >
               Manage
             </button>
