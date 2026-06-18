@@ -18,8 +18,14 @@ const ivyJournalRegular = localFont({
 });
 
 const arnoPro = localFont({
-  src: "../public/fonts/arno-pro-semibold.ttf",
+  src: "../public/fonts/arno-pro-semibold-subhead.otf",
   variable: "--font-arno",
+  display: "swap",
+});
+
+const arnoProItalic = localFont({
+  src: "../public/fonts/arno-pro-semibold-italic.otf",
+  variable: "--font-arno-italic",
   display: "swap",
 });
 
@@ -36,7 +42,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${ivyJournalLight.variable} ${ivyJournalRegular.variable} ${arnoPro.variable} h-full antialiased`}
+      className={`${ivyJournalLight.variable} ${ivyJournalRegular.variable} ${arnoPro.variable} ${arnoProItalic.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

@@ -23,7 +23,7 @@ export default function GrandmaTipsPage() {
             Tips for Grandmas
           </h1>
 
-          <p className="text-[17px] tracking-widest text-muted-foreground">
+          <p className="text-[17px] tracking-widest text-gray-300">
             - Grandma Inspiration &amp; Ideas -
           </p>
 

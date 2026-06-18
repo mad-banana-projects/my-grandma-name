@@ -5,7 +5,7 @@ export default function AboutPage() {
   return (
     <>
       {/* Hero: image left, content right */}
-      <section className="flex flex-col sm:flex-row sm:items-stretch">
+      <section className="flex flex-col pt-[83px] sm:flex-row sm:items-stretch">
 
         {/* Left: photo — full image, no crop */}
         <div className="w-full overflow-hidden rounded-br-3xl sm:w-1/2">

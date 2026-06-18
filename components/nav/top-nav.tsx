@@ -79,7 +79,7 @@ export function TopNav({ user, appNavItems = [] }: TopNavProps) {
       <nav
         className={cn(
           'fixed left-0 right-0 top-0 z-50 flex w-full items-center justify-between px-10 py-1 transition-colors duration-300',
-          isSolid ? 'bg-black/20 backdrop-blur-md' : 'bg-transparent'
+          isHome && !scrolled ? 'bg-transparent' : 'bg-[#dcb6c9]'
         )}
       >
         {/* Left: logo + app nav items */}
@@ -200,10 +200,10 @@ export function TopNav({ user, appNavItems = [] }: TopNavProps) {
                 <Link href="/login" className="text-[19px] text-white/90 transition-colors hover:text-white">
                   Log In
                 </Link>
-                <Link href="/about" className="text-[19px] text-white/90 transition-colors hover:text-white">
+                <Link href="/about" className={cn('text-[19px] transition-colors hover:text-white', pathname === '/about' ? 'text-[#8f6593]' : 'text-white/90')}>
                   About
                 </Link>
-                <Link href="/grandma-tips" className="text-[19px] text-white/90 transition-colors hover:text-white">
+                <Link href="/grandma-tips" className={cn('text-[19px] transition-colors hover:text-white', pathname === '/grandma-tips' ? 'text-[#8f6593]' : 'text-white/90')}>
                   Grandma Tips
                 </Link>
               </div>
