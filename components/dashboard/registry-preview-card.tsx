@@ -31,10 +31,10 @@ export function RegistryPreviewCard({
 }) {
   return (
     <Card className="flex flex-col h-full">
-      <CardContent className="flex flex-col h-full p-4 gap-4">
+      <CardContent className="flex flex-col h-full px-4 pb-4 pt-1.5 gap-4">
 
         {/* Items area — scrollable with fixed max height */}
-        <div className="overflow-y-auto max-h-[420px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="overflow-y-auto max-h-[522px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {items.length === 0 ? (
             <div className="flex h-40 flex-col items-center justify-center text-center">
               <p className="text-sm text-muted-foreground">No gifts saved yet.</p>
@@ -62,7 +62,7 @@ export function RegistryPreviewCard({
                     rel="noopener noreferrer"
                     className="group flex flex-col overflow-hidden rounded-lg border bg-background transition-shadow hover:shadow-md"
                   >
-                    <div className="relative aspect-square w-full overflow-hidden bg-muted/30">
+                    <div className="relative aspect-[10/9] w-full overflow-hidden bg-muted/30">
                       {imageUrl ? (
                         <Image
                           src={imageUrl}
