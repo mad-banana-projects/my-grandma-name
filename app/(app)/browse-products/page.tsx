@@ -57,8 +57,8 @@ export default async function BrowseProductsPage() {
     <main className="bg-background px-4 py-12">
       <div className="mx-auto max-w-6xl space-y-8">
         <div className="space-y-2">
-          <h1 className="text-3xl font-semibold tracking-tight">Gift ideas she'll love</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-[52px] font-light tracking-tight">Gift ideas she'll love</h1>
+          <p className="text-[25px] text-foreground/80 [font-family:var(--font-arno-italic)]">
             A curated collection of thoughtful gifts for grandma.
           </p>
         </div>

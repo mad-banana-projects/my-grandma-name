@@ -217,8 +217,8 @@ export function ProductCard({
                 className={cn(
                   'rounded-full border px-3 py-1 text-xs transition-colors',
                   selectedVariant?.id === v.id
-                    ? 'border-[#8f6593] bg-[#8f6593] text-white'
-                    : 'border-[#8f6593] bg-white text-[#8f6593] hover:bg-[#8f6593]/10'
+                    ? 'border-[#dcb6c9] bg-[#dcb6c9] text-white'
+                    : 'border-[#dcb6c9] bg-white text-[#dcb6c9] hover:bg-[#dcb6c9]/10'
                 )}
               >
                 {v.label}
@@ -311,9 +311,9 @@ export function ProductCard({
               href={outboundUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className={cn(buttonVariants({ size: 'sm', variant: 'outline' }))}
+              className={cn(buttonVariants({ size: 'sm' }), 'bg-[#8f6593] text-white shadow-[inset_0_0_0_1.5px_rgba(255,255,255,0.8)] hover:bg-[#7a5680]')}
             >
-              View product
+              View Product
             </a>
           </div>
         </div>
