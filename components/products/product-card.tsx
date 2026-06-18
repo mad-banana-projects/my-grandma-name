@@ -290,7 +290,7 @@ export function ProductCard({
                       {bookmarkMode === 'login' ? (
                         <>
                           <a href="/signup" className={cn(buttonVariants())}>
-                            Create free account
+                            Create Free Account
                           </a>
                           <a href="/login" className={cn(buttonVariants({ variant: 'outline' }))}>
                             Sign in

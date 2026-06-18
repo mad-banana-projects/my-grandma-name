@@ -24,7 +24,7 @@ export default async function GrandmaSignupPage({
             <>
               <h1 className="text-3xl font-semibold tracking-normal">Create your free account</h1>
               <p className="text-sm text-muted-foreground">
-                Find your grandma name, browse gifts, and build a wishlist your family will love.
+                Find your grandma name, save the things you love, and make it easier for family to celebrate you thoughtfully.
               </p>
             </>
           )}

@@ -394,7 +394,7 @@ export function GeneratorForm({ isSignedIn, isPaidGrandma, anonUsesRemaining, fr
                       href={`/signup?grandmaName=${encodeURIComponent(result?.winner.name ?? '')}`}
                       className={cn(buttonVariants())}
                     >
-                      Create free account
+                      Create Free Account
                     </a>
                     <a
                       href="/login"
@@ -466,7 +466,7 @@ export function GeneratorForm({ isSignedIn, isPaidGrandma, anonUsesRemaining, fr
             </DialogHeader>
             <DialogFooter showCloseButton>
               <a href="/signup" className={cn(buttonVariants())}>
-                Create free account
+                Create Free Account
               </a>
               <a href="/login" className={cn(buttonVariants({ variant: 'outline' }))}>
                 Sign in

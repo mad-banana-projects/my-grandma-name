@@ -73,7 +73,7 @@ function SubmitButton() {
   const { pending } = useFormStatus()
   return (
     <Button type="submit" size="lg" className="w-full" disabled={pending}>
-      {pending ? 'Creating account…' : 'Create free account'}
+      {pending ? 'Creating account…' : 'Create Free Account'}
     </Button>
   )
 }
@@ -108,7 +108,6 @@ export function GrandmaSignupForm({ grandmaName }: GrandmaSignupFormProps) {
   return (
     <Card className="w-full max-w-lg rounded-lg">
       <CardHeader>
-        <CardTitle className="text-xl">Create your account</CardTitle>
         <CardDescription>Free to join. You can add more details and upgrade anytime.</CardDescription>
       </CardHeader>
       <CardContent>

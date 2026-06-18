@@ -89,7 +89,7 @@ export function ProductGrid({
           </p>
           <div className="flex justify-center gap-3">
             <Link href="/signup" className={buttonVariants()}>
-              Create free account
+              Create Free Account
             </Link>
             <Link href="/login" className={buttonVariants({ variant: 'outline' })}>
               Sign in

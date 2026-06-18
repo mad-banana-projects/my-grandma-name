@@ -332,7 +332,7 @@ export function HeroGenerator({
                     href={`/signup?grandmaName=${encodeURIComponent(result.winner.name)}`}
                     className={cn(buttonVariants({ size: 'sm', variant: 'outline' }), 'shrink-0')}
                   >
-                    Create free account to save
+                    Create Free Account to save
                   </a>
                 )}
               </div>
@@ -363,7 +363,7 @@ export function HeroGenerator({
                   href={`/signup?grandmaName=${encodeURIComponent(result.runnerUp.name)}`}
                   className={cn(buttonVariants({ size: 'sm', variant: 'ghost' }), 'shrink-0 h-7 px-2 text-xs')}
                 >
-                  Create free account to save
+                  Create Free Account to save
                 </a>
               )}
             </div>
