@@ -3,7 +3,6 @@
 import { useState, useTransition } from 'react'
 import Image from 'next/image'
 import { X } from 'lucide-react'
-import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { removeRegistryItem } from '@/app/(app)/registry/actions'
 
@@ -30,7 +29,8 @@ function formatPrice(price: string | null): string | null {
 function RemoveButton({ itemId, onRemove }: { itemId: string; onRemove: () => void }) {
   const [isPending, startTransition] = useTransition()
 
-  function handleClick() {
+  function handleClick(e: React.MouseEvent) {
+    e.preventDefault()
     startTransition(async () => {
       const result = await removeRegistryItem(itemId)
       if (result.success) onRemove()
@@ -42,9 +42,11 @@ function RemoveButton({ itemId, onRemove }: { itemId: string; onRemove: () => vo
       onClick={handleClick}
       disabled={isPending}
       aria-label="Remove from registry"
-      className="shrink-0 rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-40"
+      className={cn(
+        'absolute right-2 top-2 z-10 flex size-6 items-center justify-center rounded-full bg-white/90 text-foreground shadow-sm transition-colors hover:bg-white disabled:opacity-40',
+      )}
     >
-      <X className="h-4 w-4" />
+      <X className="h-3.5 w-3.5" />
     </button>
   )
 }
@@ -70,59 +72,55 @@ export function RegistryItemList({ initialItems, isOwner = false }: { initialIte
   }
 
   return (
-    <div className="space-y-3">
+    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
       {items.map((item) => {
         const imageUrl = item.product.image_urls?.[0] ?? null
         const outboundUrl = item.product.affiliate_url ?? item.product.product_url
         const priceDisplay = formatPrice(item.product.price)
 
         return (
-          <div
-            key={item.id}
-            className="flex items-center gap-4 rounded-lg border bg-background p-3"
-          >
-            <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-md bg-muted/30">
-              {imageUrl ? (
-                <Image
-                  src={imageUrl}
-                  alt={item.product.name}
-                  fill
-                  className="object-cover"
-                  sizes="64px"
-                />
-              ) : (
-                <div className="flex h-full items-center justify-center text-xs text-muted-foreground">
-                  —
-                </div>
-              )}
-            </div>
+          <div key={item.id} className="group relative overflow-hidden rounded-lg border bg-background">
+            <a
+              href={outboundUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block"
+            >
+              {/* Image */}
+              <div className="relative aspect-square w-full overflow-hidden bg-muted/30">
+                {imageUrl ? (
+                  <Image
+                    src={imageUrl}
+                    alt={item.product.name}
+                    fill
+                    className="object-cover transition-transform group-hover:scale-105"
+                    sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 25vw"
+                  />
+                ) : (
+                  <div className="flex h-full items-center justify-center text-xs text-muted-foreground">—</div>
+                )}
+              </div>
 
-            <div className="min-w-0 flex-1 space-y-0.5">
-              {item.product.brand && (
-                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                  {item.product.brand}
-                </p>
-              )}
-              <p className="truncate text-sm font-semibold">{item.product.name}</p>
-              {item.variant && (
-                <p className="text-xs text-muted-foreground">{item.variant.label}</p>
-              )}
-              {priceDisplay && (
-                <p className="text-xs text-muted-foreground">{priceDisplay}</p>
-              )}
-            </div>
+              {/* Details */}
+              <div className="flex flex-col gap-0.5 p-3">
+                {item.product.brand && (
+                  <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                    {item.product.brand}
+                  </p>
+                )}
+                <p className="line-clamp-2 text-sm font-medium leading-snug">{item.product.name}</p>
+                {item.variant && (
+                  <p className="text-xs text-muted-foreground">{item.variant.label}</p>
+                )}
+                {priceDisplay && (
+                  <p className="mt-0.5 text-sm font-semibold">{priceDisplay}</p>
+                )}
+              </div>
+            </a>
 
-            <div className="flex shrink-0 items-center gap-1">
-              <a
-                href={outboundUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={cn(buttonVariants({ size: 'sm', variant: 'outline' }))}
-              >
-                View
-              </a>
-              {isOwner && <RemoveButton itemId={item.id} onRemove={() => handleRemove(item.id)} />}
-            </div>
+            {isOwner && (
+              <RemoveButton itemId={item.id} onRemove={() => handleRemove(item.id)} />
+            )}
           </div>
         )
       })}

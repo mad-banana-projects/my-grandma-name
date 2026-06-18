@@ -3,7 +3,6 @@
 import { useState, useTransition, useRef, useEffect } from 'react'
 import Image from 'next/image'
 import { X, Pencil, Trash2, Plus, Check, ChevronDown } from 'lucide-react'
-import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import {
   createList,
@@ -94,9 +93,9 @@ function AssignListDropdown({
   )
 }
 
-// ─── Single item row ──────────────────────────────────────────────────────────
+// ─── Single item card ─────────────────────────────────────────────────────────
 
-function RegistryItemRow({
+function RegistryItemCard({
   item,
   lists,
   isOwner,
@@ -114,7 +113,8 @@ function RegistryItemRow({
   const outboundUrl = item.product.affiliate_url ?? item.product.product_url
   const priceDisplay = formatPrice(item.product.price)
 
-  function handleRemove() {
+  function handleRemove(e: React.MouseEvent) {
+    e.preventDefault()
     startRemoveTransition(async () => {
       const result = await removeRegistryItem(item.id)
       if (result.success) onRemove(item.id)
@@ -122,51 +122,54 @@ function RegistryItemRow({
   }
 
   return (
-    <div className="flex items-center gap-4 rounded-lg border bg-background p-3">
-      <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-md bg-muted/30">
-        {imageUrl ? (
-          <Image src={imageUrl} alt={item.product.name} fill className="object-cover" sizes="64px" />
-        ) : (
-          <div className="flex h-full items-center justify-center text-xs text-muted-foreground">—</div>
-        )}
-      </div>
+    <div className="group relative overflow-hidden rounded-lg border bg-background">
+      <a href={outboundUrl} target="_blank" rel="noopener noreferrer" className="block">
+        {/* Image */}
+        <div className="relative aspect-square w-full overflow-hidden bg-muted/30">
+          {imageUrl ? (
+            <Image
+              src={imageUrl}
+              alt={item.product.name}
+              fill
+              className="object-cover transition-transform group-hover:scale-105"
+              sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 25vw"
+            />
+          ) : (
+            <div className="flex h-full items-center justify-center text-xs text-muted-foreground">—</div>
+          )}
+        </div>
 
-      <div className="min-w-0 flex-1 space-y-0.5">
-        {item.product.brand && (
-          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-            {item.product.brand}
-          </p>
-        )}
-        <p className="truncate text-sm font-semibold">{item.product.name}</p>
-        {item.variant && <p className="text-xs text-muted-foreground">{item.variant.label}</p>}
-        {priceDisplay && <p className="text-xs text-muted-foreground">{priceDisplay}</p>}
-        {isOwner && (
-          <div className="pt-1">
-            <AssignListDropdown item={item} lists={lists} onAssign={onAssign} />
-          </div>
-        )}
-      </div>
+        {/* Details */}
+        <div className="flex flex-col gap-0.5 p-3">
+          {item.product.brand && (
+            <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+              {item.product.brand}
+            </p>
+          )}
+          <p className="line-clamp-2 text-sm font-medium leading-snug">{item.product.name}</p>
+          {item.variant && <p className="text-xs text-muted-foreground">{item.variant.label}</p>}
+          {priceDisplay && <p className="mt-0.5 text-sm font-semibold">{priceDisplay}</p>}
+        </div>
+      </a>
 
-      <div className="flex shrink-0 items-center gap-1">
-        <a
-          href={outboundUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={cn(buttonVariants({ size: 'sm', variant: 'outline' }))}
+      {/* List assignment — outside the link */}
+      {isOwner && (
+        <div className="px-3 pb-3">
+          <AssignListDropdown item={item} lists={lists} onAssign={onAssign} />
+        </div>
+      )}
+
+      {/* Remove button */}
+      {isOwner && (
+        <button
+          onClick={handleRemove}
+          disabled={isRemoving}
+          aria-label="Remove from registry"
+          className="absolute right-2 top-2 z-10 flex size-6 items-center justify-center rounded-full bg-white/90 text-foreground shadow-sm transition-colors hover:bg-white disabled:opacity-40"
         >
-          View
-        </a>
-        {isOwner && (
-          <button
-            onClick={handleRemove}
-            disabled={isRemoving}
-            aria-label="Remove from registry"
-            className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-40"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        )}
-      </div>
+          <X className="h-3.5 w-3.5" />
+        </button>
+      )}
     </div>
   )
 }
@@ -416,9 +419,9 @@ export function RegistryListView({
             {listItems.length === 0 ? (
               <p className="text-sm text-muted-foreground">No items in this list yet.</p>
             ) : (
-              <div className="space-y-3">
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
                 {listItems.map((item) => (
-                  <RegistryItemRow
+                  <RegistryItemCard
                     key={item.id}
                     item={item}
                     lists={lists}
@@ -441,9 +444,9 @@ export function RegistryListView({
               <h2 className="text-sm font-semibold text-muted-foreground">Uncategorized</h2>
             </div>
           )}
-          <div className="space-y-3">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
             {uncategorized.map((item) => (
-              <RegistryItemRow
+              <RegistryItemCard
                 key={item.id}
                 item={item}
                 lists={lists}
