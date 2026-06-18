@@ -25,7 +25,7 @@ export default function AboutPage() {
             <h1 className="font-heading text-[52px] font-light tracking-tight">
               About <em>My</em> Grandma Name
             </h1>
-            <p className="font-heading text-[17px] font-semibold italic">
+            <p className="text-[25px] [font-family:var(--font-arno-italic)]">
               Where a name becomes part of something bigger
             </p>
             <p className="text-[17px] leading-relaxed text-foreground/80">
@@ -65,7 +65,7 @@ export default function AboutPage() {
 
             {/* Col 1: For grandparents */}
             <div className="space-y-4 text-justify">
-              <h3 className="font-heading text-[34px] font-semibold text-foreground">For grandparents...</h3>
+              <h3 className="text-[34px] text-foreground [font-family:var(--font-arno-italic)]">For grandparents...</h3>
               <p className="text-[17px]">This is a space designed with you in mind.</p>
               <p className="text-[17px]">
                 To help you define what you want to be called.<br />
@@ -80,7 +80,7 @@ export default function AboutPage() {
 
             {/* Col 2: For families */}
             <div className="space-y-4 text-justify">
-              <h3 className="font-heading text-[34px] font-semibold text-foreground">For families...</h3>
+              <h3 className="text-[34px] text-foreground [font-family:var(--font-arno-italic)]">For families...</h3>
               <p className="text-[17px]">This is just as much for the people giving as it is for the one receiving.</p>
               <p className="text-[17px]">
                 My Grandma Name is being built to take the pressure out of figuring out what to get, when to get it, and whether it will actually feel meaningful. Instead of scrambling for ideas or defaulting to something generic, families will have a more thoughtful way to stay connected to what she likes, how she wants to be celebrated, and what feels personal to her.
@@ -130,22 +130,22 @@ export default function AboutPage() {
             {/* Col 1 */}
             <div className="flex flex-col items-center gap-4 px-8 py-8 sm:py-4">
               <Image src="/images/icons/heart_icon2.png" alt="Curated gift ideas" width={111} height={111} />
-              <p className="text-[20px] font-bold italic text-foreground">Curated gift ideas</p>
-              <p className="text-sm text-foreground/70">that actually feel thoughtful</p>
+              <p className="text-[25px] text-foreground [font-family:var(--font-arno-italic)]">Curated gift ideas</p>
+              <p className="text-[17px] text-foreground/70">that actually feel thoughtful</p>
             </div>
 
             {/* Col 2 */}
             <div className="flex flex-col items-center gap-4 px-8 py-8 sm:py-4">
               <Image src="/images/icons/calendar_icon.png" alt="Reminders" width={111} height={111} />
-              <p className="text-[20px] font-bold italic text-foreground">Reminders</p>
-              <p className="text-sm text-foreground/70">for the moments that matter</p>
+              <p className="text-[25px] text-foreground [font-family:var(--font-arno-italic)]">Reminders</p>
+              <p className="text-[17px] text-foreground/70">for the moments that matter</p>
             </div>
 
             {/* Col 3 */}
             <div className="flex flex-col items-center gap-4 px-8 py-8 sm:py-4">
               <Image src="/images/icons/heart_icon.png" alt="Personalized touches" width={111} height={111} />
-              <p className="text-[20px] font-bold italic text-foreground">Personalized touches</p>
-              <p className="text-sm text-foreground/70">built around your <em>grandma</em> name</p>
+              <p className="text-[25px] text-foreground [font-family:var(--font-arno-italic)]">Personalized touches</p>
+              <p className="text-[17px] text-foreground/70">built around your <em>grandma</em> name</p>
             </div>
           </div>
         </div>
