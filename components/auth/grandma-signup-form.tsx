@@ -189,7 +189,7 @@ export function GrandmaSignupForm({ grandmaName }: GrandmaSignupFormProps) {
               className="h-4 w-4 rounded border-input accent-foreground"
             />
             <label htmlFor="textUpdatesOptIn" className="text-sm text-muted-foreground cursor-pointer">
-              I agree to receive text updates
+              I Agree to Receive Text Updates
             </label>
           </div>
 
@@ -262,9 +262,9 @@ export function GrandmaSignupForm({ grandmaName }: GrandmaSignupFormProps) {
         </form>
 
         <p className="mt-4 text-center text-sm text-muted-foreground">
-          Already have an account?{' '}
+          Already Have an Account?{' '}
           <Link href="/login" className="font-medium text-foreground underline-offset-4 hover:underline">
-            Log in
+            Log In
           </Link>
         </p>
       </CardContent>

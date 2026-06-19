@@ -37,8 +37,8 @@ export function LoginForm() {
   return (
     <Card className="w-full max-w-md rounded-lg">
       <CardHeader>
-        <CardTitle className="text-xl">Welcome back</CardTitle>
-        <CardDescription>Sign in to your account.</CardDescription>
+        <CardTitle className="text-xl">Welcome Back</CardTitle>
+        <CardDescription>Sign In to your Account.</CardDescription>
       </CardHeader>
       <CardContent>
         <form action={formAction} className="space-y-4">
@@ -82,9 +82,9 @@ export function LoginForm() {
         </form>
 
         <p className="mt-4 text-center text-sm text-muted-foreground">
-          Don&apos;t have an account?{' '}
+          Don&apos;t Have an Account?{' '}
           <Link href="/signup" className="font-medium text-foreground underline-offset-4 hover:underline">
-            Create one
+            Create One
           </Link>
         </p>
       </CardContent>
