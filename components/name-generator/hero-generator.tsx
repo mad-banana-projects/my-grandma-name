@@ -241,7 +241,7 @@ export function HeroGenerator({
           {/* Row 2: preferred style + preferred vibe */}
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label className="text-[clamp(15px,1.48vw,19px)] font-bold [font-family:var(--font-ivy-regular)]">Preferred Style</Label>
+              <Label className="text-[clamp(14px,1.41vw,18px)] font-bold [font-family:var(--font-ivy-regular)]">Preferred Style</Label>
               <div className="flex flex-wrap gap-2">
                 {STYLES.map((s) => (
                   <PillButton
@@ -255,7 +255,7 @@ export function HeroGenerator({
               </div>
             </div>
             <div className="space-y-2">
-              <Label className="text-[clamp(15px,1.48vw,19px)] font-bold [font-family:var(--font-ivy-regular)]">Desired Name Format</Label>
+              <Label className="text-[clamp(14px,1.41vw,18px)] font-bold [font-family:var(--font-ivy-regular)]">Desired Name Format</Label>
               <div className="flex flex-wrap gap-2">
                 {FORMATS.map((f) => (
                   <PillButton
