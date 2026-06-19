@@ -50,15 +50,12 @@ export function TopNav({ user, appNavItems = [] }: TopNavProps) {
   const [profileOpen, setProfileOpen] = useState(false)
   const profileRef = useRef<HTMLDivElement>(null)
 
-  const isHome = pathname === '/'
-  const isSolid = !isHome || scrolled
 
   useEffect(() => {
-    if (!isHome) return
     const onScroll = () => setScrolled(window.scrollY > 10)
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
-  }, [isHome])
+  }, [])
 
   useEffect(() => {
     if (!profileOpen) return
@@ -78,8 +75,8 @@ export function TopNav({ user, appNavItems = [] }: TopNavProps) {
     <>
       <nav
         className={cn(
-          'fixed left-0 right-0 top-0 z-50 flex w-full items-center justify-between px-10 py-1 transition-colors duration-300',
-          isHome && !scrolled ? 'bg-transparent' : 'bg-[#dcb6c9]'
+          'fixed left-0 right-0 top-0 z-50 flex w-full items-center justify-between px-10 py-1 transition-all duration-300',
+          scrolled ? 'bg-neutral-900/30 backdrop-blur-md' : 'bg-[#dcb6c9]'
         )}
       >
         {/* Left: logo */}
