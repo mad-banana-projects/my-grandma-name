@@ -237,10 +237,10 @@ export default function AboutPage() {
         {/* Green vertical line above card */}
         <div className="absolute left-1/2 top-5 h-14 w-[2px] -translate-x-1/2 bg-[#618985]" />
 
-        <div className="mx-auto max-w-4xl rounded-2xl bg-white px-12 py-14 shadow-[0_4px_40px_rgba(53,51,48,0.15)]">
+        <div className="mx-auto w-[88%] max-w-4xl rounded-2xl bg-white px-12 py-14 shadow-[0_4px_40px_rgba(53,51,48,0.15)]">
 
           {/* Heading */}
-          <h2 className="font-heading text-center text-4xl font-light tracking-tight sm:text-5xl">
+          <h2 className="font-heading text-center text-[clamp(26px,3.5vw,48px)] font-light tracking-tight">
             <em>Why</em> we started this platform
           </h2>
           <p className="mt-3 text-center text-sm tracking-widest text-muted-foreground">
@@ -248,7 +248,7 @@ export default function AboutPage() {
           </p>
 
           {/* 2-col body */}
-          <div className="mt-10 grid gap-10 text-[clamp(13px,1.33vw,17px)] leading-relaxed text-foreground/80 sm:grid-cols-2 sm:gap-16">
+          <div className="mt-10 grid gap-10 text-[clamp(13px,1.33vw,17px)] leading-relaxed text-foreground/80 min-[900px]:grid-cols-2 min-[900px]:gap-16">
             <div className="space-y-4 text-justify">
               <p>A grandma name is the name your family comes to know you by, the one that shows up in memories, traditions, and the everyday moments that matter most.</p>
               <p>
