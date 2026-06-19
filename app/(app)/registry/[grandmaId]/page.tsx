@@ -88,7 +88,7 @@ export default async function RegistryPage({
   return (
     <main className="bg-background px-4 py-12">
       <div className="mx-auto max-w-5xl space-y-8">
-        <h1 className="text-3xl font-semibold tracking-tight">
+        <h1 className="font-heading text-[clamp(38px,4.06vw,52px)] font-light tracking-tight">
           {displayName}&apos;s Registry
         </h1>
 

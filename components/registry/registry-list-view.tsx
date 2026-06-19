@@ -5,6 +5,12 @@ import Image from 'next/image'
 import { X, Pencil, Trash2, Plus, Check, ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import {
   createList,
   renameList,
   deleteList,
@@ -34,15 +40,6 @@ function AssignListDropdown({
 }) {
   const [open, setOpen] = useState(false)
   const [isPending, startTransition] = useTransition()
-  const ref = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    function handleClick(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
-    }
-    document.addEventListener('mousedown', handleClick)
-    return () => document.removeEventListener('mousedown', handleClick)
-  }, [])
 
   function handleSelect(listId: string | null) {
     setOpen(false)
@@ -55,41 +52,50 @@ function AssignListDropdown({
   const currentList = lists.find((l) => l.id === item.listId)
 
   return (
-    <div ref={ref} className="relative">
+    <>
       <button
         type="button"
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => setOpen(true)}
         disabled={isPending}
-        className="flex items-center gap-1 rounded-md border px-2 py-1 text-xs text-muted-foreground transition-colors hover:text-foreground disabled:opacity-40"
+        className="flex items-center gap-1 rounded-md bg-[#618985] px-2 py-1 text-xs text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.6)] transition-colors hover:bg-[#527673] disabled:opacity-40"
       >
-        <span>{currentList ? currentList.name : 'No list'}</span>
+        <span>{currentList ? currentList.name : 'No List'}</span>
         <ChevronDown className="h-3 w-3" />
       </button>
 
-      {open && (
-        <div className="absolute left-0 top-full z-10 mt-1 min-w-[140px] rounded-md border bg-background shadow-md">
-          <button
-            type="button"
-            onClick={() => handleSelect(null)}
-            className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs hover:bg-muted"
-          >
-            {!item.listId && <Check className="h-3 w-3 shrink-0" />}
-            <span className={cn(!item.listId && 'font-medium')}>No list</span>
-          </button>
-          {lists.map((list) => (
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="max-w-xs">
+          <DialogHeader>
+            <DialogTitle className="text-sm">Assign to list</DialogTitle>
+          </DialogHeader>
+          <div className="flex flex-col">
             <button
-              key={list.id}
               type="button"
-              onClick={() => handleSelect(list.id)}
-              className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs hover:bg-muted"
+              onClick={() => handleSelect(null)}
+              className="flex items-center gap-2 rounded-md px-3 py-2 text-left text-sm hover:bg-muted"
             >
-              {item.listId === list.id && <Check className="h-3 w-3 shrink-0" />}
-              <span className={cn(item.listId === list.id && 'font-medium')}>{list.name}</span>
+              <span className="flex h-3.5 w-3.5 shrink-0 items-center justify-center">
+                {!item.listId && <Check className="h-3.5 w-3.5" />}
+              </span>
+              <span className={cn(!item.listId && 'font-medium')}>No List</span>
             </button>
-          ))}
-        </div>
-      )}
-    </div>
+            {lists.map((list) => (
+              <button
+                key={list.id}
+                type="button"
+                onClick={() => handleSelect(list.id)}
+                className="flex items-center gap-2 rounded-md px-3 py-2 text-left text-sm hover:bg-muted"
+              >
+                <span className="flex h-3.5 w-3.5 shrink-0 items-center justify-center">
+                  {item.listId === list.id && <Check className="h-3.5 w-3.5" />}
+                </span>
+                <span className={cn(item.listId === list.id && 'font-medium')}>{list.name}</span>
+              </button>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }
 
@@ -122,8 +128,8 @@ function RegistryItemCard({
   }
 
   return (
-    <div className="group relative overflow-hidden rounded-lg border bg-background">
-      <a href={outboundUrl} target="_blank" rel="noopener noreferrer" className="block">
+    <div className="group relative flex flex-col overflow-hidden rounded-lg border bg-background">
+      <a href={outboundUrl} target="_blank" rel="noopener noreferrer" className="flex flex-1 flex-col">
         {/* Image */}
         <div className="relative aspect-square w-full overflow-hidden bg-muted/30">
           {imageUrl ? (
@@ -140,7 +146,7 @@ function RegistryItemCard({
         </div>
 
         {/* Details */}
-        <div className="flex flex-col gap-0.5 p-3">
+        <div className="flex flex-1 flex-col gap-0.5 p-3">
           {item.product.brand && (
             <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
               {item.product.brand}
@@ -244,7 +250,7 @@ function ListSectionHeader({
         </>
       ) : (
         <>
-          <h2 className="flex-1 text-sm font-semibold">{list.name}</h2>
+          <h2 className="flex-1 font-heading text-[clamp(24px,2.66vw,34px)] font-light tracking-tight">{list.name}</h2>
           {isOwner && (
             <>
               <button
@@ -301,10 +307,10 @@ function CreateListForm({ onCreate }: { onCreate: (list: RegistryList) => void }
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+        className="flex items-center gap-1.5 rounded-md bg-[#618985] px-3 py-1.5 text-sm text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.6)] transition-colors hover:bg-[#527673]"
       >
         <Plus className="h-4 w-4" />
-        New list
+        New List
       </button>
     )
   }
@@ -324,7 +330,7 @@ function CreateListForm({ onCreate }: { onCreate: (list: RegistryList) => void }
         type="button"
         onClick={handleCreate}
         disabled={!name.trim() || isPending}
-        className="rounded-md bg-foreground px-3 py-1 text-xs font-medium text-background disabled:opacity-40"
+        className="rounded-md bg-[#8f6593] px-3 py-1 text-xs font-medium text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.6)] transition-colors hover:bg-[#7a5580] disabled:opacity-40"
       >
         Create
       </button>
@@ -441,7 +447,7 @@ export function RegistryListView({
         <div className="space-y-3">
           {lists.length > 0 && (
             <div className="border-b pb-2">
-              <h2 className="text-sm font-semibold text-muted-foreground">Uncategorized</h2>
+              <h2 className="font-heading text-[clamp(24px,2.66vw,34px)] font-light tracking-tight text-muted-foreground">Uncategorized</h2>
             </div>
           )}
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
