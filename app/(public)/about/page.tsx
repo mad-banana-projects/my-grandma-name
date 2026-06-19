@@ -5,22 +5,22 @@ export default function AboutPage() {
   return (
     <>
       {/* Hero: image left, content right */}
-      <section className="flex flex-col pt-[clamp(58px,6.48vw,83px)] sm:flex-row sm:items-stretch">
+      <section className="flex flex-col pt-[clamp(58px,6.48vw,83px)] md:flex-row md:items-stretch">
 
-        {/* Left: photo — full image, no crop */}
-        <div className="w-full overflow-hidden rounded-br-3xl sm:w-1/2">
+        {/* Left: photo — fills column height, always rounded */}
+        <div className="min-h-[400px] w-full overflow-hidden rounded-br-3xl md:w-1/2">
           <Image
             src="/images/about-page/grandmother-with-grandkid.jpg"
             alt="Grandmother with grandchild"
             width={821}
             height={583}
-            className="h-auto w-full"
+            className="h-full w-full object-cover object-center"
             priority
           />
         </div>
 
         {/* Right: content */}
-        <div className="flex w-full items-center bg-background px-10 py-10 sm:w-1/2 sm:px-16">
+        <div className="flex w-full items-center bg-background px-10 py-10 md:w-1/2 md:px-16">
           <div className="max-w-[45rem] space-y-5">
             <h1 className="font-heading text-[clamp(38px,4.06vw,52px)] font-light tracking-tight">
               About <em>My</em> Grandma Name
