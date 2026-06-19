@@ -104,6 +104,8 @@ export function HeroGenerator({
   const [saveError, setSaveError] = useState<string | null>(null)
   const [isSavePending, startSaveTransition] = useTransition()
 
+  const [fieldErrors, setFieldErrors] = useState<{ firstName: boolean; nameToAvoid: boolean; style: boolean; format: boolean }>({ firstName: false, nameToAvoid: false, style: false, format: false })
+
   const [emailInput, setEmailInput] = useState('')
   const [emailSending, setEmailSending] = useState(false)
   const [emailSent, setEmailSent] = useState(false)
@@ -171,6 +173,13 @@ export function HeroGenerator({
       return
     }
 
+    const errors = { firstName: !firstName, nameToAvoid: !nameToAvoid, style: !style, format: !format }
+    if (errors.firstName || errors.nameToAvoid || errors.style || errors.format) {
+      setFieldErrors(errors)
+      return
+    }
+    setFieldErrors({ firstName: false, nameToAvoid: false, style: false, format: false })
+
     setLoading(true)
     setError(null)
     setResult(null)
@@ -219,54 +228,64 @@ export function HeroGenerator({
                 id="hero-first-name"
                 placeholder="First Name"
                 value={firstName}
-                onChange={(e) => setFirstName(lettersOnly(e.target.value))}
+                onChange={(e) => { setFirstName(lettersOnly(e.target.value)); setFieldErrors(prev => ({ ...prev, firstName: false })) }}
                 maxLength={CHAR_LIMIT}
-                required
+                className={cn(fieldErrors.firstName && 'ring-2 ring-destructive/60 border-destructive/60')}
               />
-              <CharCounter value={firstName} />
+              {fieldErrors.firstName
+                ? <p className="text-xs text-destructive">Please Enter Your First Name</p>
+                : <CharCounter value={firstName} />}
             </div>
             <div className="space-y-1">
               <Input
                 id="hero-name-avoid"
                 placeholder="Name to Avoid"
                 value={nameToAvoid}
-                onChange={(e) => setNameToAvoid(lettersOnly(e.target.value))}
+                onChange={(e) => { setNameToAvoid(lettersOnly(e.target.value)); setFieldErrors(prev => ({ ...prev, nameToAvoid: false })) }}
                 maxLength={CHAR_LIMIT}
-                required
+                className={cn(fieldErrors.nameToAvoid && 'ring-2 ring-destructive/60 border-destructive/60')}
               />
-              <CharCounter value={nameToAvoid} />
+              {fieldErrors.nameToAvoid
+                ? <p className="text-xs text-destructive">Please Enter a Name to Avoid</p>
+                : <CharCounter value={nameToAvoid} />}
             </div>
           </div>
 
           {/* Row 2: preferred style + preferred vibe */}
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label className="text-[clamp(14px,1.41vw,18px)] font-bold [font-family:var(--font-ivy-regular)]">Preferred Style</Label>
-              <div className="flex flex-wrap gap-2">
+              <Label className={cn('text-[clamp(14px,1.41vw,18px)] font-bold [font-family:var(--font-ivy-regular)]', fieldErrors.style && 'text-destructive')}>
+                Preferred Style
+              </Label>
+              <div className={cn('flex flex-wrap gap-2 rounded-lg transition-colors', fieldErrors.style && 'ring-2 ring-destructive/60 p-2')}>
                 {STYLES.map((s) => (
                   <PillButton
                     key={s.value}
                     selected={style === s.value}
-                    onClick={() => setStyle(style === s.value ? '' : s.value)}
+                    onClick={() => { setStyle(style === s.value ? '' : s.value); setFieldErrors(prev => ({ ...prev, style: false })) }}
                   >
                     {s.label}
                   </PillButton>
                 ))}
               </div>
+              {fieldErrors.style && <p className="text-xs text-destructive">Please Select a Preferred Style</p>}
             </div>
             <div className="space-y-2">
-              <Label className="text-[clamp(14px,1.41vw,18px)] font-bold [font-family:var(--font-ivy-regular)]">Desired Name Format</Label>
-              <div className="flex flex-wrap gap-2">
+              <Label className={cn('text-[clamp(14px,1.41vw,18px)] font-bold [font-family:var(--font-ivy-regular)]', fieldErrors.format && 'text-destructive')}>
+                Desired Name Format
+              </Label>
+              <div className={cn('flex flex-wrap gap-2 rounded-lg transition-colors', fieldErrors.format && 'ring-2 ring-destructive/60 p-2')}>
                 {FORMATS.map((f) => (
                   <PillButton
                     key={f.value}
                     selected={format === f.value}
-                    onClick={() => setFormat(format === f.value ? '' : f.value)}
+                    onClick={() => { setFormat(format === f.value ? '' : f.value); setFieldErrors(prev => ({ ...prev, format: false })) }}
                   >
                     {f.label}
                   </PillButton>
                 ))}
               </div>
+              {fieldErrors.format && <p className="text-xs text-destructive">Please Select a Name Format</p>}
             </div>
           </div>
 
@@ -275,10 +294,10 @@ export function HeroGenerator({
             <Button
               type="submit"
               size="lg"
-              disabled={loading || !firstName || !nameToAvoid || (!isSignedIn && anonUsesLeft <= 0)}
+              disabled={loading || (!isSignedIn && anonUsesLeft <= 0)}
               className="w-full sm:w-auto bg-[#618985] text-white hover:bg-[#527673] disabled:opacity-100 disabled:bg-[#618985]"
             >
-              {loading ? 'Finding your name…' : <>Find <em>My</em> Grandma Name</>}
+              {loading ? 'Finding Your Name…' : <>Find <em>My</em> Grandma Name</>}
             </Button>
 
             {/* Anon limit */}
@@ -325,7 +344,7 @@ export function HeroGenerator({
                     className="shrink-0"
                     onClick={() => handleSaveClick(result.winner.name)}
                   >
-                    Save to profile
+                    Save to Profile
                   </Button>
                 ) : (
                   <a
@@ -356,7 +375,7 @@ export function HeroGenerator({
                   className="shrink-0 h-7 px-2 text-xs"
                   onClick={() => handleSaveClick(result.runnerUp.name)}
                 >
-                  Save to profile
+                  Save to Profile
                 </Button>
               ) : (
                 <a
@@ -402,15 +421,15 @@ export function HeroGenerator({
             </div>
 
             {/* Try again */}
-            <Button variant="outline" onClick={() => { setResult(null); setSavedName(null); setSaveError(null); setEmailSent(false); setEmailError(null); setEmailInput('') }}>
-              Try again
+            <Button onClick={() => { setResult(null); setSavedName(null); setSaveError(null); setEmailSent(false); setEmailError(null); setEmailInput('') }} className="bg-[#8f6593] text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.6)] hover:bg-[#7a5580]">
+              Try Again
             </Button>
 
             {/* Save confirmation dialog */}
             <Dialog open={!!pendingName} onOpenChange={(open) => { if (!open) setPendingName(null) }}>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Save to profile</DialogTitle>
+                  <DialogTitle>Save to Profile</DialogTitle>
                   <DialogDescription>
                     Please confirm saving <strong>{pendingName}</strong> to your profile.
                   </DialogDescription>

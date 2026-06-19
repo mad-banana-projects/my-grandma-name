@@ -124,7 +124,7 @@ export async function POST(request: NextRequest) {
         role: 'user',
         content: `You are helping someone choose a grandma name — the special name their grandchildren will call them (not their given name).
 
-A grandma name is a term of endearment like: Nana, Mimi, Grammy, Gigi, Nona, Lola, Oma, Baba, Mémé, Mamie, Grams, Granny, Grandma, Bubbe — or a creative personalized variation derived from the person's first name (e.g. "JenJen", "Mimi-J", "Nana Jen"). It must sound like something a small child would naturally say and love.
+A grandma name is a term of endearment like: Nana, Mimi, Grammy, Gigi, Nona, Lola, Oma, Baba, Mémé, Mamie, Grams, Granny, Grandma, Bubbe — or a creative personalized variation derived from the person's first name (e.g. "JenJen", "Mimi-J", "Nana Jen"). It must sound like something your grandchildren would naturally say and love.
 
 Generate two grandma name suggestions based on these preferences:
 - First name: ${firstName}
@@ -136,7 +136,7 @@ Return a JSON object with exactly this shape:
 {
   "winner": { "name": "string" },
   "runnerUp": { "name": "string" },
-  "explanation": "2-3 sentences explaining why the winner name fits this person perfectly"
+  "explanation": "2-3 sentences explaining why the winner name fits this person perfectly. Write in second person — use 'you' and 'your' (not 'she', 'her', or 'they'). When referring to children, say 'your grandchildren' or 'your grand-littles'."
 }
 
 Rules:
@@ -146,6 +146,7 @@ Rules:
 - Both names must match the desired name format exactly: single-word means exactly one word with no spaces or hyphens; multi-word means two words or a hyphenated name.
 - The winner and runner-up must sound completely different when spoken aloud — a hyphenated and unhyphenated version of the same name (e.g. "JenJen" and "Jen-Jen") are NOT acceptable. Each must use a genuinely different approach: for example, one could use syllable doubling, another a traditional grandma suffix (-ma, -na, -nie), another a phonetic nickname, another a term of endearment combined with a name fragment.
 - Neither name may match or closely resemble the name they want to avoid.
+- Neither name may be identical (case-insensitive) to the person's first name. Do not return "${firstName}" as a suggestion.
 - Do not suggest generic adjectives, nouns, or words that are not grandma names.`,
       },
     ],
