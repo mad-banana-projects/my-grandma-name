@@ -64,7 +64,7 @@ export default function AboutPage() {
           <div className="grid gap-10 leading-relaxed text-foreground/80 sm:grid-cols-2 sm:gap-16">
 
             {/* Col 1: For grandparents */}
-            <div className="space-y-4 text-justify">
+            <div className="space-y-4 text-justify hyphens-auto">
               <h3 className="text-[clamp(24px,2.66vw,34px)] text-foreground [font-family:var(--font-arno-italic)]">For grandparents...</h3>
               <p className="text-[clamp(13px,1.33vw,17px)]">This is a space designed with you in mind.</p>
               <p className="text-[clamp(13px,1.33vw,17px)]">
@@ -79,7 +79,7 @@ export default function AboutPage() {
             </div>
 
             {/* Col 2: For families */}
-            <div className="space-y-4 text-justify">
+            <div className="space-y-4 text-justify hyphens-auto">
               <h3 className="text-[clamp(24px,2.66vw,34px)] text-foreground [font-family:var(--font-arno-italic)]">For families...</h3>
               <p className="text-[clamp(13px,1.33vw,17px)]">This is just as much for the people giving as it is for the one receiving.</p>
               <p className="text-[clamp(13px,1.33vw,17px)]">
@@ -249,7 +249,7 @@ export default function AboutPage() {
 
           {/* 2-col body */}
           <div className="mt-10 grid gap-10 text-[clamp(13px,1.33vw,17px)] leading-relaxed text-foreground/80 min-[900px]:grid-cols-2 min-[900px]:gap-16">
-            <div className="space-y-4 text-justify">
+            <div className="space-y-4 text-justify hyphens-auto">
               <p>A grandma name is the name your family comes to know you by, the one that shows up in memories, traditions, and the everyday moments that matter most.</p>
               <p>
                 For some, it&apos;s something they&apos;ve always known.<br />
@@ -258,7 +258,7 @@ export default function AboutPage() {
               <p>But when it feels right, it sticks.</p>
               <p>It becomes part of how you&apos;re remembered &ndash; in the little voices calling for you, in handwritten cards, and in the way your role takes shape within your family.</p>
             </div>
-            <div className="space-y-4 text-justify">
+            <div className="space-y-4 text-justify hyphens-auto">
               <p>Whether you choose something timeless, playful, or entirely your own, your <em>grandma</em> name becomes a small but meaningful part of your identity, and a thread that carries through every gift, every visit, and every celebration.</p>
               <p>This platform is built to support that. To help you find it, define it, and carry it forward in thoughtful ways.</p>
             </div>
