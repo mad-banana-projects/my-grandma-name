@@ -64,7 +64,7 @@ function PillButton({
       type="button"
       onClick={onClick}
       className={cn(
-        'rounded-full border px-4 py-1.5 text-[17px] transition-colors',
+        'rounded-full border px-4 py-1.5 text-[clamp(12px,1.17vw,15px)] transition-colors',
         selected
           ? 'border-primary bg-primary text-white'
           : 'border-border bg-white text-foreground/70 hover:border-primary/50 hover:text-foreground'
@@ -302,7 +302,7 @@ export function HeroGenerator({
 
             {/* Anon limit */}
             {!isSignedIn && (
-              <p className="text-[18px] text-muted-foreground [font-family:var(--font-arno-italic)]">
+              <p className="text-[clamp(11px,1.09vw,14px)] text-muted-foreground [font-family:var(--font-ivy-regular)]">
                 {anonUsesLeft > 0
                   ? `${anonUsesLeft} Free ${anonUsesLeft === 1 ? 'Generation' : 'Generations'} Remaining`
                   : 'Limit reached — create an account for more'}
