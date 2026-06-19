@@ -30,9 +30,9 @@ const OCCASIONS = [
 ]
 
 const PRESET_FREQUENCY = [
-  { days: 30, label: '1 month' },
-  { days: 14, label: '2 weeks' },
-  { days: 7, label: '1 week' },
+  { days: 30, label: '1 Month' },
+  { days: 14, label: '2 Weeks' },
+  { days: 7, label: '1 Week' },
 ]
 
 type OccasionKey = (typeof OCCASIONS)[number]['key']
@@ -327,7 +327,7 @@ export function EmailRemindersCard({ id, initial }: EmailRemindersCardProps) {
                           !isEditing && 'cursor-default'
                         )}
                       >
-                        {label} before
+                        {label} Before
                       </button>
                     )
                   })}

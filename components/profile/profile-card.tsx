@@ -497,8 +497,8 @@ export function ProfileCard({ profile, subscriptionStatus }: ProfileCardProps) {
               </div>
               {passwordServerError && <p className="text-sm text-destructive">{passwordServerError}</p>}
               <div className="flex gap-2">
-                <Button type="submit" size="sm" disabled={isPasswordPending}>
-                  {isPasswordPending ? 'Saving…' : 'Update password'}
+                <Button type="submit" size="sm" disabled={isPasswordPending} className="bg-[#8f6593] text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.6)] hover:bg-[#7a5580]">
+                  {isPasswordPending ? 'Saving…' : 'Update Password'}
                 </Button>
                 <Button type="button" variant="outline" size="sm" onClick={handlePasswordCancel} disabled={isPasswordPending}>
                   Cancel
@@ -567,7 +567,7 @@ export function ProfileCard({ profile, subscriptionStatus }: ProfileCardProps) {
                     onClick={handleCancelSubscription}
                     disabled={isManagePending}
                   >
-                    {isManagePending ? 'Saving…' : 'Cancel subscription'}
+                    {isManagePending ? 'Saving…' : 'Cancel Subscription'}
                   </Button>
                 </DialogFooter>
               </>
