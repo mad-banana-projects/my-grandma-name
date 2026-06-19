@@ -38,7 +38,7 @@ export function LoginForm() {
     <Card className="w-full max-w-md rounded-lg">
       <CardHeader>
         <CardTitle className="text-xl">Welcome Back</CardTitle>
-        <CardDescription>Sign In to your Account.</CardDescription>
+        <CardDescription>Sign In to Your Account.</CardDescription>
       </CardHeader>
       <CardContent>
         <form action={formAction} className="space-y-4">
