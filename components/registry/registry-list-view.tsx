@@ -9,7 +9,9 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
 } from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
 import {
   createList,
   renameList,
@@ -115,15 +117,18 @@ function RegistryItemCard({
   onAssign: (itemId: string, listId: string | null) => void
 }) {
   const [isRemoving, startRemoveTransition] = useTransition()
+  const [confirmOpen, setConfirmOpen] = useState(false)
   const imageUrl = item.product.image_urls?.[0] ?? null
   const outboundUrl = item.product.affiliate_url ?? item.product.product_url
   const priceDisplay = formatPrice(item.product.price)
 
-  function handleRemove(e: React.MouseEvent) {
-    e.preventDefault()
+  function handleConfirmRemove() {
     startRemoveTransition(async () => {
       const result = await removeRegistryItem(item.id)
-      if (result.success) onRemove(item.id)
+      if (result.success) {
+        setConfirmOpen(false)
+        onRemove(item.id)
+      }
     })
   }
 
@@ -168,14 +173,37 @@ function RegistryItemCard({
       {/* Remove button */}
       {isOwner && (
         <button
-          onClick={handleRemove}
-          disabled={isRemoving}
+          onClick={(e) => { e.preventDefault(); setConfirmOpen(true) }}
           aria-label="Remove from registry"
-          className="absolute right-2 top-2 z-10 flex size-6 items-center justify-center rounded-full bg-white/90 text-foreground shadow-sm transition-colors hover:bg-white disabled:opacity-40"
+          className="absolute right-2 top-2 z-10 flex size-6 items-center justify-center rounded-full bg-white/90 text-foreground shadow-sm transition-colors hover:bg-white"
         >
           <X className="h-3.5 w-3.5" />
         </button>
       )}
+
+      {/* Remove confirmation modal */}
+      <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Remove from Registry</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-muted-foreground">
+            Are you sure you want to remove <span className="font-medium text-foreground">{item.product.name}</span> from your registry?
+          </p>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setConfirmOpen(false)} disabled={isRemoving}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleConfirmRemove}
+              disabled={isRemoving}
+              className="bg-destructive text-white hover:bg-destructive/90"
+            >
+              {isRemoving ? 'Removing…' : 'Remove'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
