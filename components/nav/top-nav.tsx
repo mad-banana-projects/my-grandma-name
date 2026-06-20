@@ -278,7 +278,7 @@ export function TopNav({ user, appNavItems = [] }: TopNavProps) {
 
       {/* Mobile drawer */}
       {mobileOpen && (
-        <div className="fixed inset-x-0 top-[68px] z-40 flex flex-col gap-1 bg-[#dcb6c9] px-4 py-4 md:hidden">
+        <div className="fixed inset-x-0 top-[48px] z-40 flex flex-col gap-1 bg-[#8f6593] px-4 py-4 md:hidden">
           {user ? (
             <>
               <p className="px-3 py-1 text-xs text-white/70 truncate">{user.email}</p>
