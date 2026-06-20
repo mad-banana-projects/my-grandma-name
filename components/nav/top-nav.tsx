@@ -88,7 +88,7 @@ export function TopNav({ user, appNavItems = [] }: TopNavProps) {
               alt="My Grandma Name"
               width={349}
               height={75}
-              className="h-[clamp(50px,5.86vw,75px)] w-auto"
+              className="h-[clamp(40px,5.86vw,75px)] w-auto"
               priority
             />
           </Link>
@@ -238,20 +238,20 @@ export function TopNav({ user, appNavItems = [] }: TopNavProps) {
         </div>
 
         {/* Hamburger + social icons — mobile only */}
-        <div className="flex items-center gap-2 md:hidden">
+        <div className="flex items-center gap-3 md:hidden">
           <button
-            className="flex size-9 items-center justify-center rounded-full bg-[#8f6593] text-white transition-colors hover:bg-[#7a5680]"
+            className="flex size-[31px] items-center justify-center rounded-none bg-[#8f6593] text-white transition-colors hover:bg-[#7a5680]"
             onClick={() => setMobileOpen((o) => !o)}
             aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
           >
-            {mobileOpen ? <X className="size-5" /> : <Menu className="size-5" />}
+            {mobileOpen ? <X className="size-4" strokeWidth={2.5} /> : <Menu className="size-4" strokeWidth={2.5} />}
           </button>
           <a
             href={SOCIAL_LINKS.youtube}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="YouTube"
-            className="flex size-9 items-center justify-center rounded-full bg-white text-[#dcb6c9] transition-colors hover:bg-white/90"
+            className="flex size-[31px] items-center justify-center rounded-full bg-white text-[#dcb6c9] transition-colors hover:bg-white/90"
           >
             <YouTubeIcon />
           </a>
@@ -260,7 +260,7 @@ export function TopNav({ user, appNavItems = [] }: TopNavProps) {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="TikTok"
-            className="flex size-9 items-center justify-center rounded-full bg-white text-[#dcb6c9] transition-colors hover:bg-white/90"
+            className="flex size-[31px] items-center justify-center rounded-full bg-white text-[#dcb6c9] transition-colors hover:bg-white/90"
           >
             <TikTokIcon />
           </a>
@@ -269,7 +269,7 @@ export function TopNav({ user, appNavItems = [] }: TopNavProps) {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Instagram"
-            className="flex size-9 items-center justify-center rounded-full bg-white text-[#dcb6c9] transition-colors hover:bg-white/90"
+            className="flex size-[31px] items-center justify-center rounded-full bg-white text-[#dcb6c9] transition-colors hover:bg-white/90"
           >
             <InstagramIcon />
           </a>
