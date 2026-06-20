@@ -253,11 +253,11 @@ export function HeroGenerator({
 
           {/* Row 2: preferred style + preferred vibe */}
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label className={cn('text-[clamp(14px,1.41vw,18px)] font-bold [font-family:var(--font-ivy-regular)]', fieldErrors.style && 'text-destructive')}>
+            <div className="space-y-2 text-center">
+              <Label className={cn('block text-center text-[clamp(14px,1.41vw,18px)] font-bold [font-family:var(--font-ivy-regular)]', fieldErrors.style && 'text-destructive')}>
                 Preferred Style
               </Label>
-              <div className={cn('flex flex-wrap gap-2 rounded-lg transition-colors', fieldErrors.style && 'ring-2 ring-destructive/60 p-2')}>
+              <div className={cn('flex flex-wrap justify-center gap-2 rounded-lg transition-colors', fieldErrors.style && 'ring-2 ring-destructive/60 p-2')}>
                 {STYLES.map((s) => (
                   <PillButton
                     key={s.value}
@@ -270,11 +270,11 @@ export function HeroGenerator({
               </div>
               {fieldErrors.style && <p className="text-xs text-destructive">Please Select a Preferred Style</p>}
             </div>
-            <div className="space-y-2">
-              <Label className={cn('text-[clamp(14px,1.41vw,18px)] font-bold [font-family:var(--font-ivy-regular)]', fieldErrors.format && 'text-destructive')}>
+            <div className="space-y-2 text-center">
+              <Label className={cn('block text-center text-[clamp(14px,1.41vw,18px)] font-bold [font-family:var(--font-ivy-regular)]', fieldErrors.format && 'text-destructive')}>
                 Desired Name Format
               </Label>
-              <div className={cn('flex flex-wrap gap-2 rounded-lg transition-colors', fieldErrors.format && 'ring-2 ring-destructive/60 p-2')}>
+              <div className={cn('flex flex-wrap justify-center gap-2 rounded-lg transition-colors', fieldErrors.format && 'ring-2 ring-destructive/60 p-2')}>
                 {FORMATS.map((f) => (
                   <PillButton
                     key={f.value}
