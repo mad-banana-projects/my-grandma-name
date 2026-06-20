@@ -76,7 +76,7 @@ export function TopNav({ user, appNavItems = [] }: TopNavProps) {
     <>
       <nav
         className={cn(
-          'fixed left-0 right-0 top-0 z-50 flex w-full items-center justify-between px-10 py-1 transition-all duration-300',
+          'fixed left-0 right-0 top-0 z-50 flex w-full items-center justify-between px-3 py-1 transition-all duration-300 md:px-10',
           scrolled ? 'bg-neutral-900/30 backdrop-blur-md' : isHome ? 'bg-transparent' : 'bg-[#dcb6c9]'
         )}
       >
