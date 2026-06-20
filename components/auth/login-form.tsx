@@ -20,7 +20,7 @@ const initialState: LoginState = { status: 'idle' }
 function SubmitButton() {
   const { pending } = useFormStatus()
   return (
-    <Button type="submit" size="lg" className="w-full" disabled={pending}>
+    <Button type="submit" size="lg" className="w-full sm:w-auto" disabled={pending}>
       {pending ? 'Signing in…' : 'Sign In'}
     </Button>
   )
@@ -78,7 +78,9 @@ export function LoginForm() {
             </div>
           ) : null}
 
-          <SubmitButton />
+          <div className="flex justify-center">
+            <SubmitButton />
+          </div>
         </form>
 
         <p className="mt-4 text-center text-sm text-muted-foreground">
