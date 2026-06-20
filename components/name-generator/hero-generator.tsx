@@ -218,11 +218,11 @@ export function HeroGenerator({
     <div className="mx-auto w-full max-w-[1030px] px-4">
 
       {/* Generator form card */}
-      <div className="rounded-3xl bg-white px-[64px] py-[37px] shadow-[0_4px_32px_rgba(53,51,48,0.12)]">
+      <div className="rounded-3xl bg-white px-4 py-6 sm:px-[64px] sm:py-[37px] shadow-[0_4px_32px_rgba(53,51,48,0.12)]">
         <form onSubmit={handleSubmit} className="space-y-6">
 
           {/* Row 1: first name + name to avoid */}
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
+          <div className="grid grid-cols-2 gap-3 sm:gap-8">
             <div className="space-y-1">
               <Input
                 id="hero-first-name"
@@ -295,7 +295,7 @@ export function HeroGenerator({
               type="submit"
               size="lg"
               disabled={loading || (!isSignedIn && anonUsesLeft <= 0)}
-              className="w-full sm:w-auto bg-[#618985] text-white hover:bg-[#527673] disabled:opacity-100 disabled:bg-[#618985]"
+              className="w-auto bg-[#618985] text-white hover:bg-[#527673] disabled:opacity-100 disabled:bg-[#618985]"
             >
               {loading ? 'Finding Your Name…' : <>Find <em>My</em> Grandma Name</>}
             </Button>

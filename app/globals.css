@@ -89,6 +89,16 @@
   to   { transform: translateX(-50%); }
 }
 
+.marquee-scroll {
+  animation: marquee 22s linear infinite;
+}
+
+@media (min-width: 768px) {
+  .marquee-scroll {
+    animation: marquee 40s linear infinite;
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

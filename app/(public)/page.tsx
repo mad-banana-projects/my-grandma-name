@@ -112,10 +112,10 @@ export default async function LandingPage() {
 
         {/* Hero content */}
         <section className="pb-20 pt-14 text-center">
-          <h1 className="font-heading mx-auto px-4 text-[clamp(38px,4.06vw,52px)] font-light tracking-tight">
+          <h1 className="font-heading mx-auto px-4 text-[clamp(38px,4.06vw,52px)] font-light tracking-tight leading-[1.15] md:leading-normal">
             Find Your Unique Grandma Name
           </h1>
-          <p className="mx-auto mt-4 px-4 text-[clamp(20px,1.95vw,25px)] text-foreground/80 [font-family:var(--font-arno-italic)]">
+          <p className="mx-auto mt-7 px-4 text-[clamp(20px,1.95vw,25px)] text-foreground/80 [font-family:var(--font-arno-italic)] leading-tight md:leading-normal">
             A name that feels like you: thoughtful, personal, and just right for the role you&apos;re stepping into
           </p>
 
@@ -131,10 +131,10 @@ export default async function LandingPage() {
 
           {/* Secondary CTAs — anon only */}
           {!isSignedIn && (
-            <div className="mt-10 flex flex-col items-center justify-center gap-3 px-4 sm:flex-row">
+            <div className="mt-10 flex flex-row items-center justify-center gap-3 px-4">
               <Link
                 href="/signup"
-                className={cn(buttonVariants({ size: 'lg' }), 'w-full sm:w-auto bg-[#8f6593] hover:bg-[#7a5680]')}
+                className={cn(buttonVariants({ size: 'lg' }), 'w-auto bg-[#8f6593] hover:bg-[#7a5680]')}
               >
                 Create Free Account
               </Link>
@@ -142,7 +142,7 @@ export default async function LandingPage() {
                 href="/browse-products"
                 className={cn(
                   buttonVariants({ size: 'lg', variant: 'outline' }),
-                  'w-full sm:w-auto border-[#8f6593] bg-white text-[#8f6593] shadow-[inset_0_0_0_1.5px_rgba(255,255,255,0.8)] hover:bg-[#8f6593]/10'
+                  'w-auto border-[#8f6593] bg-white text-[#8f6593] shadow-[inset_0_0_0_1.5px_rgba(255,255,255,0.8)] hover:bg-[#8f6593]/10'
                 )}
               >
                 Browse Gifts
@@ -155,13 +155,12 @@ export default async function LandingPage() {
       {/* Scrolling grandma names */}
       <div className="overflow-hidden py-10">
         <div
-          className="flex whitespace-nowrap"
-          style={{ animation: 'marquee 40s linear infinite' }}
+          className="marquee-scroll flex whitespace-nowrap"
         >
           {[...GRANDMA_NAMES, ...GRANDMA_NAMES].map((name, i) => (
             <span
               key={i}
-              className="px-10 text-[clamp(24px,2.66vw,34px)] text-foreground [font-family:var(--font-arno-italic)]"
+              className="px-7 md:px-10 text-[clamp(24px,2.66vw,34px)] text-foreground [font-family:var(--font-arno-italic)]"
             >
               {name}
             </span>
@@ -171,14 +170,41 @@ export default async function LandingPage() {
 
       {/* How it works */}
       <section className="bg-white py-20">
-        <div className="w-full px-10">
-          <h2 className="font-heading mb-16 text-center text-[clamp(38px,4.06vw,52px)] font-light tracking-tight">
+        <div className="w-full px-4 sm:px-10">
+          <h2 className="font-heading mb-8 text-center text-[clamp(38px,4.06vw,52px)] font-light tracking-tight sm:mb-16">
             How it Works
           </h2>
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-x-3 gap-y-8 sm:gap-5 lg:grid-cols-4">
             {HOW_IT_WORKS.map(({ step, titleLines, description, Icon }, index) => (
               <div key={step} className="relative flex flex-col items-center text-center">
-                {/* Curved dotted connector — desktop only */}
+                {/* Curved dotted connector — mobile/tablet 2-col (steps 1→2 and 3→4) */}
+                {index % 2 === 0 && (
+                  <>
+                    <svg
+                      className="absolute left-1/2 w-full block sm:hidden overflow-visible"
+                      style={{ top: '60px' }}
+                      height="30"
+                      viewBox="0 0 100 30"
+                      preserveAspectRatio="none"
+                      fill="none"
+                      aria-hidden
+                    >
+                      <path d="M 0 15 Q 50 -10 100 15" stroke="#618985" strokeWidth="2" strokeDasharray="5 4" strokeLinecap="round" strokeOpacity="0.6" vectorEffect="non-scaling-stroke" />
+                    </svg>
+                    <svg
+                      className="absolute left-1/2 w-full hidden sm:block lg:hidden overflow-visible"
+                      style={{ top: '89px' }}
+                      height="30"
+                      viewBox="0 0 100 30"
+                      preserveAspectRatio="none"
+                      fill="none"
+                      aria-hidden
+                    >
+                      <path d="M 0 15 Q 50 -10 100 15" stroke="#618985" strokeWidth="2" strokeDasharray="5 4" strokeLinecap="round" strokeOpacity="0.6" vectorEffect="non-scaling-stroke" />
+                    </svg>
+                  </>
+                )}
+                {/* Curved dotted connector — desktop 4-col (steps 1→2, 2→3, 3→4) */}
                 {index < 3 && (
                   <svg
                     className="absolute left-1/2 w-full hidden lg:block overflow-visible"
@@ -189,35 +215,27 @@ export default async function LandingPage() {
                     fill="none"
                     aria-hidden
                   >
-                    <path
-                      d="M 0 15 Q 50 -10 100 15"
-                      stroke="#618985"
-                      strokeWidth="2"
-                      strokeDasharray="5 4"
-                      strokeLinecap="round"
-                      strokeOpacity="0.6"
-                      vectorEffect="non-scaling-stroke"
-                    />
+                    <path d="M 0 15 Q 50 -10 100 15" stroke="#618985" strokeWidth="2" strokeDasharray="5 4" strokeLinecap="round" strokeOpacity="0.6" vectorEffect="non-scaling-stroke" />
                   </svg>
                 )}
                 {/* Step number badge */}
-                <div className="relative z-10 mb-3 flex h-9 w-9 items-center justify-center rounded-full bg-[#618985] text-sm font-semibold text-white">
+                <div className="relative z-10 mb-3 flex h-7 w-7 items-center justify-center rounded-full bg-[#618985] text-xs font-semibold text-white sm:h-9 sm:w-9 sm:text-sm">
                   {step}
                 </div>
                 {/* Icon circle */}
-                <div className="relative z-10 flex h-28 w-28 items-center justify-center rounded-full">
+                <div className="relative z-10 flex h-16 w-16 items-center justify-center rounded-full sm:h-28 sm:w-28">
                   <div className="absolute inset-0 rounded-full bg-white" />
                   <div className="absolute inset-0 rounded-full bg-[#618985]/15" />
-                  <Icon className="relative h-12 w-12 text-[#618985]" />
+                  <Icon className="relative h-7 w-7 text-[#618985] sm:h-12 sm:w-12" />
                 </div>
                 {/* Text */}
-                <div className="mt-6">
-                  <h3 className="text-[clamp(20px,1.95vw,25px)] [font-family:var(--font-arno-italic)]">
+                <div className="mt-3 sm:mt-6">
+                  <h3 className="text-[clamp(14px,1.95vw,25px)] [font-family:var(--font-arno-italic)]">
                     {titleLines.map((line, i) => (
                       <span key={i}>{line}{i < titleLines.length - 1 && <br />}</span>
                     ))}
                   </h3>
-                  <p className="mx-auto mt-4 max-w-[220px] text-[clamp(13px,1.33vw,17px)] leading-relaxed text-muted-foreground">{description}</p>
+                  <p className="mx-auto mt-2 max-w-none text-[clamp(11px,1.33vw,17px)] leading-relaxed text-muted-foreground sm:mt-4 sm:max-w-[220px]">{description}</p>
                 </div>
               </div>
             ))}

@@ -244,7 +244,7 @@ export function TopNav({ user, appNavItems = [] }: TopNavProps) {
             onClick={() => setMobileOpen((o) => !o)}
             aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
           >
-            {mobileOpen ? <X className="size-4" strokeWidth={2.5} /> : <Menu className="size-4" strokeWidth={2.5} />}
+            {mobileOpen ? <X className="size-[22px]" strokeWidth={2.5} /> : <Menu className="size-[22px]" strokeWidth={2.5} />}
           </button>
           <a
             href={SOCIAL_LINKS.youtube}
