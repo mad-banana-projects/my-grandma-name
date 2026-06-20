@@ -68,7 +68,7 @@ export function SubscribeContent({ grandmaName }: SubscribeContentProps) {
 
       <div className="mb-10 text-center">
         <h1 className="font-heading text-4xl font-light tracking-tight sm:text-5xl">
-          Upgrade your account
+          Upgrade Your Account
         </h1>
         {grandmaName ? (
           <p className="mt-3 text-sm text-muted-foreground">

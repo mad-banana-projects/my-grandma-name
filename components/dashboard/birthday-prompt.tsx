@@ -78,7 +78,7 @@ export function BirthdayPrompt({ initialOpen, needsBirthday }: BirthdayPromptPro
       <Dialog open={modalOpen} onOpenChange={handleModalClose}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="font-bold">One last thing — add your birthday</DialogTitle>
+            <DialogTitle className="font-bold">One Last Thing — Add Your Birthday</DialogTitle>
             <DialogDescription>
               Your birthday helps family members know when to celebrate you. You can always update it later from your profile.
             </DialogDescription>
@@ -92,8 +92,8 @@ export function BirthdayPrompt({ initialOpen, needsBirthday }: BirthdayPromptPro
             />
             {error && <p className="text-sm text-destructive">{error}</p>}
             <DialogFooter showCloseButton>
-              <Button type="submit" disabled={saving}>
-                {saving ? 'Saving…' : 'Save birthday'}
+              <Button type="submit" disabled={saving} className="bg-[#8f6593] text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.6)] hover:bg-[#7a5580]">
+                {saving ? 'Saving…' : 'Save Birthday'}
               </Button>
             </DialogFooter>
           </form>
