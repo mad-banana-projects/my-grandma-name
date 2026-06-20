@@ -1,6 +1,6 @@
 'use client'
 
-import { Suspense, useEffect } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
@@ -8,26 +8,56 @@ function AuthConfirm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const next = searchParams.get('next') ?? '/dashboard'
+  const [error, setError] = useState(false)
 
   useEffect(() => {
     const supabase = createClient()
 
-    // For implicit flow: the browser Supabase client detects #access_token in
-    // the URL hash and calls setSession automatically. We wait for the SIGNED_IN
-    // event, then forward the user to their intended destination.
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session) {
-        router.replace(next)
+    async function handleAuth() {
+      // Explicitly parse hash params — more reliable than relying on
+      // createBrowserClient's auto-detection, which can miss the event in production.
+      const hashParams = new URLSearchParams(window.location.hash.slice(1))
+      const accessToken = hashParams.get('access_token')
+      const refreshToken = hashParams.get('refresh_token')
+
+      if (accessToken && refreshToken) {
+        const { data: { session }, error: sessionError } = await supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken,
+        })
+        if (session) {
+          router.replace(next)
+          return
+        }
+        if (sessionError) {
+          setError(true)
+          return
+        }
       }
-    })
 
-    // In case session is already established (e.g. page reload)
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) router.replace(next)
-    })
+      // Fallback: session already established (e.g. page reload after sign-in)
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session) {
+        router.replace(next)
+        return
+      }
 
-    return () => subscription.unsubscribe()
+      setError(true)
+    }
+
+    handleAuth()
   }, [next, router])
+
+  if (error) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-muted/30 px-4">
+        <div className="space-y-2 text-center">
+          <p className="text-sm text-destructive">This link has expired or is invalid.</p>
+          <p className="text-sm text-muted-foreground">Please ask to be re-invited.</p>
+        </div>
+      </main>
+    )
+  }
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-muted/30">
