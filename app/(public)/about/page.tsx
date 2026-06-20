@@ -189,7 +189,7 @@ export default function AboutPage() {
       <section className="bg-white">
 
         {/* Images */}
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
           <div className="relative aspect-[4/3]">
             <Image
               src="/images/about-page/grandmother-with-family-gifting.jpg"
@@ -231,13 +231,13 @@ export default function AboutPage() {
 
       {/* Fixed parallax background section */}
       <section
-        className="relative mx-14 overflow-hidden bg-cover bg-center py-24"
+        className="relative mx-[2px] overflow-hidden bg-cover bg-center py-24 sm:mx-14"
         style={{ backgroundImage: "url('/images/about-page/grandmother-with-family.jpg')" }}
       >
         {/* Green vertical line above card */}
         <div className="absolute left-1/2 top-5 h-14 w-[2px] -translate-x-1/2 bg-[#618985]" />
 
-        <div className="mx-auto w-[88%] max-w-4xl rounded-2xl bg-white px-12 py-14 shadow-[0_4px_40px_rgba(53,51,48,0.15)]">
+        <div className="mx-auto w-[88%] max-w-4xl rounded-2xl bg-white px-[10%] py-14 sm:px-12 shadow-[0_4px_40px_rgba(53,51,48,0.15)]">
 
           {/* Heading */}
           <h2 className="font-heading text-center text-[clamp(26px,3.5vw,48px)] font-light tracking-tight">
