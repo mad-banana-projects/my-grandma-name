@@ -64,7 +64,7 @@ export function BottomNav() {
             onClick={() => setHash(new URL(href, window.location.href).hash)}
             className={cn(
               'flex flex-1 flex-col items-center justify-center gap-0.5 text-[10px] transition-colors',
-              active ? 'text-[#8f6593]' : 'text-white hover:text-[#8f6593]'
+              active ? 'text-white' : 'text-white/60 hover:text-white'
             )}
           >
             <Icon className="size-5" />
