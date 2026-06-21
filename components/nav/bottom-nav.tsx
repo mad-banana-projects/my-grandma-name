@@ -54,7 +54,7 @@ export function BottomNav() {
   }, [])
 
   return (
-    <nav className="fixed bottom-0 inset-x-0 z-50 flex h-16 items-stretch border-t border-border bg-white md:hidden">
+    <nav className="fixed bottom-0 inset-x-0 z-50 flex h-16 items-stretch border-t border-[#527673] bg-[#618985] md:hidden">
       {NAV_ITEMS.map(({ label, href, icon: Icon, isActive }) => {
         const active = isActive(pathname, hash)
         return (
@@ -64,7 +64,7 @@ export function BottomNav() {
             onClick={() => setHash(new URL(href, window.location.href).hash)}
             className={cn(
               'flex flex-1 flex-col items-center justify-center gap-0.5 text-[10px] transition-colors',
-              active ? 'text-[#8f6593]' : 'text-muted-foreground hover:text-foreground'
+              active ? 'text-white' : 'text-white/60 hover:text-white'
             )}
           >
             <Icon className="size-5" />
