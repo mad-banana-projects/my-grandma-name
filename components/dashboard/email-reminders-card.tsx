@@ -207,7 +207,7 @@ export function EmailRemindersCard({ id, initial }: EmailRemindersCardProps) {
                       >
                         {checked && <Check className="h-3 w-3" />}
                       </div>
-                      <span className="text-sm">{label}</span>
+                      <span className="text-xs sm:text-sm">{label}</span>
                     </div>
                   )
                 })}
@@ -226,22 +226,22 @@ export function EmailRemindersCard({ id, initial }: EmailRemindersCardProps) {
                     {(isEditing ? draftCustomDates : customDates).map((cd, i) => (
                       <div
                         key={i}
-                        className="flex items-center justify-between rounded-md border px-3 py-2 text-sm"
+                        className="flex items-start justify-between rounded-md border px-3 py-2 text-sm"
                       >
-                        <span className="font-medium">{cd.label}</span>
-                        <div className="flex items-center gap-3">
-                          <span className="text-muted-foreground">{cd.date}</span>
-                          {isEditing && (
-                            <button
-                              type="button"
-                              onClick={() => removeDraftCustomDate(i)}
-                              className="text-muted-foreground hover:text-foreground transition-colors"
-                              aria-label="Remove date"
-                            >
-                              <X className="h-4 w-4" />
-                            </button>
-                          )}
+                        <div className="flex flex-col">
+                          <span className="text-xs font-medium">{cd.label}</span>
+                          <span className="text-xs text-muted-foreground">{cd.date}</span>
                         </div>
+                        {isEditing && (
+                          <button
+                            type="button"
+                            onClick={() => removeDraftCustomDate(i)}
+                            className="ml-2 text-muted-foreground hover:text-foreground transition-colors"
+                            aria-label="Remove date"
+                          >
+                            <X className="h-4 w-4" />
+                          </button>
+                        )}
                       </div>
                     ))}
                   </div>
