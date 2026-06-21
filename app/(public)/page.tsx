@@ -108,7 +108,7 @@ export default async function LandingPage() {
     <main className="min-h-screen bg-background">
 
       {/* Hero — gradient wrapper, offset by nav height (68px) */}
-      <div className="bg-[linear-gradient(to_bottom,#dcb6c9_0%,#ffffff_85%)] pt-[clamp(58px,6.48vw,83px)]">
+      <div className="bg-[linear-gradient(to_bottom,#dcb6c9_15%,#f2eaec_85%,#ffffff_100%)] pt-[clamp(58px,6.48vw,83px)]">
 
         {/* Hero content */}
         <section className="pb-20 pt-14 text-center">
@@ -354,7 +354,7 @@ export default async function LandingPage() {
       </section>
 
       {/* About section */}
-      <section className="bg-[linear-gradient(135deg,#f5eef2_0%,#faf7f8_50%,#f0edf5_100%)] py-24">
+      <section className="bg-white py-24">
         <div className="mx-auto max-w-3xl px-8">
           <Image
             src="/images/wording/white-black-logo-with-wording.png"
