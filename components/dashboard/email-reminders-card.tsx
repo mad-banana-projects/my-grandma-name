@@ -6,7 +6,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
-import { updateReminders, sendTestReminder, type ReminderFormValues } from '@/app/(app)/dashboard/actions'
+import { updateReminders, type ReminderFormValues } from '@/app/(app)/dashboard/actions'
 
 type CustomDate = { label: string; date: string }
 
@@ -61,24 +61,6 @@ export function EmailRemindersCard({ id, initial }: EmailRemindersCardProps) {
 
   const [error, setError] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
-
-  const [testStatus, setTestStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
-  const [testError, setTestError] = useState<string | null>(null)
-
-  function handleTestSend() {
-    setTestStatus('sending')
-    setTestError(null)
-    startTransition(async () => {
-      const result = await sendTestReminder()
-      if (result.success) {
-        setTestStatus('sent')
-        setTimeout(() => setTestStatus('idle'), 4000)
-      } else {
-        setTestStatus('error')
-        setTestError('error' in result ? result.error : 'Something went wrong.')
-      }
-    })
-  }
 
   function startEdit() {
     setDraftOccasions({ ...occasions })
@@ -180,12 +162,12 @@ export function EmailRemindersCard({ id, initial }: EmailRemindersCardProps) {
         <CardContent className="flex flex-col flex-1 py-6 gap-6">
 
           {/* Two-column body */}
-          <div className="grid grid-cols-2 gap-6 flex-1 items-start">
+          <div className="grid grid-cols-2 gap-6 flex-1 items-stretch">
 
-            {/* Column 1: Send reminders for */}
-            <div className="space-y-3">
-              <p className="text-[clamp(13px,1.33vw,17px)] font-medium">Send Reminders For:</p>
-              <div className="space-y-2">
+            {/* Column 1: Send reminders for — fills full height */}
+            <div className="flex flex-col h-full">
+              <p className="text-[clamp(13px,1.33vw,17px)] font-medium mb-5">Send Reminders For:</p>
+              <div className="flex flex-col flex-1 justify-between">
                 {OCCASIONS.map(({ key, label }) => {
                   const checked = isEditing ? draftOccasions[key] : occasions[key]
                   return (
@@ -214,11 +196,77 @@ export function EmailRemindersCard({ id, initial }: EmailRemindersCardProps) {
               </div>
             </div>
 
-            {/* Column 2: Custom dates + Remind me */}
-            <div className="space-y-6">
+            {/* Column 2: Remind me (top) + Custom dates (bottom) */}
+            <div className="space-y-10">
 
-              {/* Custom dates */}
-              <div className="space-y-3">
+              {/* Remind me — now first */}
+              <div className="space-y-5">
+                <p className="text-[clamp(13px,1.33vw,17px)] font-medium">Remind Me</p>
+                <div className="flex flex-wrap gap-2">
+                  {PRESET_FREQUENCY.map(({ days, label }) => {
+                    const active = (isEditing ? draftFrequency : frequency).includes(days)
+                    return (
+                      <button
+                        key={days}
+                        type="button"
+                        onClick={isEditing ? () => toggleDraftFrequency(days) : undefined}
+                        disabled={!isEditing}
+                        className={cn(
+                          'rounded-full border px-3 py-1 text-xs transition-colors',
+                          active
+                            ? 'border-[#8f6593] bg-[#8f6593] text-white'
+                            : 'border-[#8f6593] bg-white text-[#8f6593]',
+                          isEditing && !active && 'hover:bg-[#8f6593]/10',
+                          !isEditing && 'cursor-default'
+                        )}
+                      >
+                        {label} Before
+                      </button>
+                    )
+                  })}
+                  {(isEditing ? draftFrequency : frequency)
+                    .filter((d) => !presetDays.includes(d))
+                    .map((days) => (
+                      <button
+                        key={days}
+                        type="button"
+                        onClick={isEditing ? () => toggleDraftFrequency(days) : undefined}
+                        disabled={!isEditing}
+                        className="flex items-center gap-1 rounded-full border border-[#8f6593] bg-[#8f6593] px-3 py-1 text-xs text-white disabled:cursor-default"
+                      >
+                        {days}d before
+                        {isEditing && <X className="h-3 w-3" />}
+                      </button>
+                    ))}
+                </div>
+
+                {isEditing && (
+                  <div className="flex items-center gap-2">
+                    <Input
+                      type="number"
+                      min={1}
+                      max={365}
+                      value={newCustomDays}
+                      onChange={(e) => setNewCustomDays(e.target.value)}
+                      placeholder="Custom days"
+                      className="h-8 w-32 text-sm"
+                      onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addCustomFrequency() } }}
+                    />
+                    <button
+                      type="button"
+                      onClick={addCustomFrequency}
+                      disabled={!newCustomDays}
+                      className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground disabled:opacity-40 transition-colors"
+                    >
+                      <Plus className="h-4 w-4" />
+                      Add
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Custom dates — now second */}
+              <div className="space-y-5">
                 <p className="text-[clamp(13px,1.33vw,17px)] font-medium">Custom Dates</p>
 
                 {(isEditing ? draftCustomDates : customDates).length > 0 && (
@@ -306,72 +354,6 @@ export function EmailRemindersCard({ id, initial }: EmailRemindersCardProps) {
                 )}
               </div>
 
-              {/* Remind me */}
-              <div className="space-y-3">
-                <p className="text-[clamp(13px,1.33vw,17px)] font-medium">Remind Me</p>
-                <div className="flex flex-wrap gap-2">
-                  {PRESET_FREQUENCY.map(({ days, label }) => {
-                    const active = (isEditing ? draftFrequency : frequency).includes(days)
-                    return (
-                      <button
-                        key={days}
-                        type="button"
-                        onClick={isEditing ? () => toggleDraftFrequency(days) : undefined}
-                        disabled={!isEditing}
-                        className={cn(
-                          'rounded-full border px-3 py-1 text-xs transition-colors',
-                          active
-                            ? 'border-[#8f6593] bg-[#8f6593] text-white'
-                            : 'border-[#8f6593] bg-white text-[#8f6593]',
-                          isEditing && !active && 'hover:bg-[#8f6593]/10',
-                          !isEditing && 'cursor-default'
-                        )}
-                      >
-                        {label} Before
-                      </button>
-                    )
-                  })}
-                  {(isEditing ? draftFrequency : frequency)
-                    .filter((d) => !presetDays.includes(d))
-                    .map((days) => (
-                      <button
-                        key={days}
-                        type="button"
-                        onClick={isEditing ? () => toggleDraftFrequency(days) : undefined}
-                        disabled={!isEditing}
-                        className="flex items-center gap-1 rounded-full border border-[#8f6593] bg-[#8f6593] px-3 py-1 text-xs text-white disabled:cursor-default"
-                      >
-                        {days}d before
-                        {isEditing && <X className="h-3 w-3" />}
-                      </button>
-                    ))}
-                </div>
-
-                {isEditing && (
-                  <div className="flex items-center gap-2">
-                    <Input
-                      type="number"
-                      min={1}
-                      max={365}
-                      value={newCustomDays}
-                      onChange={(e) => setNewCustomDays(e.target.value)}
-                      placeholder="Custom days"
-                      className="h-8 w-32 text-sm"
-                      onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addCustomFrequency() } }}
-                    />
-                    <button
-                      type="button"
-                      onClick={addCustomFrequency}
-                      disabled={!newCustomDays}
-                      className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground disabled:opacity-40 transition-colors"
-                    >
-                      <Plus className="h-4 w-4" />
-                      Add
-                    </button>
-                  </div>
-                )}
-              </div>
-
             </div>
           </div>
 
@@ -398,22 +380,9 @@ export function EmailRemindersCard({ id, initial }: EmailRemindersCardProps) {
             </div>
           )}
 
-          {/* Test reminder row — always visible */}
-          <div className="flex items-center gap-3 border-t pt-4">
-            <button
-              type="button"
-              onClick={handleTestSend}
-              disabled={testStatus === 'sending' || isPending}
-              className="rounded-md border px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground disabled:opacity-50 transition-colors"
-            >
-              {testStatus === 'sending' ? 'Sending…' : 'Send test reminder'}
-            </button>
-            {testStatus === 'sent' && (
-              <p className="text-sm text-green-600">Test email sent to all accepted family members.</p>
-            )}
-            {testStatus === 'error' && (
-              <p className="text-sm text-destructive">{testError}</p>
-            )}
+          {/* Spacer — maintains card height after test reminder button removal */}
+          <div className="pt-4">
+            <div className="h-9" />
           </div>
 
         </CardContent>
