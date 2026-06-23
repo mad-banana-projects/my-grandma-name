@@ -219,7 +219,7 @@ export function HeroGenerator({
 
       {/* Generator form card */}
       <div className="rounded-3xl bg-white px-4 py-6 sm:px-[64px] sm:py-[37px] shadow-[0_4px_32px_rgba(53,51,48,0.12)]">
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-10">
 
           {/* Row 1: first name + name to avoid */}
           <div className="grid grid-cols-2 gap-3 sm:gap-8">
@@ -254,10 +254,10 @@ export function HeroGenerator({
           {/* Row 2: preferred style + preferred vibe */}
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
             <div className="space-y-2 text-center">
-              <Label className={cn('block text-center text-[clamp(14px,1.41vw,18px)] font-bold [font-family:var(--font-ivy-regular)]', fieldErrors.style && 'text-destructive')}>
+              <Label className={cn('block text-center sm:text-left text-[clamp(14px,1.41vw,18px)] font-bold [font-family:var(--font-ivy-regular)]', fieldErrors.style && 'text-destructive')}>
                 Preferred Style
               </Label>
-              <div className={cn('flex flex-wrap justify-center gap-2 rounded-lg transition-colors', fieldErrors.style && 'ring-2 ring-destructive/60 p-2')}>
+              <div className={cn('flex flex-wrap justify-center sm:justify-start gap-2 rounded-lg transition-colors', fieldErrors.style && 'ring-2 ring-destructive/60 p-2')}>
                 {STYLES.map((s) => (
                   <PillButton
                     key={s.value}
@@ -271,10 +271,10 @@ export function HeroGenerator({
               {fieldErrors.style && <p className="text-xs text-destructive">Please Select a Preferred Style</p>}
             </div>
             <div className="space-y-2 text-center">
-              <Label className={cn('block text-center text-[clamp(14px,1.41vw,18px)] font-bold [font-family:var(--font-ivy-regular)]', fieldErrors.format && 'text-destructive')}>
+              <Label className={cn('block text-center sm:text-left text-[clamp(14px,1.41vw,18px)] font-bold [font-family:var(--font-ivy-regular)]', fieldErrors.format && 'text-destructive')}>
                 Desired Name Format
               </Label>
-              <div className={cn('flex flex-wrap justify-center gap-2 rounded-lg transition-colors', fieldErrors.format && 'ring-2 ring-destructive/60 p-2')}>
+              <div className={cn('flex flex-wrap justify-center sm:justify-start gap-2 rounded-lg transition-colors', fieldErrors.format && 'ring-2 ring-destructive/60 p-2')}>
                 {FORMATS.map((f) => (
                   <PillButton
                     key={f.value}
