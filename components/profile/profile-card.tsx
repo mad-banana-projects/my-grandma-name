@@ -566,11 +566,11 @@ export function ProfileCard({ profile, subscriptionStatus, subscriptionData }: P
           <div className="flex items-center justify-between">
             <div className="space-y-1">
               <p className="text-[17px] font-bold uppercase tracking-wide text-muted-foreground">Subscription</p>
-              <p className="rounded-lg border border-border bg-[#f2eaec] px-3 py-2 text-sm">
+              <p className="text-sm">
                 <span className="font-medium">Status:</span> {formatSubscriptionLabel(subscriptionStatus, subscriptionData)}
               </p>
               {subscriptionData?.plan && (
-                <p className="rounded-lg border border-border bg-[#f2eaec] px-3 py-2 text-sm">
+                <p className="text-sm">
                   <span className="font-medium">Plan:</span> {subscriptionData.plan.charAt(0).toUpperCase() + subscriptionData.plan.slice(1)}
                 </p>
               )}
