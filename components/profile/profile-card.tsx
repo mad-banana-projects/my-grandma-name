@@ -67,6 +67,7 @@ export interface UnifiedProfile {
 
 interface SubscriptionData {
   status: string | null
+  plan: string | null
   trial_end: string | null
   current_period_end: string | null
 }
@@ -188,13 +189,12 @@ function formatSubscriptionLabel(
     return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
   }
 
-  if (isTrialing) {
-    const date = fmt(subscriptionData?.trial_end ?? null)
-    return isCanceling ? `Free trial ends ${date}` : `Free trial ends ${date}`
+  if (isTrialing && !isCanceling) {
+    return `Free trial ends ${fmt(subscriptionData?.trial_end ?? null)}`
   }
 
   if (isCanceling) {
-    const date = fmt(subscriptionData?.current_period_end ?? null)
+    const date = fmt(subscriptionData?.current_period_end ?? subscriptionData?.trial_end ?? null)
     return `Cancels ${date}`
   }
 
@@ -564,11 +564,16 @@ export function ProfileCard({ profile, subscriptionStatus, subscriptionData }: P
         {/* Subscription row */}
         <div className="border-t pt-4 text-sm">
           <div className="flex items-center justify-between">
-            <div>
+            <div className="space-y-1">
               <p className="text-[17px] font-bold uppercase tracking-wide text-muted-foreground">Subscription</p>
-              <p className="mt-1 rounded-lg border border-border bg-[#f2eaec] px-3 py-2 text-sm">
-                {formatSubscriptionLabel(subscriptionStatus, subscriptionData)}
+              <p className="rounded-lg border border-border bg-[#f2eaec] px-3 py-2 text-sm">
+                <span className="font-medium">Status:</span> {formatSubscriptionLabel(subscriptionStatus, subscriptionData)}
               </p>
+              {subscriptionData?.plan && (
+                <p className="rounded-lg border border-border bg-[#f2eaec] px-3 py-2 text-sm">
+                  <span className="font-medium">Plan:</span> {subscriptionData.plan.charAt(0).toUpperCase() + subscriptionData.plan.slice(1)}
+                </p>
+              )}
             </div>
             <button
               onClick={() => { setManageError(null); setShowManageDialog(true) }}

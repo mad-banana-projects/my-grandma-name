@@ -32,12 +32,12 @@ export default async function DashboardPage({
       reminder_grandparents_day, reminder_mothers_day, reminder_birthday, reminder_christmas,
       reminder_custom_dates, reminder_frequency
     `).eq('user_id', user.id).single(),
-    service.from('subscriptions').select('status, trial_end, current_period_end').eq('user_id', user.id).single(),
+    service.from('subscriptions').select('status, plan, trial_end, current_period_end').eq('user_id', user.id).single(),
   ])
 
   const role = (userData?.role ?? 'free') as 'free' | 'grandma' | 'family'
   const subscriptionStatus = userData?.subscription_status
-  const isPaid = role === 'grandma' && subscriptionStatus === 'active'
+  const isPaid = role === 'grandma' && (subscriptionStatus === 'active' || subscriptionStatus === 'canceling' || subscriptionStatus === 'trialing')
 
   const needsBirthday = isPaid && !profileData?.birthday
   const showBirthdayModal = isPostCheckout && needsBirthday
@@ -109,13 +109,15 @@ export default async function DashboardPage({
             </h1>
           </div>
           <Badge
-            variant={subscriptionStatus === 'active' ? 'default' : 'secondary'}
-            className={subscriptionStatus === 'active' ? 'mt-1 shrink-0 bg-[#8f6593] text-white' : 'mt-1 shrink-0'}
+            variant={isPaid ? 'default' : 'secondary'}
+            className={isPaid ? 'mt-1 shrink-0 bg-[#8f6593] text-white' : 'mt-1 shrink-0'}
           >
-            {subscriptionStatus === 'active'
-              ? 'Active'
+            {subscriptionStatus === 'canceling'
+              ? 'Canceling'
               : subscriptionStatus === 'trialing'
               ? 'Trial'
+              : subscriptionStatus === 'active'
+              ? 'Active'
               : 'Free'}
           </Badge>
         </div>
