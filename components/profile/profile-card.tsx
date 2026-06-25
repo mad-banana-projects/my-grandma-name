@@ -609,15 +609,15 @@ export function ProfileCard({ profile, subscriptionStatus, subscriptionData }: P
               </>
             ) : (
               <>
-                <DialogHeader>
-                  <DialogTitle>Upgrade your subscription</DialogTitle>
+                <DialogHeader className="space-y-4">
+                  <DialogTitle>Upgrade Your Subscription</DialogTitle>
                   <DialogDescription>
                     You are currently using a free account. Would you like to upgrade to a paid subscription?
                   </DialogDescription>
                 </DialogHeader>
                 <DialogFooter showCloseButton>
-                  <a href="/subscribe" className={cn(buttonVariants())}>
-                    Yes, upgrade now
+                  <a href="/subscribe" className={cn(buttonVariants(), 'bg-[#8f6593] text-white border border-white hover:bg-[#7a5680]')}>
+                    Yes, Upgrade Now
                   </a>
                 </DialogFooter>
               </>
