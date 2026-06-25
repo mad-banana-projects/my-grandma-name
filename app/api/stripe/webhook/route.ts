@@ -54,7 +54,8 @@ export async function POST(request: NextRequest) {
       const plan = sub.items.data[0].price.recurring?.interval === 'year' ? 'annual' : 'monthly'
       // Treat trialing as active for feature access
       const isActive = sub.status === 'active' || sub.status === 'trialing'
-      const subscriptionStatus = isActive ? 'active' : sub.status
+      const isCanceling = isActive && sub.cancel_at_period_end
+      const subscriptionStatus = isCanceling ? 'canceling' : isActive ? 'active' : sub.status
 
       const periodEnd = sub.items.data[0]?.current_period_end ?? (sub as any).current_period_end
 
@@ -109,25 +110,26 @@ export async function POST(request: NextRequest) {
 
       if (!userId) break
 
-      const deletedPeriodEnd = sub.items.data[0]?.current_period_end ?? (sub as any).current_period_end
+      // Resolve registry list IDs so we can delete registry_items first
+      const { data: registryLists } = await supabase
+        .from('registry_lists')
+        .select('id')
+        .eq('user_id', userId)
 
-      await supabase.from('subscriptions').upsert(
-        {
-          user_id: userId,
-          stripe_subscription_id: sub.id,
-          plan: sub.items.data[0].price.recurring?.interval === 'year' ? 'annual' : 'monthly',
-          status: sub.status,
-          current_period_end: deletedPeriodEnd
-            ? new Date(deletedPeriodEnd * 1000).toISOString()
-            : null,
-        },
-        { onConflict: 'stripe_subscription_id' }
-      )
+      if (registryLists?.length) {
+        const listIds = registryLists.map((r) => r.id)
+        await supabase.from('registry_items').delete().in('registry_list_id', listIds)
+      }
 
-      await supabase
-        .from('users')
-        .update({ subscription_status: 'inactive', role: 'free' })
-        .eq('id', userId)
+      await supabase.from('registry_lists').delete().eq('user_id', userId)
+      await supabase.from('family_members').delete().eq('grandma_id', userId)
+      await supabase.from('family_members').delete().eq('user_id', userId)
+      await supabase.from('subscriptions').delete().eq('user_id', userId)
+      await supabase.from('profiles').delete().eq('user_id', userId)
+      await supabase.from('users').delete().eq('id', userId)
+
+      // Delete the Supabase auth user last
+      await supabase.auth.admin.deleteUser(userId)
       break
     }
 

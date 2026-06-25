@@ -119,19 +119,9 @@ export async function cancelSubscription(): Promise<UpdateProfileResult> {
   }
 
   try {
-    const stripeSub = await stripe.subscriptions.retrieve(sub.stripe_subscription_id)
-    const isTrialing = stripeSub.status === 'trialing'
-
-    if (isTrialing) {
-      await stripe.subscriptions.update(sub.stripe_subscription_id, {
-        cancel_at_period_end: true,
-      })
-    } else {
-      const cancelAt = Math.floor(Date.now() / 1000) + 60 // TEMP: 60s for testing (restore to 14 * 24 * 60 * 60)
-      await stripe.subscriptions.update(sub.stripe_subscription_id, {
-        cancel_at: cancelAt,
-      })
-    }
+    await stripe.subscriptions.update(sub.stripe_subscription_id, {
+      cancel_at_period_end: true,
+    })
   } catch (err: any) {
     return { success: false, error: err?.message ?? 'Failed to cancel with Stripe.' }
   }

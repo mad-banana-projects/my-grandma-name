@@ -65,9 +65,16 @@ export interface UnifiedProfile {
   address: string
 }
 
+interface SubscriptionData {
+  status: string | null
+  trial_end: string | null
+  current_period_end: string | null
+}
+
 interface ProfileCardProps {
   profile: UnifiedProfile
   subscriptionStatus?: string | null
+  subscriptionData?: SubscriptionData | null
 }
 
 const textareaClass =
@@ -167,7 +174,34 @@ function formatBirthday(dateStr: string): string {
   return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
 }
 
-export function ProfileCard({ profile, subscriptionStatus }: ProfileCardProps) {
+function formatSubscriptionLabel(
+  subscriptionStatus: string | null | undefined,
+  subscriptionData: SubscriptionData | null | undefined
+): string {
+  if (!subscriptionStatus || subscriptionStatus === 'inactive') return 'Free'
+
+  const isCanceling = subscriptionStatus === 'canceling'
+  const isTrialing = subscriptionData?.status === 'trialing'
+
+  const fmt = (iso: string | null) => {
+    if (!iso) return ''
+    return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+  }
+
+  if (isTrialing) {
+    const date = fmt(subscriptionData?.trial_end ?? null)
+    return isCanceling ? `Free trial ends ${date}` : `Free trial ends ${date}`
+  }
+
+  if (isCanceling) {
+    const date = fmt(subscriptionData?.current_period_end ?? null)
+    return `Cancels ${date}`
+  }
+
+  return 'Active'
+}
+
+export function ProfileCard({ profile, subscriptionStatus, subscriptionData }: ProfileCardProps) {
   const router = useRouter()
   const isSubscribed = subscriptionStatus === 'active' || subscriptionStatus === 'trialing'
 
@@ -533,11 +567,7 @@ export function ProfileCard({ profile, subscriptionStatus }: ProfileCardProps) {
             <div>
               <p className="text-[17px] font-bold uppercase tracking-wide text-muted-foreground">Subscription</p>
               <p className="mt-1 rounded-lg border border-border bg-[#f2eaec] px-3 py-2 text-sm">
-                {subscriptionStatus === 'active'
-                  ? 'Active'
-                  : subscriptionStatus === 'trialing'
-                  ? 'Trial'
-                  : 'Free'}
+                {formatSubscriptionLabel(subscriptionStatus, subscriptionData)}
               </p>
             </div>
             <button
@@ -558,7 +588,7 @@ export function ProfileCard({ profile, subscriptionStatus }: ProfileCardProps) {
                   <DialogTitle>Cancel Subscription</DialogTitle>
                   <DialogDescription>
                     Are you sure you want to cancel?<br />
-                    You&apos;ll retain access for 14 days, after which your account and all of your data will be permanently deleted.
+                    You&apos;ll retain access until the end of your current billing period, after which your account and all of your data will be permanently deleted.
                   </DialogDescription>
                 </DialogHeader>
                 {manageError && <p className="text-sm text-destructive px-1">{manageError}</p>}

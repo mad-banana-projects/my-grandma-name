@@ -24,7 +24,7 @@ export default async function DashboardPage({
 
   const service = createServiceClient()
 
-  const [{ data: userData }, { data: profileData }] = await Promise.all([
+  const [{ data: userData }, { data: profileData }, { data: subscriptionData }] = await Promise.all([
     service.from('users').select('role, subscription_status').eq('id', user.id).single(),
     service.from('profiles').select(`
       id, first_name, last_name, grandma_name, bio, birthday, phone_number,
@@ -32,6 +32,7 @@ export default async function DashboardPage({
       reminder_grandparents_day, reminder_mothers_day, reminder_birthday, reminder_christmas,
       reminder_custom_dates, reminder_frequency
     `).eq('user_id', user.id).single(),
+    service.from('subscriptions').select('status, trial_end, current_period_end').eq('user_id', user.id).single(),
   ])
 
   const role = (userData?.role ?? 'free') as 'free' | 'grandma' | 'family'
@@ -128,6 +129,7 @@ export default async function DashboardPage({
             <ProfileCard
               profile={profile}
               subscriptionStatus={subscriptionStatus ?? null}
+              subscriptionData={subscriptionData ?? null}
             />
           </div>
 
