@@ -127,7 +127,7 @@ export async function cancelSubscription(): Promise<UpdateProfileResult> {
         cancel_at_period_end: true,
       })
     } else {
-      const cancelAt = Math.floor(Date.now() / 1000) + 14 * 24 * 60 * 60
+      const cancelAt = Math.floor(Date.now() / 1000) + 60 // TEMP: 60s for testing (restore to 14 * 24 * 60 * 60)
       await stripe.subscriptions.update(sub.stripe_subscription_id, {
         cancel_at: cancelAt,
       })
