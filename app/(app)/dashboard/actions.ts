@@ -4,6 +4,7 @@ import { z } from 'zod'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { resend } from '@/lib/resend'
+import { stripe } from '@/lib/stripe'
 
 const profileSchema = z.object({
   first_name: z.string().min(1, 'Required').max(30).regex(/^[\p{L}]+$/u, 'Letters only'),
@@ -106,9 +107,38 @@ export async function cancelSubscription(): Promise<UpdateProfileResult> {
   if (!user) return { success: false, error: 'Not authenticated' }
 
   const service = createServiceClient()
+
+  const { data: sub } = await service
+    .from('subscriptions')
+    .select('stripe_subscription_id')
+    .eq('user_id', user.id)
+    .single()
+
+  if (!sub?.stripe_subscription_id) {
+    return { success: false, error: 'No active subscription found.' }
+  }
+
+  try {
+    const stripeSub = await stripe.subscriptions.retrieve(sub.stripe_subscription_id)
+    const isTrialing = stripeSub.status === 'trialing'
+
+    if (isTrialing) {
+      await stripe.subscriptions.update(sub.stripe_subscription_id, {
+        cancel_at_period_end: true,
+      })
+    } else {
+      const cancelAt = Math.floor(Date.now() / 1000) + 14 * 24 * 60 * 60
+      await stripe.subscriptions.update(sub.stripe_subscription_id, {
+        cancel_at: cancelAt,
+      })
+    }
+  } catch (err: any) {
+    return { success: false, error: err?.message ?? 'Failed to cancel with Stripe.' }
+  }
+
   const { error } = await service
     .from('users')
-    .update({ role: 'free', subscription_status: 'inactive' })
+    .update({ subscription_status: 'canceling' })
     .eq('id', user.id)
 
   if (error) return { success: false, error: error.message }

@@ -554,10 +554,11 @@ export function ProfileCard({ profile, subscriptionStatus }: ProfileCardProps) {
           <DialogContent>
             {isSubscribed ? (
               <>
-                <DialogHeader>
-                  <DialogTitle>Cancel subscription</DialogTitle>
+                <DialogHeader className="space-y-4">
+                  <DialogTitle>Cancel Subscription</DialogTitle>
                   <DialogDescription>
-                    Are you sure you want to cancel? You&apos;ll lose access to premium features including your registry, email reminders, and family sharing.
+                    Are you sure you want to cancel?<br />
+                    You&apos;ll retain access for 14 days, after which your account and all of your data will be permanently deleted.
                   </DialogDescription>
                 </DialogHeader>
                 {manageError && <p className="text-sm text-destructive px-1">{manageError}</p>}
