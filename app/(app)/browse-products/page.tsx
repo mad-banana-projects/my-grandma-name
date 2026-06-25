@@ -57,9 +57,9 @@ export default async function BrowseProductsPage() {
     <main className="bg-background px-4 py-12">
       <div className="mx-auto max-w-6xl space-y-8">
         <div className="space-y-2">
-          <h1 className="text-[clamp(38px,4.06vw,52px)] font-light tracking-tight">Gift ideas she'll love</h1>
-          <p className="text-[clamp(20px,1.95vw,25px)] text-foreground/80 [font-family:var(--font-arno-italic)]">
-            A curated collection of thoughtful gifts for grandma.
+          <h1 className="text-[clamp(38px,4.06vw,52px)] font-light tracking-tight">Curated Gift Ideas for <em>You</em></h1>
+          <p className="text-[22px] text-foreground/80 [font-family:var(--font-arno-italic)]">
+            Browse curated products designed to inspire meaningful gifting. Save the items you love, organize your registry, and make celebrating life's moments a little more personal.
           </p>
         </div>
 

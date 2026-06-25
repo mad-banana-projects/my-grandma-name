@@ -277,7 +277,7 @@ export function ProductCard({
                     <DialogHeader>
                       <DialogTitle>
                         {bookmarkMode === 'login'
-                          ? 'Save to your wishlist'
+                          ? 'Save to Your Wishlist'
                           : 'Upgrade to save products'}
                       </DialogTitle>
                       <DialogDescription>
@@ -286,10 +286,10 @@ export function ProductCard({
                           : 'Upgrade your account to save products to your registry and share your wishlist with family.'}
                       </DialogDescription>
                     </DialogHeader>
-                    <DialogFooter showCloseButton>
+                    <DialogFooter>
                       {bookmarkMode === 'login' ? (
                         <>
-                          <a href="/signup" className={cn(buttonVariants())}>
+                          <a href="/signup" className={cn(buttonVariants(), 'bg-[#8f6593] text-white border border-white hover:bg-[#7a5680]')}>
                             Create Free Account
                           </a>
                           <a href="/login" className={cn(buttonVariants({ variant: 'outline' }))}>
