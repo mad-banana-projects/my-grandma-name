@@ -5,6 +5,7 @@ import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { resend } from '@/lib/resend'
 import { stripe } from '@/lib/stripe'
+import { sendOptInSms } from '@/lib/sms'
 
 const profileSchema = z.object({
   first_name: z.string().min(1, 'Required').max(30).regex(/^[\p{L}]+$/u, 'Letters only'),
@@ -62,6 +63,13 @@ export async function updateProfile(
   if (!user) return { success: false, error: 'Not authenticated' }
 
   const service = createServiceClient()
+
+  const { data: existing } = await service
+    .from('profiles')
+    .select('text_updates_opt_in')
+    .eq('user_id', user.id)
+    .single()
+
   const { error } = await service
     .from('profiles')
     .update({
@@ -78,6 +86,11 @@ export async function updateProfile(
     .eq('user_id', user.id)
 
   if (error) return { success: false, error: error.message }
+
+  const justOptedIn = !existing?.text_updates_opt_in && parsed.data.text_updates_opt_in
+  if (justOptedIn && parsed.data.phone_number) {
+    try { await sendOptInSms(parsed.data.phone_number) } catch { /* non-blocking */ }
+  }
 
   revalidatePath('/dashboard')
   return { success: true }

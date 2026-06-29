@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { InviteAcceptForm } from '@/components/auth/invite-accept-form'
+import { sendFamilyAcceptedSms } from '@/lib/sms'
 
 export default async function InvitePage({
   params,
@@ -70,6 +71,17 @@ export default async function InvitePage({
           .from('users')
           .update({ role: 'family' })
           .eq('id', user.id)
+
+        // Notify grandma via SMS if she has opted in
+        const { data: grandmaProfile } = await service
+          .from('profiles')
+          .select('phone_number, text_updates_opt_in')
+          .eq('user_id', invite.grandma_id)
+          .single()
+
+        if (grandmaProfile?.text_updates_opt_in && grandmaProfile?.phone_number) {
+          try { await sendFamilyAcceptedSms(grandmaProfile.phone_number) } catch { /* non-blocking */ }
+        }
       }
       // Redirect to registry whether just accepted or already accepted
       redirect(`/registry/${invite.grandma_id}`)

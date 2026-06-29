@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import { z } from 'zod'
 
 import { createClient, createServiceClient } from '@/lib/supabase/server'
+import { sendOptInSms } from '@/lib/sms'
 
 export type GrandmaSignupState = {
   status: 'idle' | 'success' | 'error'
@@ -111,6 +112,10 @@ export async function signUpGrandma(
 
   if (profileError) {
     return { status: 'error', message: profileError.message }
+  }
+
+  if (textUpdatesOptIn && phone) {
+    try { await sendOptInSms(phone) } catch { /* non-blocking */ }
   }
 
   // Email confirmation disabled — user is immediately logged in
