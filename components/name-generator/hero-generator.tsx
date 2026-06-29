@@ -305,7 +305,7 @@ export function HeroGenerator({
               <p className="text-[clamp(11px,1.09vw,14px)] text-muted-foreground [font-family:var(--font-ivy-regular)]">
                 {anonUsesLeft > 0
                   ? `${anonUsesLeft} Free ${anonUsesLeft === 1 ? 'Generation' : 'Generations'} Remaining`
-                  : 'Limit reached — create an account for more'}
+                  : 'Limit Reached — Create a Free Account for More'}
               </p>
             )}
 
@@ -351,7 +351,7 @@ export function HeroGenerator({
                     href={`/signup?grandmaName=${encodeURIComponent(result.winner.name)}`}
                     className={cn(buttonVariants({ size: 'sm', variant: 'outline' }), 'shrink-0')}
                   >
-                    Create Free Account to save
+                    Create Free Account to Save
                   </a>
                 )}
               </div>
@@ -382,7 +382,7 @@ export function HeroGenerator({
                   href={`/signup?grandmaName=${encodeURIComponent(result.runnerUp.name)}`}
                   className={cn(buttonVariants({ size: 'sm', variant: 'ghost' }), 'shrink-0 h-7 px-2 text-xs')}
                 >
-                  Create Free Account to save
+                  Create Free Account to Save
                 </a>
               )}
             </div>

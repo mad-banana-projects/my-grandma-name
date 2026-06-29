@@ -108,7 +108,12 @@ export function GrandmaSignupForm({ grandmaName }: GrandmaSignupFormProps) {
   return (
     <Card className="w-full max-w-lg rounded-lg">
       <CardHeader>
-        <CardDescription>Free to join. You can add more details and upgrade anytime.</CardDescription>
+        <CardDescription>
+          {grandmaName
+            ? <>Create a free account to save <span className="font-medium text-foreground">{grandmaName}</span> to your profile. You can add more details and upgrade anytime.</>
+            : 'Free to join. You can add more details and upgrade anytime.'
+          }
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <form action={formAction} onSubmit={handleSubmit} className="space-y-4">
