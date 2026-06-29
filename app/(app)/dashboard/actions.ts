@@ -5,7 +5,7 @@ import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { resend } from '@/lib/resend'
 import { stripe } from '@/lib/stripe'
-import { sendOptInSms } from '@/lib/sms'
+import { sendOptInSms, sendFamilyAcceptedSms } from '@/lib/sms'
 
 const profileSchema = z.object({
   first_name: z.string().min(1, 'Required').max(30).regex(/^[\p{L}]+$/u, 'Letters only'),
@@ -284,4 +284,28 @@ export async function updateReminders(
 
   revalidatePath('/dashboard')
   return { success: true }
+}
+
+export async function sendTestSms(type: 'opt-in' | 'family-accepted'): Promise<UpdateProfileResult> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { success: false, error: 'Not authenticated' }
+
+  const service = createServiceClient()
+  const { data: profile } = await service
+    .from('profiles')
+    .select('phone_number, text_updates_opt_in')
+    .eq('user_id', user.id)
+    .single()
+
+  if (!profile?.phone_number) return { success: false, error: 'No phone number on file.' }
+  if (!profile?.text_updates_opt_in) return { success: false, error: 'Text updates not opted in.' }
+
+  try {
+    if (type === 'opt-in') await sendOptInSms(profile.phone_number)
+    else await sendFamilyAcceptedSms(profile.phone_number)
+    return { success: true }
+  } catch (err: any) {
+    return { success: false, error: err?.message ?? 'Failed to send SMS.' }
+  }
 }

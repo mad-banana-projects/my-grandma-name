@@ -23,6 +23,7 @@ import {
   updateProfile,
   updatePassword,
   cancelSubscription,
+  sendTestSms,
   type ProfileFormValues,
 } from '@/app/(app)/dashboard/actions'
 import { cn } from '@/lib/utils'
@@ -217,6 +218,25 @@ export function ProfileCard({ profile, subscriptionStatus, subscriptionData }: P
   const [showManageDialog, setShowManageDialog] = useState(false)
   const [manageError, setManageError] = useState<string | null>(null)
   const [isManagePending, startManageTransition] = useTransition()
+
+  const [smsStatus, setSmsStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
+  const [smsError, setSmsError] = useState<string | null>(null)
+  const [, startSmsTransition] = useTransition()
+
+  function handleTestSms(type: 'opt-in' | 'family-accepted') {
+    setSmsStatus('sending')
+    setSmsError(null)
+    startSmsTransition(async () => {
+      const result = await sendTestSms(type)
+      if (result.success) {
+        setSmsStatus('sent')
+        setTimeout(() => setSmsStatus('idle'), 4000)
+      } else {
+        setSmsStatus('error')
+        setSmsError('error' in result ? result.error : 'Failed to send.')
+      }
+    })
+  }
 
   const { register, handleSubmit, reset, watch, setValue, formState: { errors } } = useForm<ProfileSchemaValues>({
     resolver: zodResolver(profileSchema),
@@ -501,6 +521,28 @@ export function ProfileCard({ profile, subscriptionStatus, subscriptionData }: P
               <div>
                 <dt className="text-[17px] font-bold uppercase tracking-wide text-muted-foreground">Text updates</dt>
                 <dd className="mt-1 rounded-lg border border-border bg-[#f2eaec] px-3 py-2 text-sm">{profile.text_updates_opt_in ? 'Opted in' : 'Not opted in'}</dd>
+                {profile.text_updates_opt_in && (
+                  <div className="mt-2 flex flex-wrap items-center gap-2">
+                    <button
+                      type="button"
+                      disabled={smsStatus === 'sending'}
+                      onClick={() => handleTestSms('opt-in')}
+                      className="rounded-md border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground disabled:opacity-50 transition-colors"
+                    >
+                      {smsStatus === 'sending' ? 'Sending…' : 'Test opt-in SMS'}
+                    </button>
+                    <button
+                      type="button"
+                      disabled={smsStatus === 'sending'}
+                      onClick={() => handleTestSms('family-accepted')}
+                      className="rounded-md border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground disabled:opacity-50 transition-colors"
+                    >
+                      {smsStatus === 'sending' ? 'Sending…' : 'Test family SMS'}
+                    </button>
+                    {smsStatus === 'sent' && <p className="text-xs text-green-600">SMS sent!</p>}
+                    {smsStatus === 'error' && <p className="text-xs text-destructive">{smsError}</p>}
+                  </div>
+                )}
               </div>
             </div>
 
