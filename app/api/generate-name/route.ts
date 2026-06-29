@@ -7,7 +7,7 @@ const VALID_STYLES = ['traditional', 'unique', 'playful', 'sweet', 'trendy', 'el
 const VALID_FORMATS = ['single-word', 'multi-word'] as const
 const ANON_COOKIE = 'anon_gen_count'
 const ANON_DAILY_LIMIT = 2
-const FREE_DAILY_LIMIT = 4
+const FREE_DAILY_LIMIT = 2
 
 function sanitize(value: string, maxLen: number): string {
   return value.replace(/[<>"'`\\]/g, '').trim().slice(0, maxLen)
