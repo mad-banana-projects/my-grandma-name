@@ -313,7 +313,7 @@ export function HeroGenerator({
             {isSignedIn && !isPaidGrandma && freeUsesLeft !== null && (
               <p className="text-[clamp(11px,1.09vw,14px)] text-muted-foreground [font-family:var(--font-ivy-regular)]">
                 {freeUsesLeft > 0
-                  ? `${freeUsesLeft} ${freeUsesLeft === 1 ? 'generation' : 'generations'} remaining`
+                  ? `${freeUsesLeft} Free ${freeUsesLeft === 1 ? 'Generation' : 'Generations'} Remaining`
                   : <>Limit reached. <a href="/subscribe" className="underline underline-offset-2 hover:text-foreground">Upgrade</a> for more.</>}
               </p>
             )}
