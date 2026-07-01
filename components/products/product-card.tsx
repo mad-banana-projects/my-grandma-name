@@ -274,11 +274,11 @@ export function ProductCard({
 
                 <Dialog open={showPrompt} onOpenChange={setShowPrompt}>
                   <DialogContent>
-                    <DialogHeader>
+                    <DialogHeader className="space-y-4">
                       <DialogTitle>
                         {bookmarkMode === 'login'
                           ? 'Save to Your Wishlist'
-                          : 'Upgrade to save products'}
+                          : 'Upgrade to Save Products'}
                       </DialogTitle>
                       <DialogDescription>
                         {bookmarkMode === 'login'
