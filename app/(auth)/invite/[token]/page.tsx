@@ -76,7 +76,7 @@ export default async function InvitePage({
         const { data: grandmaProfile } = await service
           .from('profiles')
           .select('phone_number, text_updates_opt_in')
-          .eq('user_id', invite.grandma_id)
+          .eq('id', invite.grandma_id)
           .single()
 
         if (grandmaProfile?.text_updates_opt_in && grandmaProfile?.phone_number) {
