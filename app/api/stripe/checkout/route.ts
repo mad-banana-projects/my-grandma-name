@@ -39,6 +39,7 @@ export async function POST(request: NextRequest) {
         ...(grandmaName ? { grandma_name: grandmaName } : {}),
       },
     },
+    allow_promotion_codes: true,
     success_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?checkout=success`,
     cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/subscribe`,
     metadata: {
