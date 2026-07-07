@@ -186,15 +186,18 @@ export function GrandmaSignupForm({ grandmaName }: GrandmaSignupFormProps) {
           </div>
 
           {/* Text opt-in */}
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-start gap-2.5">
             <input
               id="textUpdatesOptIn"
               name="textUpdatesOptIn"
               type="checkbox"
-              className="h-4 w-4 rounded border-input accent-foreground"
+              className="h-4 w-4 mt-0.5 rounded border-input accent-foreground shrink-0"
             />
-            <label htmlFor="textUpdatesOptIn" className="text-sm text-muted-foreground cursor-pointer">
-              I Agree to Receive Text Updates
+            <label htmlFor="textUpdatesOptIn" className="text-sm text-muted-foreground cursor-pointer leading-snug">
+              I agree to receive text messages from My Grandma Name. Message frequency varies. Msg &amp; data rates may apply. Reply STOP to unsubscribe. View our{' '}
+              <a href="/terms" className="underline underline-offset-2 hover:text-foreground">Terms</a>
+              {' '}and{' '}
+              <a href="/privacy" className="underline underline-offset-2 hover:text-foreground">Privacy Policy</a>.
             </label>
           </div>
 
