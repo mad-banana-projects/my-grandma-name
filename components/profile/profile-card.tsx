@@ -426,10 +426,9 @@ export function ProfileCard({ profile, subscriptionStatus, subscriptionData }: P
                     className="h-4 w-4 mt-0.5 rounded border-input accent-foreground shrink-0"
                     {...register('text_updates_opt_in')}
                   />
-                  <Label htmlFor="text_updates_opt_in" className="font-normal cursor-pointer leading-snug">
-                    I agree to receive text messages from My Grandma Name. Message Frequency varies. Msg &amp; data rates may apply. Reply STOP or unselect this checkbox to unsubscribe. View our{' '}
-                    <a href="/privacy-policy" className="underline underline-offset-2 hover:text-foreground">Privacy Policy</a>.
-                  </Label>
+                  <label htmlFor="text_updates_opt_in" className="text-sm font-normal cursor-pointer leading-snug">
+                    I agree to receive text messages from My Grandma Name. Message Frequency varies. Msg &amp; data rates may apply. Reply STOP or unselect this checkbox to unsubscribe. View our <a href="/privacy-policy" className="underline underline-offset-2 hover:text-foreground">Privacy Policy</a>.
+                  </label>
                 </div>
               </div>
             </div>
