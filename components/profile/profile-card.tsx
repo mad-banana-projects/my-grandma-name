@@ -447,9 +447,7 @@ export function ProfileCard({ profile, subscriptionStatus, subscriptionData }: P
                   />
                   <Label htmlFor="text_updates_opt_in" className="font-normal cursor-pointer leading-snug">
                     I agree to receive text messages from My Grandma Name. Message frequency varies. Msg &amp; data rates may apply. Reply STOP to unsubscribe. View our{' '}
-                    <a href="/terms" className="underline underline-offset-2 hover:text-foreground">Terms</a>
-                    {' '}and{' '}
-                    <a href="/privacy" className="underline underline-offset-2 hover:text-foreground">Privacy Policy</a>.
+                    <a href="/privacy-policy" className="underline underline-offset-2 hover:text-foreground">Privacy Policy</a>.
                   </Label>
                 </div>
               </div>

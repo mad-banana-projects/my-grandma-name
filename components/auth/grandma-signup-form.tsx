@@ -195,9 +195,7 @@ export function GrandmaSignupForm({ grandmaName }: GrandmaSignupFormProps) {
             />
             <label htmlFor="textUpdatesOptIn" className="text-sm text-muted-foreground cursor-pointer leading-snug">
               I agree to receive text messages from My Grandma Name. Message frequency varies. Msg &amp; data rates may apply. Reply STOP to unsubscribe. View our{' '}
-              <a href="/terms" className="underline underline-offset-2 hover:text-foreground">Terms</a>
-              {' '}and{' '}
-              <a href="/privacy" className="underline underline-offset-2 hover:text-foreground">Privacy Policy</a>.
+              <a href="/privacy-policy" className="underline underline-offset-2 hover:text-foreground">Privacy Policy</a>.
             </label>
           </div>
 
