@@ -8,7 +8,7 @@ export default function AboutPage() {
       <section className="flex flex-col pt-[clamp(58px,6.48vw,83px)] md:flex-row md:items-stretch">
 
         {/* Left: photo — fills column height, always rounded */}
-        <div className="min-h-[400px] w-full overflow-hidden rounded-br-3xl md:w-1/2">
+        <div className="h-[400px] w-full overflow-hidden rounded-br-3xl md:h-auto md:min-h-[400px] md:w-1/2">
           <Image
             src="/images/about-page/grandmother-with-grandkid.jpg"
             alt="Grandmother with grandchild"
