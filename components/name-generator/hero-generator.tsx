@@ -333,8 +333,8 @@ export function HeroGenerator({
               <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
                 Your grandma name is
               </p>
-              <div className="mt-2 flex items-center justify-between gap-4">
-                <h2 className="font-heading text-5xl font-light tracking-tight">
+              <div className="mt-2 flex flex-col items-center gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+                <h2 className="font-heading text-5xl font-light tracking-tight text-center sm:text-left">
                   {result.winner.name}
                 </h2>
                 {isSignedIn ? (
@@ -363,7 +363,7 @@ export function HeroGenerator({
             </p>
 
             {/* Runner-up */}
-            <div className="flex items-center justify-between rounded-md bg-muted/40 px-3 py-2 text-sm gap-4">
+            <div className="flex flex-col gap-2 rounded-md bg-muted/40 px-3 py-2 text-sm sm:flex-row sm:items-center sm:justify-between sm:gap-4">
               <div>
                 <span className="text-muted-foreground">Runner-up: </span>
                 <span className="font-medium">{result.runnerUp.name}</span>
