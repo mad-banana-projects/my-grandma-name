@@ -20,7 +20,7 @@ export default function AboutPage() {
         </div>
 
         {/* Right: content */}
-        <div className="flex w-full items-center bg-background px-10 pt-2 pb-10 md:w-1/2 md:py-10 md:px-16">
+        <div className="flex w-full items-start md:items-center bg-background px-10 pt-4 pb-10 md:w-1/2 md:py-10 md:px-16">
           <div className="max-w-[45rem] space-y-5">
             <h1 className="font-heading text-[clamp(38px,4.06vw,52px)] font-light tracking-tight">
               About <em>My</em> Grandma Name
