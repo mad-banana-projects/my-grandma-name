@@ -186,17 +186,20 @@ export function GrandmaSignupForm({ grandmaName }: GrandmaSignupFormProps) {
           </div>
 
           {/* Text opt-in */}
-          <div className="flex items-start gap-2.5">
-            <input
-              id="textUpdatesOptIn"
-              name="textUpdatesOptIn"
-              type="checkbox"
-              className="h-4 w-4 mt-0.5 rounded border-input accent-foreground shrink-0"
-            />
-            <label htmlFor="textUpdatesOptIn" className="text-sm text-muted-foreground cursor-pointer leading-snug">
-              <span className="font-medium text-foreground">Optional:</span> I agree to receive text messages from My Grandma Name. Consent is not required to create an account or use the service. Message frequency varies. Msg &amp; data rates may apply. Reply STOP to unsubscribe or HELP for help. View our{' '}
-              <a href="/privacy-policy" className="underline underline-offset-2 hover:text-foreground">Privacy Policy</a>.
-            </label>
+          <div className="space-y-2">
+            <p className="text-sm font-medium">SMS Notification Consent</p>
+            <div className="flex items-start gap-2.5">
+              <input
+                id="textUpdatesOptIn"
+                name="textUpdatesOptIn"
+                type="checkbox"
+                className="h-4 w-4 mt-0.5 rounded border-input accent-foreground shrink-0"
+              />
+              <label htmlFor="textUpdatesOptIn" className="text-sm text-muted-foreground cursor-pointer leading-snug">
+                Optional: I consent to receive SMS notifications from My Grandma Name, including a confirmation when you join and updates when family members accept your invitations. Consent is not required to create an account or use the service. Message frequency varies. Msg &amp; data rates may apply. Reply STOP to unsubscribe or HELP for help. View our{' '}
+                <a href="/privacy-policy" className="underline underline-offset-2 hover:text-foreground">Privacy Policy</a>.
+              </label>
+            </div>
           </div>
 
           <hr className="border-border" />
